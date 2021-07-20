@@ -23,7 +23,7 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator
         // initialRouteName="WELCOMESCREEN"
-        initialRouteName="HOMESCREEN" // dev
+        initialRouteName="DETAILSCREEN" // dev
         screenOptions={{headerShown: false}}>
         <Stack.Screen name={WELCOMESCREEN} component={WelcomeScreen} />
         <Stack.Screen name={HOMESCREEN} component={HomeScreen} />
