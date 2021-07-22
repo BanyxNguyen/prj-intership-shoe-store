@@ -1,12 +1,39 @@
-import React, {FC} from 'react';
+import axios from 'axios';
+import React, {FC, useEffect} from 'react';
 import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {productService} from '../services';
 import {colors, fonts, sizes} from '../support/constants';
 import {globalStyles} from '../support/globalStyles';
 
 import {Container, Text, Title} from '../support/styledComponents';
 
 const HomeScreen: FC = () => {
+  useEffect(() => {
+    const fetchAPI = async () => {
+      try {
+        // console.log('fuck 1');
+        // // let res = await productService.gets();
+        // var ins1 = axios.create({
+        //   baseURL: 'http://192.168.1.80',
+        //   headers: {},
+        // });
+        // let res = await ins1
+        //   .get('/api/Product/GetProducts')
+        //   // .catch(x => console.log(x.response));
+        // console.log('fuck 2');
+
+        // console.log('data: ', res.data);
+
+        // TODO add real api
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAPI();
+  }, []);
+
   return (
     <Container style={styles.container}>
       <TouchableOpacity style={styles.btnMenu}>
@@ -108,8 +135,8 @@ const styles = StyleSheet.create({
     width: 75,
     height: 90,
   },
-  productDetail:{
+  productDetail: {
     paddingHorizontal: 10,
-    paddingVertical: 15
-  }
+    paddingVertical: 15,
+  },
 });
