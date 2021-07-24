@@ -16,6 +16,8 @@ export interface IWelcomeScreenParams {}
 
 export interface IHomeScreenParams {}
 
+export interface IDetailScreenParams {}
+
 export interface ILoginLogOutScreenParams {
   page: number;
 }
@@ -24,6 +26,7 @@ export type StackParams = {
   [WELCOMESCREEN]: IWelcomeScreenParams;
   [LOGINLOGOUTSCREEN]: ILoginLogOutScreenParams;
   [HOMESCREEN]: IHomeScreenParams;
+  [DETAILSCREEN]: IDetailScreenParams;
 };
 
 export type StackNavigationProp = NavigationProp<StackParams>;

@@ -1,7 +1,9 @@
 import React, {FC} from 'react';
+import {Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import HomeScreen from '../views/HomeScreen';
 import DetailScreen from '../views/DetailScreen';
@@ -22,10 +24,50 @@ const Tab = createBottomTabNavigator();
 
 const HomeScreenTab: FC = () => {
   return (
-    <Tab.Navigator initialRouteName="Home">
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Product" component={ProductScreen} />
+    <Tab.Navigator
+      initialRouteName="Home"
+      tabBarOptions={{
+        showLabel: false,
+        style: {
+          height: 60,
+        },
+      }}>
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Image
+              style={{width: 45, height: 45, tintColor: color}}
+              source={{uri: 'asset:/images/shoe-icon.png'}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Image
+              style={{width: 45, height: 45, tintColor: color}}
+              source={{uri: 'asset:/images/apps-icon.png'}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Product"
+        component={ProductScreen}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Image
+              style={{width: 45, height: 45, tintColor: color}}
+              source={{uri: 'asset:/images/person-icon.png'}}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

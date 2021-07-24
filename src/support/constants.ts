@@ -47,6 +47,8 @@ export const colors = {
   black_75: 'rgba(0, 0, 0, 0.75)',
   black_50: 'rgba(0, 0, 0, 0.5)',
   black_25: 'rgba(0, 0, 0, 0.25)',
+  //violet
+  violet: '#973aa4',
   // orange
   orange: '#ff952e',
   // red
@@ -64,4 +66,18 @@ export const fonts = {
     regular: 'Roboto-Regular',
   },
   otomanopeeOneRegular: 'OtomanopeeOne-Regular',
+};
+
+export const shadows = {
+  s24: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+
+    elevation: 24,
+  },
 };
