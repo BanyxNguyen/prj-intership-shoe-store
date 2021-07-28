@@ -25,7 +25,7 @@ const Tab = createBottomTabNavigator();
 const HomeScreenTab: FC = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Product"
       tabBarOptions={{
         showLabel: false,
         style: {
@@ -33,8 +33,8 @@ const HomeScreenTab: FC = () => {
         },
       }}>
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Product"
+        component={ProductScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -57,8 +57,8 @@ const HomeScreenTab: FC = () => {
         }}
       />
       <Tab.Screen
-        name="Product"
-        component={ProductScreen}
+        name="Profile"
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
