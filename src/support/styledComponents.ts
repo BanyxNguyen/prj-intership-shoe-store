@@ -24,7 +24,7 @@ export const Container: IView = styled.View`
 
 export const Text: IText = styled.Text`
   font-family: ${(p: TextStyle) => p.fontFamily || fonts.roboto.regular};
-  font-size: ${(p: TextStyle) => p.fontSize || `${sizes.h6}px`};
+  font-size: ${(p: TextStyle) => p.fontSize || `${sizes.h5}px`};
   text-align: ${(p: TextStyle) => p.textAlign || 'left'};
   color: ${(p: TextStyle) => (p.color ? p.color.toString() : colors.shark)};
   font-weight: ${(p: TextStyle) => p.fontWeight || '300'};

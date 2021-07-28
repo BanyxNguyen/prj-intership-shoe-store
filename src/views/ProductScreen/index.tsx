@@ -1,34 +1,35 @@
 import React, {FC} from 'react';
-import {
-  View,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+
+import _ from 'lodash';
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {TempData} from '../utilities/data';
-import {Container, Text} from '../support/styledComponents';
-import {colors, fonts, shadows, sizes} from '../support/constants';
-import {TextInput} from 'react-native-gesture-handler';
+import {TempData} from '../../utilities/data';
+import TextInputControl from './TextInputControl';
+import {Container, Text} from '../../support/styledComponents';
+import {colors, fonts, shadows, sizes} from '../../support/constants';
+import {globalStyles} from '../../support/globalStyles';
 
 const ProductScreen: FC = () => {
   const data = TempData.sneakers;
+  const keyword = 'abc';
+
   return (
     <Container style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.btnMenu}>
-          <Image
-            style={{width: 50, height: 50, tintColor: '#202020'}}
-            source={{uri: 'asset:/images/menu-icon.png'}}
-          />
-        </TouchableOpacity>
-        <TextInput style={styles.textInput} />
+        <View style={{flex: 1}}>
+          {!_.isEmpty(keyword) && (
+            <Text style={styles.txtKeyWord}>
+              Search key: "
+              <Text style={globalStyles.gsTextBold}>{keyword}</Text>"
+            </Text>
+          )}
+        </View>
         <TouchableOpacity style={styles.btnCart}>
           <Icon color="#202020" name="cart-outline" size={36} />
         </TouchableOpacity>
+        <TextInputControl />
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -71,6 +72,7 @@ const wBigItem = sizes.wScreen * 0.55;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 10,
   },
   header: {
     flexDirection: 'row',
@@ -78,11 +80,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 5,
   },
+  txtKeyWord: {},
   btnMenu: {},
-  textInput: {
-    flex: 1,
-    backgroundColor: 'red',
-  },
   btnCart: {
     marginLeft: 5,
   },

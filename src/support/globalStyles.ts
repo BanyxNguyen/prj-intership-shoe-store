@@ -1,9 +1,7 @@
 import {StyleSheet} from 'react-native';
-import {colors, sizes} from './constants';
+import {colors, fonts, sizes} from './constants';
 export const globalStyles = StyleSheet.create({
-  gsContainer:{
-    
-  },
+  gsContainer: {},
   gsFlex: {
     flex: 1,
   },
@@ -21,6 +19,9 @@ export const globalStyles = StyleSheet.create({
   },
   gsClWhite: {
     color: colors.white,
+  },
+  gsTextBold: {
+    fontFamily: fonts.roboto.bold,
   },
   // bg
   gsBgWhite: {
