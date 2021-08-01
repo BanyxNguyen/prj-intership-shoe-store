@@ -2,8 +2,8 @@ import React from 'react';
 import AppNavigator from './navigators';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
-import SystemNavigationBar from "react-native-system-navigation-bar";
-SystemNavigationBar.stickyImmersive()
+// import SystemNavigationBar from "react-native-system-navigation-bar";
+// SystemNavigationBar.stickyImmersive()
 
 const theme = {
   ...DefaultTheme,

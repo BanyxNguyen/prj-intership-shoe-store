@@ -63,6 +63,7 @@ export const colors = {
 export const fonts = {
   roboto: {
     bold: 'Roboto-Bold',
+    medium: 'Roboto-Medium',
     regular: 'Roboto-Regular',
   },
   otomanopeeOneRegular: 'OtomanopeeOne-Regular',

@@ -12,6 +12,10 @@ export const DETAILSCREEN = 'DETAILSCREEN';
 export const PROFILESCREEN = 'PROFILESCREEN';
 export const LOGINLOGOUTSCREEN = 'LOGINLOGOUTSCREEN';
 
+export const TABDROPS = 'DROPS';
+export const TABSHOP = 'SHOP';
+export const TABWISHLISH = 'WISHLISH';
+
 export interface IWelcomeScreenParams {}
 
 export interface IHomeScreenParams {}

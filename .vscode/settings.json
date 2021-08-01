@@ -7,8 +7,13 @@
     "Otomanopee",
     "PROFILESCREEN",
     "REGISTERSCREEN",
+    "TABDROPS",
+    "TABSHOP",
+    "TABWISHLISH",
     "WELCOMESCREEN",
+    "WISHLISH",
     "appbar",
+    "hocs",
     "jfif"
   ]
 }

@@ -35,28 +35,45 @@ const ProductScreen: FC = () => {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}>
         <View style={styles.content}>
-          <Text style={styles.titleBigSlider}>Sneakers</Text>
-          <View style={styles.bigSlider}>
-            {data.map((item, index) => (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={[styles.itemBigSlider, shadows.s7]}
-                key={index.toString()}>
-                <FastImage
-                  style={styles.imageBigItem}
-                  source={{
-                    uri: item.images[0],
-                    priority: FastImage.priority.normal,
-                  }}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
-                <View style={[StyleSheet.absoluteFill, styles.contentBigItem]}>
-                  {/* <Text style={styles.brandBigItem}>{item.brand}</Text> */}
-                  <Text style={styles.titleBigItem}>{item.name}</Text>
-                  <Text style={styles.priceBigItem}>${item.price}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+          <View>
+            <Text style={styles.titleBigSlider}>Sneakers</Text>
+            <ScrollView
+              horizontal={true}
+              contentContainerStyle={{paddingVertical: 5}}>
+              {data.map((item, index) => (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  key={index.toString()}
+                  style={[styles.itemBigSlider, shadows.s7]}>
+                  <FastImage
+                    style={styles.imageBigItem}
+                    source={{
+                      uri: item.images[0],
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.contain}
+                  />
+                  <View
+                    style={[StyleSheet.absoluteFill, styles.contentBigItem]}>
+                    {/* <Text style={styles.brandBigItem}>{item.brand}</Text> */}
+                    <Text style={styles.titleBigItem}>{item.name}</Text>
+                    <Text style={styles.priceBigItem}>${item.price}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+          <View>
+            <Text style={styles.titleSmallSlider}>Sneakers</Text>
+            <ScrollView
+              horizontal={true}
+              contentContainerStyle={{paddingVertical: 5}}>
+              {data.map((item, index) => (
+                <TouchableOpacity activeOpacity={0.8} key={index.toString()}>
+                  <Text>123</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </ScrollView>
@@ -87,10 +104,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 10,
-  },
-  bigSlider: {
-    paddingTop: 5,
-    paddingBottom: 10,
   },
   titleBigSlider: {
     fontFamily: fonts.roboto.bold,
@@ -123,5 +136,10 @@ const styles = StyleSheet.create({
   priceBigItem: {
     fontFamily: fonts.roboto.bold,
     fontSize: sizes.h4,
+  },
+  // small slider
+  titleSmallSlider: {
+    fontFamily: fonts.roboto.bold,
+    fontSize: sizes.h5,
   },
 });
