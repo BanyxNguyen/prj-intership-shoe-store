@@ -21,14 +21,18 @@ import {
   TABSHOP,
   TABDROPS,
   TABWISHLISH,
+  SEARCHSCREEN,
 } from './config';
 import Icons, {TypeLibraryIcons} from '../components/Icons';
 import HeaderHoc, {ChangeTitleHeader} from '../hocs/HeaderHoc';
 import {navigationRef} from './navigationService';
+import {colors} from '../support/constants';
+import SearchScreen from '../views/SearchScreen';
+import ShowAndFilterModal from '../components/ShowAndFilterModal';
 
 const Tab = createBottomTabNavigator();
 
-export const InitTabBarNavigation = TABDROPS;
+export const InitTabBarNavigation = TABSHOP; //TABDROPS;
 
 const HomeScreenTab: FC = () => {
   const _tabIcon =
@@ -38,12 +42,14 @@ const HomeScreenTab: FC = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Product"
+      initialRouteName={InitTabBarNavigation}
       tabBarOptions={{
         showLabel: false,
         style: {
           height: 55,
         },
+        activeTintColor: colors.black,
+        inactiveTintColor: colors.blueyGrey,
       }}>
       <Tab.Screen
         name={TABDROPS}
@@ -83,17 +89,28 @@ const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-        // initialRouteName="WELCOMESCREEN"
-        initialRouteName="HOMESCREEN" // dev
-        screenOptions={{headerShown: false}}>
-        <Stack.Screen name={WELCOMESCREEN} component={WelcomeScreen} />
-        <Stack.Screen name={HOMESCREEN} component={HeaderHoc(HomeScreenTab)} />
-        <Stack.Screen name={DETAILSCREEN} component={DetailScreen} />
-        <Stack.Screen name={PROFILESCREEN} component={ProfileScreen} />
-        <Stack.Screen name={LOGINLOGOUTSCREEN} component={LoginLogOutScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      {/* modal zone */}
+      <ShowAndFilterModal />
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator
+          // initialRouteName="WELCOMESCREEN"
+          initialRouteName="HOMESCREEN" // dev
+          screenOptions={{headerShown: false}}>
+          <Stack.Screen name={WELCOMESCREEN} component={WelcomeScreen} />
+          <Stack.Screen
+            name={HOMESCREEN}
+            component={HeaderHoc(HomeScreenTab)}
+          />
+          <Stack.Screen name={DETAILSCREEN} component={DetailScreen} />
+          <Stack.Screen name={PROFILESCREEN} component={ProfileScreen} />
+          <Stack.Screen
+            name={LOGINLOGOUTSCREEN}
+            component={LoginLogOutScreen}
+          />
+          <Stack.Screen name={SEARCHSCREEN} component={SearchScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 }

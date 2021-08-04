@@ -1,83 +1,106 @@
 import React, {FC} from 'react';
-import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 
 import _ from 'lodash';
 import FastImage from 'react-native-fast-image';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {TempData} from '../../utilities/data';
 import TextInputControl from './TextInputControl';
 import {Container, Text} from '../../support/styledComponents';
 import {colors, fonts, shadows, sizes} from '../../support/constants';
 import {globalStyles} from '../../support/globalStyles';
+import Icons from '../../components/Icons';
+import SearchModal from '../../components/SearchModal';
+import {navigate} from '../../navigators/navigationService';
 
 const ProductScreen: FC = () => {
   const data = TempData.sneakers;
-  const keyword = 'abc';
+
+  const _toSearchScreen = () => {
+    navigate('SEARCHSCREEN');
+  };
 
   return (
-    <Container style={styles.container}>
-      <View style={styles.header}>
-        <View style={{flex: 1}}>
-          {!_.isEmpty(keyword) && (
-            <Text style={styles.txtKeyWord}>
-              Search key: "
-              <Text style={globalStyles.gsTextBold}>{keyword}</Text>"
-            </Text>
-          )}
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}>
+      {/* <SearchModal>
+        <View style={[styles.searchBox, shadows.s1]}>
+          <View style={styles.btnSearch}>
+            <Icons
+              size={26}
+              color={colors.black}
+              name="md-search-outline"
+              lib="Ionicons"
+            />
+          </View>
+          <Text style={styles.inputSearch}>Find products...</Text>
         </View>
-        <TouchableOpacity style={styles.btnCart}>
-          <Icon color="#202020" name="cart-outline" size={36} />
-        </TouchableOpacity>
-        <TextInputControl />
+      </SearchModal> */}
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={_toSearchScreen}
+        style={[styles.searchBox, shadows.s1]}>
+        <View style={styles.btnSearch}>
+          <Icons
+            size={26}
+            color={colors.black}
+            name="md-search-outline"
+            lib="Ionicons"
+          />
+        </View>
+        <Text style={styles.inputSearch}>Find products...</Text>
+      </TouchableOpacity>
+
+      <View style={styles.content}>
+        {/* <TabsProduct /> */}
+        <View>
+          <Text style={styles.titleBigSlider}>Sneakers</Text>
+          <ScrollView
+            horizontal={true}
+            contentContainerStyle={{paddingVertical: 5}}>
+            {data.map((item, index) => (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                key={index.toString()}
+                style={[styles.itemBigSlider, shadows.s7]}>
+                <FastImage
+                  style={styles.imageBigItem}
+                  source={{
+                    uri: item.images[0],
+                    priority: FastImage.priority.normal,
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
+                <View style={[StyleSheet.absoluteFill, styles.contentBigItem]}>
+                  {/* <Text style={styles.brandBigItem}>{item.brand}</Text> */}
+                  <Text style={styles.titleBigItem}>{item.name}</Text>
+                  <Text style={styles.priceBigItem}>${item.price}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+        <View>
+          <Text style={styles.titleSmallSlider}>Sneakers</Text>
+          <ScrollView
+            horizontal={true}
+            contentContainerStyle={{paddingVertical: 5}}>
+            {data.map((item, index) => (
+              <TouchableOpacity activeOpacity={0.8} key={index.toString()}>
+                <Text>123</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}>
-        <View style={styles.content}>
-          <View>
-            <Text style={styles.titleBigSlider}>Sneakers</Text>
-            <ScrollView
-              horizontal={true}
-              contentContainerStyle={{paddingVertical: 5}}>
-              {data.map((item, index) => (
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  key={index.toString()}
-                  style={[styles.itemBigSlider, shadows.s7]}>
-                  <FastImage
-                    style={styles.imageBigItem}
-                    source={{
-                      uri: item.images[0],
-                      priority: FastImage.priority.normal,
-                    }}
-                    resizeMode={FastImage.resizeMode.contain}
-                  />
-                  <View
-                    style={[StyleSheet.absoluteFill, styles.contentBigItem]}>
-                    {/* <Text style={styles.brandBigItem}>{item.brand}</Text> */}
-                    <Text style={styles.titleBigItem}>{item.name}</Text>
-                    <Text style={styles.priceBigItem}>${item.price}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-          <View>
-            <Text style={styles.titleSmallSlider}>Sneakers</Text>
-            <ScrollView
-              horizontal={true}
-              contentContainerStyle={{paddingVertical: 5}}>
-              {data.map((item, index) => (
-                <TouchableOpacity activeOpacity={0.8} key={index.toString()}>
-                  <Text>123</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-      </ScrollView>
-    </Container>
+    </ScrollView>
   );
 };
 
@@ -87,23 +110,25 @@ const hBigItem = sizes.hScreen * 0.42;
 const wBigItem = sizes.wScreen * 0.55;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 10,
-  },
-  header: {
+  searchBox: {
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     paddingTop: 5,
+    backgroundColor: colors.bgScreen,
   },
-  txtKeyWord: {},
-  btnMenu: {},
-  btnCart: {
-    marginLeft: 5,
+  btnSearch: {
+    marginRight: 5,
+  },
+  inputSearch: {
+    flex: 1,
+    fontSize: sizes.h6,
+    color: colors.txtGray,
+    marginBottom: 2,
   },
   content: {
-    padding: 10,
+    // padding: 10,
   },
   titleBigSlider: {
     fontFamily: fonts.roboto.bold,

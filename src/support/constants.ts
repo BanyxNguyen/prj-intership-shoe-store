@@ -14,6 +14,7 @@ export const sizes = {
   h3: 24,
   h4: 22,
   h5: 18,
+  h55: 16,
   h6: 14,
   h7: 12,
   h8: 10,
@@ -29,6 +30,8 @@ export const sizes = {
 
 export const colors = {
   bgScreen: '#fafafa',
+  txtBlack: '#202020',
+  txtGray: '#9696aa',
   transparent: 'transparent',
   // white
   white: '#ffffff',
@@ -47,6 +50,7 @@ export const colors = {
   black_75: 'rgba(0, 0, 0, 0.75)',
   black_50: 'rgba(0, 0, 0, 0.5)',
   black_25: 'rgba(0, 0, 0, 0.25)',
+  black_10: 'rgba(0, 0, 0, 0.10)',
   //violet
   violet: '#973aa4',
   // orange
@@ -66,10 +70,41 @@ export const fonts = {
     medium: 'Roboto-Medium',
     regular: 'Roboto-Regular',
   },
+  montserrat: {
+    back: 'Montserrat-Black',
+    bold: 'Montserrat-Bold',
+    extraBold: 'Montserrat-ExtraBold',
+    extraLight: 'Montserrat-ExtraLight',
+    light: 'Montserrat-Light',
+    medium: 'Montserrat-Medium',
+    regular: 'Montserrat-Regular',
+    semiBold: 'Montserrat-SemiBold',
+    thin: 'Montserrat-Thin',
+  },
   otomanopeeOneRegular: 'OtomanopeeOne-Regular',
 };
 
 export const shadows = {
+  s1: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    elevation: 1,
+  },
+  s2: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
   s5: {
     shadowColor: '#000',
     shadowOffset: {
@@ -78,7 +113,6 @@ export const shadows = {
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
   },
   s7: {
@@ -89,7 +123,6 @@ export const shadows = {
     },
     shadowOpacity: 0.29,
     shadowRadius: 4.65,
-
     elevation: 7,
   },
   s24: {
@@ -100,7 +133,6 @@ export const shadows = {
     },
     shadowOpacity: 0.58,
     shadowRadius: 16.0,
-
     elevation: 24,
   },
 };

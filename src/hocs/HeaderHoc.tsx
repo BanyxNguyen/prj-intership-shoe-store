@@ -1,7 +1,7 @@
 import React, {ComponentType, FC, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Icons from '../components/Icons';
-import { InitTabBarNavigation } from '../navigators';
+import {InitTabBarNavigation} from '../navigators';
 import {TABDROPS} from '../navigators/config';
 import {colors, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text} from '../support/styledComponents';
@@ -26,16 +26,16 @@ const HeaderHoc = <P extends object>(WrappedComponent: ComponentType<P>) => {
 
     return (
       <Container style={{flex: 1}}>
-        <View style={[styles.header, shadows.s5]}>
+        <View style={[styles.header, shadows.s1]}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.groupIcon}>
             <View style={styles.icon}>
-              {!isSearchIcon && (
+              {isSearchIcon && (
                 <Icons
                   size={30}
                   color={colors.black}
-                  name="md-search"
-                  lib="Ionicons"
+                  name="search"
+                  lib="EvilIcons"
                 />
               )}
             </View>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   title: {
-    fontFamily: fonts.roboto.medium,
+    fontFamily: fonts.otomanopeeOneRegular,
     fontSize: sizes.h4,
     textTransform: 'uppercase',
   },
