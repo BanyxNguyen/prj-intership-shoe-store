@@ -26,13 +26,13 @@ import {
 import Icons, {TypeLibraryIcons} from '../components/Icons';
 import HeaderHoc, {ChangeTitleHeader} from '../hocs/HeaderHoc';
 import {navigationRef} from './navigationService';
-import {colors} from '../support/constants';
+import {colors, constants} from '../support/constants';
 import SearchScreen from '../views/SearchScreen';
 import ShowAndFilterModal from '../components/ShowAndFilterModal';
 
 const Tab = createBottomTabNavigator();
 
-export const InitTabBarNavigation = TABSHOP; //TABDROPS;
+export const InitTabBarNavigation = TABDROPS; //TABSHOP; 
 
 const HomeScreenTab: FC = () => {
   const _tabIcon =
@@ -46,7 +46,7 @@ const HomeScreenTab: FC = () => {
       tabBarOptions={{
         showLabel: false,
         style: {
-          height: 55,
+          height: constants.hFooter,
         },
         activeTintColor: colors.black,
         inactiveTintColor: colors.blueyGrey,

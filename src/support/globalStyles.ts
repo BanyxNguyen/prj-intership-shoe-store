@@ -25,6 +25,6 @@ export const globalStyles = StyleSheet.create({
   },
   // bg
   gsBgWhite: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.whiteGray,
   },
 });

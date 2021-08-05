@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import Icons from '../components/Icons';
 import {InitTabBarNavigation} from '../navigators';
 import {TABDROPS} from '../navigators/config';
-import {colors, fonts, shadows, sizes} from '../support/constants';
+import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text} from '../support/styledComponents';
 
 export let ChangeTitleHeader: (name: string) => () => void;
@@ -56,7 +56,7 @@ export default HeaderHoc;
 const styles = StyleSheet.create({
   header: {
     backgroundColor: colors.bgScreen,
-    height: 50,
+    height: constants.hHeader,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

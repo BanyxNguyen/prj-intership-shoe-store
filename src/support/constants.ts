@@ -1,7 +1,12 @@
-import {Dimensions} from 'react-native';
+import {Dimensions, StatusBar} from 'react-native';
 
-const {width, height} = Dimensions.get('screen');
+const {width, height} = Dimensions.get('window');
 
+export const constants = {
+  hHeader: 50,
+  hFooter: 55,
+  statusBar: StatusBar.currentHeight || 20,
+};
 export const sizes = {
   wScreen: width,
   hScreen: height,
@@ -80,6 +85,10 @@ export const fonts = {
     regular: 'Montserrat-Regular',
     semiBold: 'Montserrat-SemiBold',
     thin: 'Montserrat-Thin',
+    extraLightItalic: 'Montserrat-ExtraLightItalic',
+    italic: 'Montserrat-Italic',
+    mediumItalic: 'Montserrat-MediumItalic',
+    semiBoldItalic: 'Montserrat-SemiBoldItalic',
   },
   otomanopeeOneRegular: 'OtomanopeeOne-Regular',
 };

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, {FC, useEffect} from 'react';
+import React, {FC, PureComponent, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
   View,
@@ -7,19 +7,95 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ListRenderItem,
+  FlatList,
+  NativeSyntheticEvent,
+  Animated,
+  NativeScrollEvent,
+  StatusBar,
+  NativeModules,
 } from 'react-native';
 
 import {productService} from '../services';
 import {globalStyles} from '../support/globalStyles';
 import {StackNavigationProp} from '../navigators/config';
-import {colors, fonts, sizes} from '../support/constants';
+import {colors, constants, fonts, sizes} from '../support/constants';
 import {Container, Text, Title} from '../support/styledComponents';
+import Icons from '../components/Icons';
+
+const DATA = [
+  {
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+    title: 'First Item',
+  },
+  {
+    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+    title: 'Second Item',
+  },
+  {
+    id: '58694a0f-3da1-471f-bd96-145571e29d72',
+    title: 'Third Item',
+  },
+];
+
+const {hHeader, hFooter, statusBar} = constants;
+
+const hItem = sizes.hScreen - hHeader - hFooter - statusBar;
+// console.log(sizes.hScreen, hItem);
 
 const HomeScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
 
   const _detail = () => {
     stackNav.navigate('DETAILSCREEN', {});
+  };
+
+  const _renderItem = (item: any, index: any) => {
+    const test = ['red', 'blue', 'violet'];
+    return (
+      <View style={[styles.itemDrop]} key={index.toString()}>
+        <Image
+          resizeMode="cover"
+          style={{height: hItem, width: sizes.wScreen}}
+          source={{uri: 'asset:/images/áo-hoodie-tokyo-pack-adidas-z.n.e..jpg'}}
+        />
+        <View style={[StyleSheet.absoluteFill, styles.itemContent]}>
+          <View style={styles.label}>
+            <Text style={[styles.labelTxtType, styles.labelTxt]}>RUNNING</Text>
+          </View>
+          <View style={styles.bottomBox}>
+            <View style={styles.label}>
+              <Text style={[styles.labelTxtName, styles.labelTxt]}>
+                ULTRABOOST 21
+              </Text>
+            </View>
+            <View style={styles.label}>
+              <Text style={[styles.labelTxtNew, styles.labelTxt]}>
+                JUST DROPPED
+              </Text>
+            </View>
+            <View>
+              <View style={styles.btnBoxLine}>
+                <View style={styles.btnDetailLine} />
+              </View>
+              <View style={[styles.btnBox, StyleSheet.absoluteFill]}>
+                <View style={styles.btnDetailContent}>
+                  <Text style={styles.btnDetailText}>SEE MORE</Text>
+                  <View style={[globalStyles.gsFlexCenter]}>
+                    <Icons
+                      size={24}
+                      color={colors.black}
+                      name="arrow-right-l"
+                      lib="Fontisto"
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   useEffect(() => {
@@ -45,111 +121,132 @@ const HomeScreen: FC = () => {
   }, []);
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}>
-      <Container style={styles.container}>
-        <TouchableOpacity style={styles.btnMenu}>
-          <Image
-            style={{width: 50, height: 50, tintColor: '#fff'}}
-            source={{uri: 'asset:/images/menu-icon.png'}}
-          />
-        </TouchableOpacity>
-        <View>
-          <Image
-            style={{width: sizes.wScreen, height: sizes.hScreen * 0.56}}
-            source={{uri: 'asset:/images/shoes-3.png'}}
-          />
-          <View style={[StyleSheet.absoluteFill, styles.boxItemSlider]}>
-            <Text style={styles.bigTitle}>Nike One 2020</Text>
-            <Text style={styles.smallTitle}>Running shoe store</Text>
-          </View>
-        </View>
-        <View style={styles.new}>
-          <View style={[StyleSheet.absoluteFill, globalStyles.gsFlexCenter]}>
-            <View style={styles.newLine} />
-          </View>
-          <Title style={styles.newText}>New Trend</Title>
-        </View>
-        <View style={styles.productList}>
-          <TouchableOpacity style={{flexDirection: 'row'}} onPress={_detail}>
-            <Image
-              style={styles.productImage}
-              source={{uri: 'asset:/images/p-shoe-1.jpg'}}
-            />
-            <View style={styles.productDetail}>
-              <Text style={styles.bigTitle}>Nike One 2020</Text>
-              <Text style={styles.smallTitle}>Running shoe store</Text>
-            </View>
-          </TouchableOpacity>
-          <View style={{flexDirection: 'row'}}>
-            <Image
-              style={styles.productImage}
-              source={{uri: 'asset:/images/p-shoe-1.jpg'}}
-            />
-            <View style={styles.productDetail}>
-              <Text style={styles.bigTitle}>Nike One 2020</Text>
-              <Text style={styles.smallTitle}>Running shoe store</Text>
-            </View>
-          </View>
-        </View>
-      </Container>
-    </ScrollView>
+    <Container style={styles.container}>
+      <CustomScrollView HeightItem={hItem}>
+        {DATA.map(_renderItem)}
+      </CustomScrollView>
+    </Container>
   );
 };
+
+interface CustomScrollViewProps {
+  HeightItem: number;
+}
+
+class CustomScrollView extends PureComponent<CustomScrollViewProps> {
+  refScrollView = React.createRef<ScrollView>();
+  ScrollValue: Animated.ValueXY;
+  constructor(props: CustomScrollViewProps) {
+    super(props);
+    this.ScrollValue = new Animated.ValueXY();
+  }
+  onScrollEvent = ({
+    nativeEvent: {
+      contentOffset: {y: CurrentY},
+      velocity,
+    },
+  }: NativeSyntheticEvent<NativeScrollEvent>) => {
+    let index = Math.floor(CurrentY / this.props.HeightItem);
+    const offset = CurrentY % this.props.HeightItem;
+
+    if ((velocity?.y ?? 0) < 0) {
+      index = offset > 100 ? index + 1 : index;
+    } else {
+      index = this.props.HeightItem - offset > 100 ? index : index + 1;
+    }
+
+    this.refScrollView?.current?.scrollTo({
+      y: index * this.props.HeightItem,
+      animated: true,
+    });
+  };
+  render() {
+    return (
+      <ScrollView
+        ref={this.refScrollView}
+        showsVerticalScrollIndicator={false}
+        decelerationRate={0}
+        overScrollMode="always"
+        onScrollEndDrag={this.onScrollEvent}>
+        {this.props.children}
+      </ScrollView>
+    );
+  }
+}
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: hItem,
+    width: sizes.wScreen,
   },
-  btnMenu: {
-    top: 10,
-    left: 10,
-    zIndex: 5,
+  itemDrop: {
+    height: hItem,
+    width: sizes.wScreen,
+  },
+  itemContent: {
+    flex: 1,
+    padding: 15,
+    justifyContent: 'space-between',
+  },
+  label: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  labelTxt: {
     padding: 5,
-    position: 'absolute',
+    textTransform: 'uppercase',
   },
-  boxItemSlider: {
-    flex: 1,
-    paddingBottom: 5,
-    paddingHorizontal: 20,
-    justifyContent: 'flex-end',
+  labelTxtType: {
+    color: colors.whiteGray,
+    backgroundColor: colors.black,
+    fontFamily: fonts.montserrat.bold,
   },
-  bigTitle: {
-    fontSize: sizes.h2,
-    fontFamily: fonts.roboto.bold,
-  },
-  smallTitle: {
+  labelTxtName: {
+    color: colors.txtBlack,
+    backgroundColor: colors.whiteGray,
+    fontFamily: fonts.montserrat.semiBoldItalic,
     fontSize: sizes.h5,
-    color: colors.blueyGrey,
+    marginBottom: 3,
   },
-  new: {
-    marginTop: 25,
+  labelTxtNew: {
+    color: colors.txtBlack,
+    backgroundColor: colors.whiteGray,
+    fontFamily: fonts.montserrat.mediumItalic,
+    fontSize: sizes.h8,
+    marginBottom: 20,
+  },
+  bottomBox: {
+    marginBottom: 15,
+    paddingHorizontal: 45,
+  },
+  btnBox: {
+    height: 50,
+    paddingRight: 5,
+    paddingBottom: 5,
+  },
+  btnDetailContent: {
+    flex: 1,
+    padding: 5,
     alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.whiteGray,
   },
-  newText: {
-    textAlign: 'center',
-    paddingHorizontal: 5,
-    backgroundColor: colors.bgScreen,
+  btnDetailText: {
+    fontSize: sizes.h6,
+    textTransform: 'uppercase',
+    fontFamily: fonts.montserrat.medium,
   },
-  newLine: {
-    height: 1.5,
-    width: sizes.wScreen - 100,
-    backgroundColor: colors.shark,
+  btnBoxLine: {
+    height: 50,
+    paddingTop: 5,
+    paddingLeft: 5,
   },
-  productList: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-  },
-  productImage: {
-    width: 75,
-    height: 90,
-  },
-  productDetail: {
-    paddingVertical: 15,
-    paddingHorizontal: 10,
+  btnDetailLine: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: colors.whiteGray,
   },
 });
