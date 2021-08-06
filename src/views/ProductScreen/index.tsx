@@ -49,6 +49,9 @@ const ProductScreen: FC = () => {
         <View>
           <View style={styles.titleBox}>
             <Text style={styles.title}>BEST SELLERS</Text>
+            <TouchableOpacity style={styles.btnSeeMore}>
+              <Text style={styles.btnSeeMoreTxt}>SEE All</Text>
+            </TouchableOpacity>
           </View>
           <ScrollView
             horizontal={true}
@@ -58,7 +61,22 @@ const ProductScreen: FC = () => {
                 activeOpacity={0.8}
                 key={index.toString()}
                 style={styles.item}>
-                <Text>123</Text>
+                <View style={styles.imageItemBox}>
+                  <FastImage
+                    style={styles.imageItem}
+                    source={{
+                      uri: item.images[0],
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                  />
+                  <View style={styles.priceBox}>
+                    <Text style={styles.priceText}>$300.00</Text>
+                  </View>
+                </View>
+                <View style={styles.itemContent}>
+                  <Text>123</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -92,18 +110,59 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   content: {},
+  titleBox: {
+    marginHorizontal: 20,
+    marginTop: 25,
+    marginBottom: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
   title: {
     fontFamily: fonts.montserrat.bold,
     fontSize: sizes.h5,
   },
-  titleBox: {
-    marginHorizontal: 20,
-    marginVertical: 25,
+  btnSeeMore: {
+    borderBottomWidth: 1.5,
+    borderBottomColor: colors.black,
+  },
+  btnSeeMoreTxt: {
+    fontFamily: fonts.montserrat.medium,
+    fontSize: sizes.h6,
   },
   item: {
     width: wItem,
     height: hItem,
     backgroundColor: '#e0e0e0',
     marginHorizontal: 2.5,
+  },
+  imageItemBox: {
+    width: wItem,
+    height: hItem * 0.45,
+    // backgroundColor: 'blueviolet',
+  },
+  imageItem: {
+    width: wItem,
+    height: hItem * 0.45,
+  },
+  priceBox: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    position: 'absolute',
+    left: 10,
+    bottom: -15,
+  },
+  priceText: {
+    height: 25,
+    textAlignVertical: 'center',
+    paddingHorizontal: 5,
+    backgroundColor: colors.whiteSmoke,
+    color: colors.txtBlack,
+    fontFamily: fonts.montserrat.light,
+  },
+  itemContent: {
+    paddingHorizontal: 10,
+    paddingVertical: 20
   },
 });

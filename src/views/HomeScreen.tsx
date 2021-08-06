@@ -19,24 +19,12 @@ import {
 import {productService} from '../services';
 import {globalStyles} from '../support/globalStyles';
 import {StackNavigationProp} from '../navigators/config';
-import {colors, constants, fonts, sizes} from '../support/constants';
+import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text, Title} from '../support/styledComponents';
 import Icons from '../components/Icons';
-
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
+import FastImage from 'react-native-fast-image';
+import {ProductTrend} from '../models';
+import {TempData} from '../utilities/data';
 
 const {hHeader, hFooter, statusBar} = constants;
 
@@ -46,31 +34,38 @@ const hItem = sizes.hScreen - hHeader - hFooter - statusBar;
 const HomeScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
 
+  const _data = TempData.trends;
+
   const _detail = () => {
     stackNav.navigate('DETAILSCREEN', {});
   };
 
-  const _renderItem = (item: any, index: any) => {
+  const _renderItem = (item: ProductTrend, index: any) => {
     const test = ['red', 'blue', 'violet'];
     return (
       <View style={[styles.itemDrop]} key={index.toString()}>
-        <Image
-          resizeMode="cover"
+        <FastImage
           style={{height: hItem, width: sizes.wScreen}}
-          source={{uri: 'asset:/images/áo-hoodie-tokyo-pack-adidas-z.n.e..jpg'}}
+          source={{
+            uri: item.image,
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
         />
         <View style={[StyleSheet.absoluteFill, styles.itemContent]}>
           <View style={styles.label}>
-            <Text style={[styles.labelTxtType, styles.labelTxt]}>RUNNING</Text>
+            <Text style={[styles.labelTxtType, styles.labelTxt]}>
+              {item.type}
+            </Text>
           </View>
           <View style={styles.bottomBox}>
             <View style={styles.label}>
-              <Text style={[styles.labelTxtName, styles.labelTxt]}>
-                ULTRABOOST 21
+              <Text style={[styles.labelTxtName, styles.labelTxt, shadows.s1]}>
+                {item.name}
               </Text>
             </View>
             <View style={styles.label}>
-              <Text style={[styles.labelTxtNew, styles.labelTxt]}>
+              <Text style={[styles.labelTxtNew, styles.labelTxt, shadows.s1]}>
                 JUST DROPPED
               </Text>
             </View>
@@ -123,7 +118,7 @@ const HomeScreen: FC = () => {
   return (
     <Container style={styles.container}>
       <CustomScrollView HeightItem={hItem}>
-        {DATA.map(_renderItem)}
+        {_data.map(_renderItem)}
       </CustomScrollView>
     </Container>
   );
