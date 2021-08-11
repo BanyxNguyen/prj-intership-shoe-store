@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     backgroundColor: colors.white,
-    borderRadius: 10,
+    borderRadius: 5,
     overflow: 'hidden',
   },
   imageItemBox: {},

@@ -13,7 +13,7 @@ import {TempData} from '../utilities/data';
 import {ScrollView} from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image';
 import ItemProduct from './ProductScreen/ItemProduct';
-import FilterModal from '../components/FilterModal';
+import FilterBottomSheet from '../components/FilterBottomSheet';
 
 const ShowAndFilterScreen: FC = () => {
   const route = useRoute();
@@ -48,12 +48,13 @@ const ShowAndFilterScreen: FC = () => {
         </TouchableOpacity>
       </View>
       <View style={{flex: 1}}>
-        <FilterModal/>
         <View style={styles.resultBox}>
           <Text style={styles.txtResult}>{products.length} RESULTS</Text>
-          <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-            <Icons size={26} color={colors.black} name="options-outline" lib="Ionicons" />
-          </TouchableOpacity>
+          <FilterBottomSheet>
+            <View style={styles.btn}>
+              <Icons size={26} color={colors.black} name="options-outline" lib="Ionicons" />
+            </View>
+          </FilterBottomSheet>
         </View>
         <View style={{flex: 1}}>
           <ScrollView contentContainerStyle={styles.contentProduct}>
