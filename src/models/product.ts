@@ -14,3 +14,13 @@ export interface ProductTrend {
   image: string;
   type: string;
 }
+
+export interface ProductOptions {
+  /**
+   * 0 is female, 1 is male
+   */
+  gender?: 0 | 1;
+  types?: string[];
+  colors?: string[];
+  sizes?: string[];
+}

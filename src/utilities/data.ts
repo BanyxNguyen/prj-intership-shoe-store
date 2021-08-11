@@ -14,7 +14,7 @@ const temp: Product[] = [
   {
     //https://www.dsw.com/en/us/product/adidas-daily-3-training-shoe---mens/508057?activeColor=400
     name: `DAILY 3 TRAINING SHOE - MEN'S`,
-    brand: 'adidas',
+    brand: 'Adidas',
     price: 54.99,
     type: ['school', 'kid', 'men'],
     size: ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13'],

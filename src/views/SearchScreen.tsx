@@ -1,15 +1,7 @@
 import _ from 'lodash';
 import React, {FC, useState} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Icons from '../components/Icons';
-import {ShowModalFilter} from '../components/ShowAndFilterModal';
 import {Product} from '../models';
 import {goBack} from '../navigators/navigationService';
 import {colors, fonts, shadows, sizes} from '../support/constants';
@@ -26,24 +18,13 @@ const SearchScreen: FC = props => {
     setTxtSearch('');
   };
 
-  const _showProductsToFilterModal = () => {
-    const temp: Product[] = [
-      {name: 'test 1', price: 300},
-      {name: 'test 2', price: 600},
-    ];
-    ShowModalFilter([]);
-  };
+  const _showProductsToFilterModal = () => {};
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, shadows.s1]}>
         <TouchableOpacity style={styles.btnLeft} onPress={goBack}>
-          <Icons
-            size={26}
-            color={colors.black}
-            name="arrow-left"
-            lib="Feather"
-          />
+          <Icons size={26} color={colors.black} name="arrow-left" lib="Feather" />
         </TouchableOpacity>
         <View style={styles.inputBox}>
           <TextInput
@@ -59,12 +40,7 @@ const SearchScreen: FC = props => {
               style={styles.closeIcon}
               activeOpacity={0.8}
               onPress={_clearTextSearch}>
-              <Icons
-                size={26}
-                color={colors.black}
-                name="md-close-circle"
-                lib="Ionicons"
-              />
+              <Icons size={26} color={colors.black} name="md-close-circle" lib="Ionicons" />
             </TouchableOpacity>
           )}
         </View>
@@ -73,9 +49,7 @@ const SearchScreen: FC = props => {
         <View style={[styles.box, shadows.s1]}>
           <View style={styles.boxTitleGroup}>
             <Text style={styles.title}>PRODUCTS</Text>
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={_showProductsToFilterModal}>
+            <TouchableOpacity activeOpacity={0.85} onPress={_showProductsToFilterModal}>
               <Text style={[styles.title, styles.seeAll]}>SEE ALL</Text>
             </TouchableOpacity>
           </View>

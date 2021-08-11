@@ -1,97 +1,82 @@
 import React, {FC} from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
+import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 
 import _ from 'lodash';
 import FastImage from 'react-native-fast-image';
+import {useNavigation} from '@react-navigation/native';
 
+import Icons from '../../components/Icons';
 import {TempData} from '../../utilities/data';
-import TextInputControl from './TextInputControl';
+import {navigate} from '../../navigators/navigationService';
+import {SEARCHSCREEN, SHOWANDFILTERSCREEN, StackNavigationProp} from '../../navigators/config';
 import {Container, Text} from '../../support/styledComponents';
 import {colors, fonts, shadows, sizes} from '../../support/constants';
-import {globalStyles} from '../../support/globalStyles';
-import Icons from '../../components/Icons';
-import SearchModal from '../../components/SearchModal';
-import {navigate} from '../../navigators/navigationService';
+import {Product, ProductOptions} from '../../models';
+import ItemProduct from './ItemProduct';
 
 const ProductScreen: FC = () => {
+  const stackNav = useNavigation<StackNavigationProp>();
   const data = TempData.sneakers;
 
   const _toSearchScreen = () => {
-    navigate('SEARCHSCREEN');
+    // navigate('SEARCHSCREEN');
+    stackNav.navigate(SEARCHSCREEN, {});
+  };
+
+  const _seeMore = (_data: Product[]) => () => {
+    const options: ProductOptions = {gender: 1};
+    stackNav.navigate(SHOWANDFILTERSCREEN, {title: 'Best sellers[10]', options});
   };
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}>
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={_toSearchScreen}
-        style={[styles.searchBox, shadows.s1]}>
-        <View style={styles.btnSearch}>
-          <Icons
-            size={26}
-            color={colors.black}
-            name="md-search-outline"
-            lib="Ionicons"
-          />
-        </View>
-        <Text style={styles.inputSearch}>Find products...</Text>
-      </TouchableOpacity>
-
-      <View style={styles.content}>
-        <View>
-          <View style={styles.titleBox}>
-            <Text style={styles.title}>BEST SELLERS</Text>
-            <TouchableOpacity style={styles.btnSeeMore}>
-              <Text style={styles.btnSeeMoreTxt}>SEE All</Text>
-            </TouchableOpacity>
+    <Container style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={_toSearchScreen}
+          style={[styles.searchBox, shadows.s1]}>
+          <View style={styles.btnSearch}>
+            <Icons size={26} color={colors.black} name="md-search-outline" lib="Ionicons" />
           </View>
-          <ScrollView
-            horizontal={true}
-            contentContainerStyle={{paddingVertical: 5, paddingHorizontal: 20}}>
-            {data.map((item, index) => (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                key={index.toString()}
-                style={styles.item}>
-                <View style={styles.imageItemBox}>
-                  <FastImage
-                    style={styles.imageItem}
-                    source={{
-                      uri: item.images[0],
-                      priority: FastImage.priority.normal,
-                    }}
-                    resizeMode={FastImage.resizeMode.cover}
-                  />
-                  <View style={styles.priceBox}>
-                    <Text style={styles.priceText}>$300.00</Text>
-                  </View>
-                </View>
-                <View style={styles.itemContent}>
-                  <Text>123</Text>
-                </View>
+          <Text style={styles.inputSearch}>Find products...</Text>
+        </TouchableOpacity>
+
+        <View style={styles.content}>
+          <View>
+            <View style={styles.titleBox}>
+              <Text style={styles.title}>BEST SELLERS</Text>
+              <TouchableOpacity style={styles.btnSeeMore} onPress={_seeMore(data)}>
+                <Text style={styles.btnSeeMoreTxt}>SEE All</Text>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
+            </View>
+            <ScrollView
+              horizontal={true}
+              contentContainerStyle={{paddingVertical: 5, paddingHorizontal: 20}}>
+              {data.map((item, index) => (
+                <ItemProduct
+                  data={item}
+                  key={index.toString()}
+                  size={{width: wItem, height: hItem}}
+                  ratioSizeImage={0.44}
+                />
+              ))}
+            </ScrollView>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </Container>
   );
 };
 
 export default ProductScreen;
 
-const hItem = sizes.hScreen * 0.42;
+const hItem = sizes.hScreen * 0.38;
 const wItem = sizes.wScreen * 0.4;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   searchBox: {
     height: 50,
     flexDirection: 'row',
@@ -129,40 +114,5 @@ const styles = StyleSheet.create({
   btnSeeMoreTxt: {
     fontFamily: fonts.montserrat.medium,
     fontSize: sizes.h6,
-  },
-  item: {
-    width: wItem,
-    height: hItem,
-    backgroundColor: '#e0e0e0',
-    marginHorizontal: 2.5,
-  },
-  imageItemBox: {
-    width: wItem,
-    height: hItem * 0.45,
-    // backgroundColor: 'blueviolet',
-  },
-  imageItem: {
-    width: wItem,
-    height: hItem * 0.45,
-  },
-  priceBox: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    position: 'absolute',
-    left: 10,
-    bottom: -15,
-  },
-  priceText: {
-    height: 25,
-    textAlignVertical: 'center',
-    paddingHorizontal: 5,
-    backgroundColor: colors.whiteSmoke,
-    color: colors.txtBlack,
-    fontFamily: fonts.montserrat.light,
-  },
-  itemContent: {
-    paddingHorizontal: 10,
-    paddingVertical: 20
   },
 });

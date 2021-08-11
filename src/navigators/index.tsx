@@ -22,17 +22,18 @@ import {
   TABDROPS,
   TABWISHLISH,
   SEARCHSCREEN,
+  SHOWANDFILTERSCREEN,
 } from './config';
 import Icons, {TypeLibraryIcons} from '../components/Icons';
 import HeaderHoc, {ChangeTitleHeader} from '../hocs/HeaderHoc';
 import {navigationRef} from './navigationService';
 import {colors, constants} from '../support/constants';
 import SearchScreen from '../views/SearchScreen';
-import ShowAndFilterModal from '../components/ShowAndFilterModal';
+import ShowAndFilterScreen from '../views/ShowAndFilterScreen';
 
 const Tab = createBottomTabNavigator();
 
-export const InitTabBarNavigation = TABDROPS; //TABSHOP; 
+export const InitTabBarNavigation = TABSHOP; //TABDROPS;
 
 const HomeScreenTab: FC = () => {
   const _tabIcon =
@@ -90,25 +91,18 @@ const Stack = createStackNavigator();
 export default function AppNavigator() {
   return (
     <>
-      {/* modal zone */}
-      <ShowAndFilterModal />
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
           // initialRouteName="WELCOMESCREEN"
           initialRouteName="HOMESCREEN" // dev
           screenOptions={{headerShown: false}}>
           <Stack.Screen name={WELCOMESCREEN} component={WelcomeScreen} />
-          <Stack.Screen
-            name={HOMESCREEN}
-            component={HeaderHoc(HomeScreenTab)}
-          />
+          <Stack.Screen name={HOMESCREEN} component={HeaderHoc(HomeScreenTab)} />
           <Stack.Screen name={DETAILSCREEN} component={DetailScreen} />
           <Stack.Screen name={PROFILESCREEN} component={ProfileScreen} />
-          <Stack.Screen
-            name={LOGINLOGOUTSCREEN}
-            component={LoginLogOutScreen}
-          />
+          <Stack.Screen name={LOGINLOGOUTSCREEN} component={LoginLogOutScreen} />
           <Stack.Screen name={SEARCHSCREEN} component={SearchScreen} />
+          <Stack.Screen name={SHOWANDFILTERSCREEN} component={ShowAndFilterScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </>
