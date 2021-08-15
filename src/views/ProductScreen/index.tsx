@@ -24,7 +24,7 @@ const ProductScreen: FC = () => {
   };
 
   const _seeMore = (_data: Product[]) => () => {
-    const options: ProductOptions = {gender: 1};
+    const options: ProductOptions = {};
     stackNav.navigate(SHOWANDFILTERSCREEN, {title: 'Best sellers[10]', options});
   };
 

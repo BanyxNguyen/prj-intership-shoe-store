@@ -4,9 +4,9 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import _ from 'lodash';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
-import {Product} from '../models';
+import {Product, ProductOptions} from '../models';
 import {colors, constants, fonts, shadows, sizes} from '../support/constants';
-import {StackNavigationProp} from '../navigators/config';
+import {SEARCHSCREEN, StackNavigationProp} from '../navigators/config';
 import {Container, Text} from '../support/styledComponents';
 import Icons from '../components/Icons';
 import {TempData} from '../utilities/data';
@@ -20,6 +20,7 @@ const ShowAndFilterScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
   const [products, setProducts] = useState<Product[]>([]);
   const [title, setTitle] = useState<string>('');
+  const [options, setOptions] = useState<ProductOptions>({});
 
   const _goBack = () => {
     stackNav.goBack();
@@ -30,6 +31,11 @@ const ShowAndFilterScreen: FC = () => {
     const name: any = _.get(route.params, 'title', '');
     setProducts(TempData.sneakers);
     setTitle(name);
+    setOptions(result);
+  };
+
+  const _toSearchScreen = () => {
+    stackNav.navigate(SEARCHSCREEN, {});
   };
 
   useEffect(() => {
@@ -43,14 +49,14 @@ const ShowAndFilterScreen: FC = () => {
           <Icons size={26} color={colors.black} name="arrow-left" lib="Feather" />
         </TouchableOpacity>
         <Text style={styles.titleHeader}>{title}</Text>
-        <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
+        <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={_toSearchScreen}>
           <Icons size={26} color={colors.black} name="md-search-outline" lib="Ionicons" />
         </TouchableOpacity>
       </View>
       <View style={{flex: 1}}>
         <View style={styles.resultBox}>
           <Text style={styles.txtResult}>{products.length} RESULTS</Text>
-          <FilterBottomSheet>
+          <FilterBottomSheet options={options}>
             <View style={styles.btn}>
               <Icons size={26} color={colors.black} name="options-outline" lib="Ionicons" />
             </View>

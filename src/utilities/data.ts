@@ -1,7 +1,66 @@
 import _ from 'lodash';
-import {Product, ProductTrend} from '../models';
+import {OptionType, Product, ProductOptions, ProductTrend} from '../models';
 
 const driveLink = 'https://drive.google.com/uc?export=view&id=';
+
+export const DefaultOptions: ProductOptions = {
+  sort: [
+    {name: 'Price [low/high]', value: 'price-ascending'},
+    {name: 'Newest', value: 'new'},
+    {name: 'Top Sellers', value: 'top'},
+    {name: 'Price [high/low]', value: 'price-decrease'},
+  ],
+  gender: [
+    {name: 'Men', value: 'men'},
+    {name: 'Women', value: 'women'},
+    {name: 'Unisex', value: 'unisex'},
+  ],
+  types: [
+    {name: 'Sneakers', value: 'sneakers'},
+    {name: 'T Shirts', value: 't-shirts'},
+    {name: 'Pants', value: 'pants'},
+    {name: 'Hoodies & Sweatshirts', value: 'hoodies-sweatshirts'},
+    {name: 'Shorts', value: 'shorts'},
+    {name: 'Boots', value: 'boots'},
+  ],
+  colors: [
+    {name: 'Black', value: '#202020'},
+    {name: 'Red', value: '#d50000'},
+    {name: 'Green', value: '#00600f'},
+  ],
+  sizes: [
+    {name: '3', value: '3'},
+    {name: '3.5', value: '3.5'},
+    {name: '4', value: '4'},
+    {name: '4.5', value: '3'},
+    {name: '5', value: '5'},
+    {name: '5.5', value: '5.5'},
+    {name: '6', value: '6'},
+    {name: '6.5', value: '6.5'},
+    {name: '7', value: '7'},
+    {name: '7.5', value: '7.5'},
+  ],
+  brand: [
+    {name: 'Adidas', value: 'adidas'},
+    {name: 'Nike', value: 'nike'},
+    {name: 'Dr.Martens', value: 'dr-martens'},
+  ],
+  category: [
+    {name: 'Apparel', value: 'apparel'},
+    {name: 'Shoes', value: 'shoes'},
+    {name: 'Accessories', value: 'accessories'},
+  ],
+};
+
+export const DefaultOptionsMenu: OptionType[] = [
+  {name: 'Sort By', value: 'sort'},
+  {name: 'Gender', value: 'gender'},
+  {name: 'Category', value: 'category'},
+  {name: 'Product Type', value: 'types'},
+  {name: 'Size', value: 'sizes'},
+  {name: 'Color', value: 'colors'},
+  {name: 'Brand', value: 'brand'},
+];
 
 interface DataAllType {
   sneakers: Product[];

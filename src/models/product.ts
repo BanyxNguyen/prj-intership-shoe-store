@@ -15,12 +15,17 @@ export interface ProductTrend {
   type: string;
 }
 
+export interface OptionType {
+  name: string;
+  value: string;
+}
+
 export interface ProductOptions {
-  /**
-   * 0 is female, 1 is male
-   */
-  gender?: 0 | 1;
-  types?: string[];
-  colors?: string[];
-  sizes?: string[];
+  sort?: OptionType[];
+  gender?: OptionType[];
+  types?: OptionType[];
+  colors?: OptionType[];
+  sizes?: OptionType[];
+  brand?: OptionType[];
+  category?: OptionType[];
 }

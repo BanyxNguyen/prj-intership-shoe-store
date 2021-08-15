@@ -46,7 +46,21 @@ const SearchScreen: FC = props => {
         </View>
       </View>
       <ScrollView>
-        <View style={[styles.box, shadows.s1]}>
+        <View style={styles.box}>
+          <Text style={styles.title}>HISTORY</Text>
+          <View style={styles.resultBox}>
+            <View style={styles.resultItem}>
+              <Text>men</Text>
+            </View>
+            <View style={styles.resultItem}>
+              <Text>ultra</Text>
+            </View>
+            <View style={styles.resultItem}>
+              <Text>running boost</Text>
+            </View>
+          </View>
+        </View>
+        <View style={[styles.box, styles.lineBottomBox]}>
           <View style={styles.boxTitleGroup}>
             <Text style={styles.title}>PRODUCTS</Text>
             <TouchableOpacity activeOpacity={0.85} onPress={_showProductsToFilterModal}>
@@ -59,11 +73,11 @@ const SearchScreen: FC = props => {
         </View>
         <View style={styles.box}>
           <Text style={styles.title}>SUGGESTIONS</Text>
-          <View style={styles.suggestionsResult}>
-            <View style={styles.suggestionsItem}>
+          <View style={styles.resultBox}>
+            <View style={styles.resultItem}>
               <Text>ultra boost men[119]</Text>
             </View>
-            <View style={styles.suggestionsItem}>
+            <View style={styles.resultItem}>
               <Text>running boost men[38]</Text>
             </View>
           </View>
@@ -132,6 +146,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.bgScreen,
   },
+  lineBottomBox: {
+    borderBottomColor: colors.black_10,
+    borderBottomWidth: 1,
+  },
   productsResult: {
     marginBottom: 20,
   },
@@ -140,10 +158,10 @@ const styles = StyleSheet.create({
     width: wP,
     backgroundColor: colors.bgScreen,
   },
-  suggestionsResult: {
+  resultBox: {
     paddingHorizontal: 5,
   },
-  suggestionsItem: {
+  resultItem: {
     marginVertical: 5,
   },
 });
