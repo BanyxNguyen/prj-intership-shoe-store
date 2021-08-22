@@ -2,6 +2,8 @@ import {Dimensions, StatusBar} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
+export const driveLink = 'https://drive.google.com/uc?export=view&id=';
+
 export const constants = {
   hHeader: 50,
   hFooter: 55,
@@ -43,6 +45,7 @@ export const colors = {
   white25: 'rgba(255, 255, 255, 0.25)',
   white50: 'rgba(255, 255, 255, 0.5)',
   white75: 'rgba(255, 255, 255, 0.75)',
+  white85: 'rgba(255, 255, 255, 0.85)',
   whiteSmoke: '#f5f5f5',
   whiteGray: '#f9f9f9',
   // black

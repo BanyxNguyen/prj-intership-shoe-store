@@ -78,11 +78,7 @@ const temp: Product[] = [
     type: ['school', 'kid', 'men'],
     size: ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13'],
     color: ['#285199'],
-    description: `Workout in some vibrant style in the Daily 3 training shoe by Adidas. Made of washed canvas 
-    upper for breathable feel, this low-top sneaker features OrthoLite® sockliner footbed for plush cushioning 
-    with every step.
-    \n\nItem # 508057
-    \nUPC # 194830771060`,
+    description: `Workout in some vibrant style in the Daily 3 training shoe by Adidas. Made of washed canvas upper for breathable feel, this low-top sneaker features OrthoLite® sockliner footbed for plush cushioning with every step.\n\nItem # 508057\nUPC # 194830771060`,
     images: [
       `${driveLink}13eg0v9-5-d7lmXi3vzgNHqCV_uboCsRy`,
       `${driveLink}112uxP52_xPiXuT719eLjw1r7HNv1o9iZ`,
@@ -109,10 +105,7 @@ const temp: Product[] = [
       'UK 9 / US 11',
     ],
     color: ['#4f4f4f'],
-    description: `The iconic 1460 8-eye combat boot from Dr. Martens allows you to embrace your inner rebel. 
-    With a Goodyear Welt construction for enhanced comfort and durability, this rugged boot emboldens your style.
-    \n\nItem # 247425
-    \nUPC # 800090795776`,
+    description: `The iconic 1460 8-eye combat boot from Dr. Martens allows you to embrace your inner rebel. With a Goodyear Welt construction for enhanced comfort and durability, this rugged boot emboldens your style.\n\nItem # 247425\nUPC # 800090795776`,
     images: [
       `${driveLink}1A1eCkXi8tTCZ0sQryZoS_GQfsaiOtrMw`,
       `${driveLink}1HNN_APAoy6mxFAjWC_iFLQPWg2b5CI44`,

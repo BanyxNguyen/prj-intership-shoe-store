@@ -15,9 +15,7 @@ export class AccountGateway {
 
   async login(loginForm: LoginCredentials): Promise<{token: string}> {
     try {
-      const {data}: any = await SlowFetch(
-        this.restConnector.post('/accounts/login', loginForm),
-      );
+      const {data}: any = await SlowFetch(this.restConnector.post('/accounts/login', loginForm));
       return data;
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -41,25 +39,21 @@ export class AccountGateway {
       const {data} = await this.restConnector.get('/accounts/me');
       return data;
     } catch (e) {
-      if (e.response && e.response.status === 401) {
-        return null;
-      }
-      throw e;
+      // if (e.response && e.response.status === 401) {
+      //   return null;
+      // }
+      // throw e;
+      return null;
     }
   }
 
   async useAndSaveAccessToken(token: string | null): Promise<void> {
     this.restConnector.defaults.headers.common.Authorization = `Bearer ${token}`;
-    await this.localStorageConnector.setItem(
-      'authentication.accessToken',
-      token || '',
-    );
+    await this.localStorageConnector.setItem('authentication.accessToken', token || '');
   }
 
   async _loadAccessToken() {
-    const accessToken = await this.localStorageConnector.getItem(
-      'authentication.accessToken',
-    );
+    const accessToken = await this.localStorageConnector.getItem('authentication.accessToken');
     return accessToken;
   }
 }

@@ -1,5 +1,5 @@
 import {NavigationProp, NavigatorScreenParams, RouteProp} from '@react-navigation/native';
-import { ProductOptions } from '../models';
+import {Product, ProductOptions} from '../models';
 
 export const WELCOMESCREEN = 'WELCOMESCREEN';
 export const LOGINSCREEN = 'LOGINSCREEN';
@@ -25,23 +25,28 @@ export type ScreenName =
 export const TABSHOP = 'SHOP';
 export const TABDROPS = 'DROPS';
 export const TABWISHLISH = 'WISHLISH';
+export const TABCARTSCREEN = 'CART';
 
 export interface IWelcomeScreenParams {}
 export interface IHomeScreenParams {}
-export interface IDetailScreenParams {}
+export interface IDetailScreenParams {
+  data: Product;
+}
 export interface ISearchScreenParams {}
 export interface ILoginLogOutScreenParams {
   page: number;
 }
 export interface IShowAndFilterScreenParams {
   title: string;
-  options: ProductOptions
+  options: ProductOptions;
 }
+export interface IProfileScreenParams {}
 
 export type StackParams = {
   [HOMESCREEN]: IHomeScreenParams;
   [SEARCHSCREEN]: ISearchScreenParams;
   [DETAILSCREEN]: IDetailScreenParams;
+  [PROFILESCREEN]: IProfileScreenParams;
   [WELCOMESCREEN]: IWelcomeScreenParams;
   [LOGINLOGOUTSCREEN]: ILoginLogOutScreenParams;
   [SHOWANDFILTERSCREEN]: IShowAndFilterScreenParams;
@@ -55,3 +60,4 @@ export type LoginLogOutScreenRouteProp = RouteProp<StackParams, 'LOGINLOGOUTSCRE
 export type HomeScreenRouteProp = RouteProp<StackParams, 'HOMESCREEN'>;
 export type SearchScreenRouteProp = RouteProp<StackParams, 'SEARCHSCREEN'>;
 export type ShowAndFilterRouteProp = RouteProp<StackParams, 'SHOWANDFILTERSCREEN'>;
+export type ProfileRouteProp = RouteProp<StackParams, 'PROFILESCREEN'>;

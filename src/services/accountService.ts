@@ -14,4 +14,9 @@ export class AccountService {
     await this.accountGateway.useAndSaveAccessToken(token);
     return this.accountGateway.getLoginUser();
   }
+
+  async getLoginUser() {
+    const user = await this.accountGateway.getLoginUser();
+    return user;
+  }
 }

@@ -10,7 +10,7 @@ import {
   Platform,
   Keyboard,
 } from 'react-native';
-import {sizes} from '../../support/constants';
+import {colors, sizes} from '../../support/constants';
 import {Container, Header} from '../../support/styledComponents';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
@@ -19,6 +19,7 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StackNavigationProp} from '../../navigators/config';
 import {globalStyles} from '../../support/globalStyles';
+import Icons from '../../components/Icons';
 
 type Page = 0 | 1;
 
@@ -48,14 +49,11 @@ const LoginLogOutScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.angleLeft}
-              activeOpacity={0.3}
-              onPress={_goBack}>
+          <View style={styles.headerBox}>
+            <TouchableOpacity style={styles.angleLeft} activeOpacity={0.85} onPress={_goBack}>
               <Icon name="angle-left" size={40} color="#000" />
             </TouchableOpacity>
-            <Header>WELCOME</Header>
+            <Header style={styles.header}>SHOE STORE</Header>
           </View>
           <ScrollView
             ref={refScrollView}
@@ -89,16 +87,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
+  headerBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  header: {
+    fontSize: sizes.h2,
   },
   angleLeft: {
     position: 'absolute',
     top: 0,
     left: 0,
-    marginTop: 18,
+    marginTop: 12,
     paddingHorizontal: 10,
   },
 });

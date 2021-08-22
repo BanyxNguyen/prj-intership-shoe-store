@@ -23,6 +23,7 @@ import {
   TABWISHLISH,
   SEARCHSCREEN,
   SHOWANDFILTERSCREEN,
+  TABCARTSCREEN,
 } from './config';
 import Icons, {TypeLibraryIcons} from '../components/Icons';
 import HeaderHoc, {ChangeTitleHeader} from '../hocs/HeaderHoc';
@@ -30,6 +31,8 @@ import {navigationRef} from './navigationService';
 import {colors, constants} from '../support/constants';
 import SearchScreen from '../views/SearchScreen';
 import ShowAndFilterScreen from '../views/ShowAndFilterScreen';
+import WishlistScreen from '../views/WishlistScreen';
+import CartScreen from '../views/CartScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -74,12 +77,23 @@ const HomeScreenTab: FC = () => {
       />
       <Tab.Screen
         name={TABWISHLISH}
-        component={ProfileScreen}
+        component={WishlistScreen}
         options={{
           tabBarIcon: _tabIcon('heart-outline', 'MaterialCommunityIcons', 32),
         }}
         listeners={() => ({
           tabPress: ChangeTitleHeader(TABWISHLISH),
+        })}
+      />
+      <Tab.Screen
+        name={TABCARTSCREEN}
+        component={CartScreen}
+        options={{
+          tabBarIcon: _tabIcon('ios-cart-outline', 'Ionicons', 32),
+          tabBarBadge: 10,
+        }}
+        listeners={() => ({
+          tabPress: ChangeTitleHeader(TABCARTSCREEN),
         })}
       />
     </Tab.Navigator>

@@ -29,3 +29,20 @@ export interface ProductOptions {
   brand?: OptionType[];
   category?: OptionType[];
 }
+//Model filter
+export enum ELogic {
+    And, Or
+}
+export interface PropFilter {
+    Logic: ELogic | null;
+    IsExactly: boolean | null;
+    FieldName: string;
+    Value: string;
+    Scopes: PropFilter[];
+}
+
+export interface ModelFilter{
+    Page: number;
+    Amount: number;
+    PropFilters: PropFilter[];
+}

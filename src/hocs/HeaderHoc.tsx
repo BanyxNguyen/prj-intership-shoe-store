@@ -1,8 +1,16 @@
+import {useNavigation} from '@react-navigation/native';
+import _ from 'lodash';
 import React, {ComponentType, FC, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Icons from '../components/Icons';
 import {InitTabBarNavigation} from '../navigators';
-import {TABDROPS} from '../navigators/config';
+import {
+  LOGINLOGOUTSCREEN,
+  PROFILESCREEN,
+  StackNavigationProp,
+  TABDROPS,
+} from '../navigators/config';
+import {accountService} from '../services';
 import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text} from '../support/styledComponents';
 
@@ -12,6 +20,7 @@ interface WithProps {}
 
 const HeaderHoc = <P extends object>(WrappedComponent: ComponentType<P>) => {
   const hocComponent: FC<P & WithProps> = _props => {
+    const stackNav = useNavigation<StackNavigationProp>();
     const {...props} = _props;
     const [title, setTitle] = useState(InitTabBarNavigation);
     const [isSearchIcon, setIsSearchIcon] = useState(false);
@@ -24,6 +33,15 @@ const HeaderHoc = <P extends object>(WrappedComponent: ComponentType<P>) => {
       _changeTitle(name);
     };
 
+    const _toProfile = async () => {
+      const user = await accountService.getLoginUser();
+      if (!_.isEmpty(user)) {
+        stackNav.navigate(LOGINLOGOUTSCREEN, {page: 0});
+      } else {
+        stackNav.navigate(PROFILESCREEN, {});
+      }
+    };
+
     return (
       <Container style={{flex: 1}}>
         <View style={[styles.header, shadows.s1]}>
@@ -31,17 +49,12 @@ const HeaderHoc = <P extends object>(WrappedComponent: ComponentType<P>) => {
           <View style={styles.groupIcon}>
             <View style={styles.icon}>
               {isSearchIcon && (
-                <Icons
-                  size={30}
-                  color={colors.black}
-                  name="search"
-                  lib="EvilIcons"
-                />
+                <Icons size={30} color={colors.black} name="search" lib="EvilIcons" />
               )}
             </View>
-            <View style={styles.icon}>
+            <TouchableOpacity style={styles.icon} activeOpacity={0.85} onPress={_toProfile}>
               <Icons size={34} color={colors.black} name="user" lib="Feather" />
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
         <WrappedComponent {...(props as P)} />

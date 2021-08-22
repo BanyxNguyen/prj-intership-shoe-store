@@ -1,7 +1,9 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {FC} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {Product} from '../../models';
+import {DETAILSCREEN, StackNavigationProp} from '../../navigators/config';
 import {colors, fonts, shadows, sizes} from '../../support/constants';
 
 interface Props {
@@ -14,11 +16,17 @@ interface Props {
 }
 
 const ItemProduct: FC<Props> = props => {
+  const stackNav = useNavigation<StackNavigationProp>();
   const {data, size, ratioSizeImage} = props;
   const sizeImg = {width: size.width, height: size.height * ratioSizeImage};
+
+  const _toDetail = () => {
+    stackNav.navigate(DETAILSCREEN, {data: props.data});
+  };
+
   return (
     <View style={[styles.container, size]}>
-      <TouchableOpacity activeOpacity={0.85} style={[styles.item, shadows.s1]}>
+      <TouchableOpacity activeOpacity={0.85} style={[styles.item, shadows.s1]} onPress={_toDetail}>
         <View style={[styles.imageItemBox, sizeImg]}>
           <FastImage
             style={[styles.imageItemBox, sizeImg]}

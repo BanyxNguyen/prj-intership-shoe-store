@@ -36,10 +36,6 @@ const HomeScreen: FC = () => {
 
   const _data = TempData.trends;
 
-  const _detail = () => {
-    stackNav.navigate('DETAILSCREEN', {});
-  };
-
   const _renderItem = (item: ProductTrend, index: any) => {
     const test = ['red', 'blue', 'violet'];
     return (
@@ -54,20 +50,14 @@ const HomeScreen: FC = () => {
         />
         <View style={[StyleSheet.absoluteFill, styles.itemContent]}>
           <View style={styles.label}>
-            <Text style={[styles.labelTxtType, styles.labelTxt]}>
-              {item.type}
-            </Text>
+            <Text style={[styles.labelTxtType, styles.labelTxt]}>{item.type}</Text>
           </View>
           <View style={styles.bottomBox}>
             <View style={styles.label}>
-              <Text style={[styles.labelTxtName, styles.labelTxt, shadows.s1]}>
-                {item.name}
-              </Text>
+              <Text style={[styles.labelTxtName, styles.labelTxt, shadows.s1]}>{item.name}</Text>
             </View>
             <View style={styles.label}>
-              <Text style={[styles.labelTxtNew, styles.labelTxt, shadows.s1]}>
-                JUST DROPPED
-              </Text>
+              <Text style={[styles.labelTxtNew, styles.labelTxt, shadows.s1]}>JUST DROPPED</Text>
             </View>
             <View>
               <View style={styles.btnBoxLine}>
@@ -77,12 +67,7 @@ const HomeScreen: FC = () => {
                 <View style={styles.btnDetailContent}>
                   <Text style={styles.btnDetailText}>SEE MORE</Text>
                   <View style={[globalStyles.gsFlexCenter]}>
-                    <Icons
-                      size={24}
-                      color={colors.black}
-                      name="arrow-right-l"
-                      lib="Fontisto"
-                    />
+                    <Icons size={24} color={colors.black} name="arrow-right-l" lib="Fontisto" />
                   </View>
                 </View>
               </View>
@@ -117,9 +102,7 @@ const HomeScreen: FC = () => {
 
   return (
     <Container style={styles.container}>
-      <CustomScrollView HeightItem={hItem}>
-        {_data.map(_renderItem)}
-      </CustomScrollView>
+      <CustomScrollView HeightItem={hItem}>{_data.map(_renderItem)}</CustomScrollView>
     </Container>
   );
 };
