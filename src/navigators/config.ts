@@ -1,5 +1,5 @@
 import {NavigationProp, NavigatorScreenParams, RouteProp} from '@react-navigation/native';
-import {Product, ProductOptions} from '../models';
+import {Product, FilterOptions} from '../models';
 
 export const WELCOMESCREEN = 'WELCOMESCREEN';
 export const LOGINSCREEN = 'LOGINSCREEN';
@@ -38,7 +38,7 @@ export interface ILoginLogOutScreenParams {
 }
 export interface IShowAndFilterScreenParams {
   title: string;
-  options: ProductOptions;
+  options: FilterOptions;
 }
 export interface IProfileScreenParams {}
 

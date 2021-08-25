@@ -15,9 +15,11 @@ import {Button, TextInput} from '../../components';
 import {colors, sizes} from '../../support/constants';
 import {Container, Header, Text, Title} from '../../support/styledComponents';
 import {LOGINSCREEN, StackNavigationProp} from '../../navigators/config';
+import { SignUp } from '../../models';
 
 interface Props {
   toLogin: () => void;
+  submit: (data: SignUp) => void;
 }
 
 const widthBtn = sizes.wScreen - 30;

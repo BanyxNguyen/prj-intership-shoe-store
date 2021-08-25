@@ -16,19 +16,22 @@ export interface ProductTrend {
 }
 
 export interface OptionType {
-  name: string;
+  key: string;
   value: string;
 }
 
-export interface ProductOptions {
+export interface FilterOptions {
   sort?: OptionType[];
   gender?: OptionType[];
   types?: OptionType[];
   colors?: OptionType[];
   sizes?: OptionType[];
-  brand?: OptionType[];
-  category?: OptionType[];
+  brands?: OptionType[];
+  categories?: OptionType[];
 }
+
+export type FilterOptionsKey = keyof FilterOptions;
+
 //Model filter
 export enum ELogic {
     And, Or

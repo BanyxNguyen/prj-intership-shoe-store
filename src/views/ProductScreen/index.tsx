@@ -11,7 +11,7 @@ import {navigate} from '../../navigators/navigationService';
 import {SEARCHSCREEN, SHOWANDFILTERSCREEN, StackNavigationProp} from '../../navigators/config';
 import {Container, Text} from '../../support/styledComponents';
 import {colors, fonts, shadows, sizes} from '../../support/constants';
-import {Product, ProductOptions} from '../../models';
+import {Product, FilterOptions} from '../../models';
 import ItemProduct from './ItemProduct';
 
 const ProductScreen: FC = () => {
@@ -24,7 +24,7 @@ const ProductScreen: FC = () => {
   };
 
   const _seeMore = (_data: Product[]) => () => {
-    const options: ProductOptions = {};
+    const options: FilterOptions = {};
     stackNav.navigate(SHOWANDFILTERSCREEN, {title: 'Best sellers[10]', options});
   };
 

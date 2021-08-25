@@ -1,5 +1,5 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {LegacyRef, MutableRefObject, useEffect, useRef} from 'react';
+import React, {FC, LegacyRef, MutableRefObject, useEffect, useRef} from 'react';
 import {
   StyleSheet,
   Text,
@@ -20,13 +20,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {StackNavigationProp} from '../../navigators/config';
 import {globalStyles} from '../../support/globalStyles';
 import Icons from '../../components/Icons';
+import {LoginCredentials, SignUp} from '../../models';
 
 type Page = 0 | 1;
 
-const LoginLogOutScreen = () => {
+const LoginLogOutScreen: FC = () => {
   const route = useRoute();
   const stackNav = useNavigation<StackNavigationProp>();
-  const refScrollView: MutableRefObject<ScrollView | null> = useRef(null);
+  const refScrollView = useRef<ScrollView>(null);
 
   const _goBack = () => {
     stackNav.goBack();
@@ -36,6 +37,13 @@ const LoginLogOutScreen = () => {
     const x = sizes.wScreen * page;
     refScrollView.current?.scrollTo({x, y: 0, animated: true});
   };
+
+  const _submitSignIn = (data: LoginCredentials) => {
+    console.log(data);
+    
+  };
+
+  const _submitSignUp = (data: SignUp) => {};
 
   useEffect(() => {
     const page = _.get(route.params, 'page', 0);
@@ -65,14 +73,14 @@ const LoginLogOutScreen = () => {
                 width: sizes.wScreen,
                 height: sizes.hScreen,
               }}>
-              <LoginPage toRegister={_scrollTo(1)} />
+              <LoginPage toRegister={_scrollTo(1)} submit={_submitSignIn}/>
             </View>
             <View
               style={{
                 width: sizes.wScreen,
                 height: sizes.hScreen,
               }}>
-              <RegisterPage toLogin={_scrollTo(0)} />
+              <RegisterPage toLogin={_scrollTo(0)} submit={_submitSignUp} />
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>

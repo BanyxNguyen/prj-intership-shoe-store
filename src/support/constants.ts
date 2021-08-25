@@ -65,6 +65,8 @@ export const colors = {
   orange: '#ff952e',
   // red
   red: '#f42b2b',
+  //blue
+  blue: '#005b9f',
   // green
   green: '#68cf00',
   darkLimeGreen25: 'rgba(104, 207, 0, 0.25)',

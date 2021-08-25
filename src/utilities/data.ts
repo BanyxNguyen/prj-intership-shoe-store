@@ -1,65 +1,65 @@
 import _ from 'lodash';
-import {OptionType, Product, ProductOptions, ProductTrend} from '../models';
+import {OptionType, Product, FilterOptions, ProductTrend} from '../models';
 
 const driveLink = 'https://drive.google.com/uc?export=view&id=';
 
-export const DefaultOptions: ProductOptions = {
+export const DefaultOptions: FilterOptions = {
   sort: [
-    {name: 'Price [low/high]', value: 'price-ascending'},
-    {name: 'Newest', value: 'new'},
-    {name: 'Top Sellers', value: 'top'},
-    {name: 'Price [high/low]', value: 'price-decrease'},
+    {value: 'Price [low/high]', key: 'price-ascending'},
+    {value: 'Newest', key: 'new'},
+    {value: 'Top Sellers', key: 'top'},
+    {value: 'Price [high/low]', key: 'price-decrease'},
   ],
   gender: [
-    {name: 'Men', value: 'men'},
-    {name: 'Women', value: 'women'},
-    {name: 'Unisex', value: 'unisex'},
+    {value: 'Men', key: 'men'},
+    {value: 'Women', key: 'women'},
+    {value: 'Unisex', key: 'unisex'},
   ],
   types: [
-    {name: 'Sneakers', value: 'sneakers'},
-    {name: 'T Shirts', value: 't-shirts'},
-    {name: 'Pants', value: 'pants'},
-    {name: 'Hoodies & Sweatshirts', value: 'hoodies-sweatshirts'},
-    {name: 'Shorts', value: 'shorts'},
-    {name: 'Boots', value: 'boots'},
+    {value: 'Sneakers', key: 'sneakers'},
+    {value: 'T Shirts', key: 't-shirts'},
+    {value: 'Pants', key: 'pants'},
+    {value: 'Hoodies & Sweatshirts', key: 'hoodies-sweatshirts'},
+    {value: 'Shorts', key: 'shorts'},
+    {value: 'Boots', key: 'boots'},
   ],
   colors: [
-    {name: 'Black', value: '#202020'},
-    {name: 'Red', value: '#d50000'},
-    {name: 'Green', value: '#00600f'},
+    {value: 'Black', key: '#202020'},
+    {value: 'Red', key: '#d50000'},
+    {value: 'Green', key: '#00600f'},
   ],
   sizes: [
-    {name: '3', value: '3'},
-    {name: '3.5', value: '3.5'},
-    {name: '4', value: '4'},
-    {name: '4.5', value: '3'},
-    {name: '5', value: '5'},
-    {name: '5.5', value: '5.5'},
-    {name: '6', value: '6'},
-    {name: '6.5', value: '6.5'},
-    {name: '7', value: '7'},
-    {name: '7.5', value: '7.5'},
+    {value: '3', key: '3'},
+    {value: '3.5', key: '3.5'},
+    {value: '4', key: '4'},
+    {value: '4.5', key: '3'},
+    {value: '5', key: '5'},
+    {value: '5.5', key: '5.5'},
+    {value: '6', key: '6'},
+    {value: '6.5', key: '6.5'},
+    {value: '7', key: '7'},
+    {value: '7.5', key: '7.5'},
   ],
-  brand: [
-    {name: 'Adidas', value: 'adidas'},
-    {name: 'Nike', value: 'nike'},
-    {name: 'Dr.Martens', value: 'dr-martens'},
+  brands: [
+    {value: 'Adidas', key: 'adidas'},
+    {value: 'Nike', key: 'nike'},
+    {value: 'Dr.Martens', key: 'dr-martens'},
   ],
-  category: [
-    {name: 'Apparel', value: 'apparel'},
-    {name: 'Shoes', value: 'shoes'},
-    {name: 'Accessories', value: 'accessories'},
+  categories: [
+    {value: 'Apparel', key: 'apparel'},
+    {value: 'Shoes', key: 'shoes'},
+    {value: 'Accessories', key: 'accessories'},
   ],
 };
 
 export const DefaultOptionsMenu: OptionType[] = [
-  {name: 'Sort By', value: 'sort'},
-  {name: 'Gender', value: 'gender'},
-  {name: 'Category', value: 'category'},
-  {name: 'Product Type', value: 'types'},
-  {name: 'Size', value: 'sizes'},
-  {name: 'Color', value: 'colors'},
-  {name: 'Brand', value: 'brand'},
+  {value: 'Sort By', key: 'sort'},
+  {value: 'Gender', key: 'gender'},
+  {value: 'Category', key: 'categories'},
+  {value: 'Product Type', key: 'types'},
+  {value: 'Size', key: 'sizes'},
+  {value: 'Color', key: 'colors'},
+  {value: 'Brand', key: 'brands'},
 ];
 
 interface DataAllType {

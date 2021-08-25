@@ -4,7 +4,7 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import _ from 'lodash';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
-import {Product, ProductOptions} from '../models';
+import {Product, FilterOptions} from '../models';
 import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {SEARCHSCREEN, StackNavigationProp} from '../navigators/config';
 import {Container, Text} from '../support/styledComponents';
@@ -20,7 +20,7 @@ const ShowAndFilterScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
   const [products, setProducts] = useState<Product[]>([]);
   const [title, setTitle] = useState<string>('');
-  const [options, setOptions] = useState<ProductOptions>({});
+  const [options, setOptions] = useState<FilterOptions>({});
 
   const _goBack = () => {
     stackNav.goBack();

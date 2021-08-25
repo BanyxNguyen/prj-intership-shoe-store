@@ -4,24 +4,34 @@ import {BackHandler, Button, StyleSheet, Text, TouchableOpacity, View} from 'rea
 import {ScrollView} from 'react-native-gesture-handler';
 import {Chip} from 'react-native-paper';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {OptionType, ProductOptions} from '../../models';
-import { navigate } from '../../navigators/navigationService';
+import {OptionType, FilterOptions} from '../../models';
+import {navigate} from '../../navigators/navigationService';
 import {colors, constants, fonts, sizes} from '../../support/constants';
 import {Container} from '../../support/styledComponents';
 import {DefaultOptions, DefaultOptionsMenu} from '../../utilities/data';
 import Icons from '../Icons';
 import ItemsMenu from './ItemsMenu';
 
-const TEMP = ['PRODUCT TYPE', 'COLORS', 'BRAND'];
-
 interface Props {
-  options: ProductOptions;
+  options: FilterOptions;
 }
+
+const filterOptionsDefault: FilterOptions = {
+  sort: [],
+  gender: [],
+  types: [],
+  colors: [],
+  sizes: [],
+  brands: [],
+  categories: [],
+};
 
 class FilterBottomSheet extends Component<Props> {
   refRBSheet;
   refScrollView;
   refItemMenu;
+
+  filterOptions: FilterOptions = filterOptionsDefault;
 
   constructor(props: Props) {
     super(props);
@@ -33,6 +43,10 @@ class FilterBottomSheet extends Component<Props> {
       heightSheet: 100,
     };
   }
+
+  _submit = () => {
+    console.log(this.filterOptions);
+  };
 
   _open = () => {
     if (this.refRBSheet && this.refRBSheet.current) {
@@ -47,14 +61,16 @@ class FilterBottomSheet extends Component<Props> {
   };
 
   _getItems = (item: OptionType) => {
-    let temp: OptionType[] = _.get(DefaultOptions, item.value, []);
+    let temp: OptionType[] = _.get(DefaultOptions, item.key, []);
     return temp;
   };
 
   _scrollViewToItemMenu = (item: OptionType) => () => {
     if (this.refItemMenu && this.refItemMenu.current) {
-      const items = this._getItems(item);
-      this.refItemMenu.current.RenderItemsMenu(items);
+      this.refItemMenu.current.RenderItemsMenu({
+        father: item,
+        items: this._getItems(item),
+      });
       if (this.refScrollView && this.refScrollView.current) {
         this.refScrollView.current.scrollToEnd();
       }
@@ -75,7 +91,7 @@ class FilterBottomSheet extends Component<Props> {
           key={index.toString()}
           style={styles.menuItem}
           onPress={this._scrollViewToItemMenu(item)}>
-          <Text>{item.name}</Text>
+          <Text>{item.value}</Text>
         </TouchableOpacity>
       );
     });
@@ -83,7 +99,7 @@ class FilterBottomSheet extends Component<Props> {
 
   render() {
     return (
-      <View>
+      <>
         <TouchableOpacity activeOpacity={0.85} onPress={this._open}>
           {this.props.children}
         </TouchableOpacity>
@@ -141,18 +157,25 @@ class FilterBottomSheet extends Component<Props> {
                 </View>
               </View>
               <View style={[styles.itemContainer, {backgroundColor: 'red'}]}>
-                <ItemsMenu ref={this.refItemMenu} onBack={this._scrollViewBackMenu} />
+                <ItemsMenu
+                  ref={this.refItemMenu}
+                  onBack={this._scrollViewBackMenu}
+                  filterOptions={this.filterOptions}
+                />
               </View>
             </ScrollView>
             <View style={styles.confirmBox}>
-              <TouchableOpacity style={styles.btnConfirm} activeOpacity={0.85}>
+              <TouchableOpacity
+                style={styles.btnConfirm}
+                activeOpacity={0.85}
+                onPress={this._submit}>
                 <Text style={styles.btnConfirmTxt}>VIEW ITEM</Text>
                 <Icons size={30} color={colors.white} name="arrow-right-alt" lib="MaterialIcons" />
               </TouchableOpacity>
             </View>
           </Container>
         </RBSheet>
-      </View>
+      </>
     );
   }
 }
