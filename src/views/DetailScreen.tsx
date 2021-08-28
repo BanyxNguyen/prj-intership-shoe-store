@@ -27,9 +27,9 @@ const defaultProduct = {
   name: `DAILY 3 TRAINING SHOE - MEN'S`,
   brand: 'Adidas',
   price: 54.99,
-  type: ['school', 'kid', 'men'],
-  size: ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13'],
-  color: ['#285199'],
+  types: ['school', 'kid', 'men'],
+  sizes: ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13'],
+  colors: ['#285199'],
   description: `Workout in some vibrant style in the Daily 3 training shoe by Adidas. Made of washed canvas 
   upper for breathable feel, this low-top sneaker features OrthoLite® sockliner footbed for plush cushioning 
   with every step.
@@ -101,7 +101,7 @@ const DetailScreen: FC = () => {
   const route = useRoute();
   const stackNav = useNavigation<StackNavigationProp>();
   const [product, setProduct] = useState(defaultProduct);
-  const {name, images, brand, description, color} = product;
+  const {name, images, brand, description, colors: cls} = product;
 
   const _goBack = () => {
     stackNav.goBack();
@@ -115,7 +115,7 @@ const DetailScreen: FC = () => {
   };
 
   const _renderColorsLabel = () => {
-    return color.map((item, index) => {
+    return cls.map((item, index) => {
       return <View style={[styles.circle, {backgroundColor: item}]} key={index.toString()} />;
     });
   };
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    zIndex: 10
+    zIndex: 10,
   },
   boxTitle: {
     paddingVertical: 5,

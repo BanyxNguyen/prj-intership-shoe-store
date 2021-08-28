@@ -39,7 +39,7 @@ const LoginLogOutScreen: FC = () => {
   };
 
   const _submitSignIn = (data: LoginCredentials) => {
-    console.log(data);
+    console.log('sign in sign out: ', data);
     
   };
 

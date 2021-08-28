@@ -51,11 +51,6 @@ const LoginPage: FC<Props> = ({toRegister, submit}) => {
     }
   };
 
-  LoginPage.prototype.reset = () => {
-    console.log('fuck 123');
-    
-  }
-
   return (
     <>
       <View style={styles.header}>

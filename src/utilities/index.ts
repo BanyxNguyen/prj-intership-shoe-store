@@ -1,7 +1,7 @@
 // import {PERMISSIONS, request, check} from 'react-native-permissions';
 import {Share, Platform} from 'react-native';
 // import Config from 'react-native-config';
-import {findIndex} from 'lodash';
+import _, {findIndex} from 'lodash';
 export * from './validationControl';
 
 export const Sleep = async (second: number) => {
@@ -13,6 +13,17 @@ export const Sleep = async (second: number) => {
 export const SlowFetch = async (func: Promise<any | void>, timing: number = 1200) => {
   const all: [Promise<any>, Promise<void>] = [func, Sleep(timing)];
   return Promise.all(all).then(([res]) => res);
+};
+
+export const triggerArray = (arr: any[] = [], item: any) => {
+  const indexCheck = _.findIndex(arr, item);
+  let temp = arr;
+  if (indexCheck < 0) {
+    temp = _.concat(temp, item);
+  } else {
+    _.remove(temp, i => _.isEqual(i, item));
+  }
+  return temp;
 };
 
 export const isExistArrayForId = (arr: Array<any>, id: any) => {

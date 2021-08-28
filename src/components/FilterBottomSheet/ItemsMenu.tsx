@@ -5,6 +5,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {FilterOptions, FilterOptionsKey, OptionType} from '../../models';
 import {colors, fonts, sizes} from '../../support/constants';
 import {Container, Text} from '../../support/styledComponents';
+import {triggerArray} from '../../utilities';
 import Icons from '../Icons';
 
 interface Props {
@@ -41,21 +42,10 @@ export class ItemsMenu extends Component<Props, State> {
     this.setState({items, itemsActive, father});
   };
 
-  triggerArray(arr: any[] = [], item: any) {
-    const indexCheck = _.findIndex(arr, item);
-    let temp = arr;
-    if (indexCheck < 0) {
-      temp = _.concat(temp, item);
-    } else {
-      _.remove(temp, i => _.isEqual(i, item));
-    }
-    return temp;
-  }
-
   private _onPress = (item: OptionType) => () => {
     const {itemsActive} = this.state;
     const key = this.state.father.key as FilterOptionsKey;
-    const temp = this.triggerArray(itemsActive, item);
+    const temp = triggerArray(itemsActive, item);
     this.props.filterOptions[key] = temp;
     this.setState({itemsActive: temp});
   };

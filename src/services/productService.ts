@@ -1,4 +1,5 @@
-import {ProductGateway} from '../gateways/productGateways';
+import {Product} from '../models';
+import {ProductGateway} from './gateways/productGateways';
 
 export class ProductService {
   private productGateway: ProductGateway;
@@ -10,5 +11,13 @@ export class ProductService {
   async gets(filter: any = {}) {
     const data: any = await this.productGateway.gets();
     return data;
+  }
+
+  async loadWishlist() {
+    return this.productGateway.loadWishlist();
+  }
+
+  async saveWishlist(products: Product[] = []) {
+    await this.productGateway.saveWishlist(products);
   }
 }

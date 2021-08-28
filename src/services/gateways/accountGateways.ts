@@ -1,7 +1,7 @@
 import {AxiosInstance} from 'axios';
 import {AsyncStorageStatic} from 'react-native';
-import {LoginCredentials, ResultAccount} from '../models';
-import {SlowFetch} from '../utilities';
+import {LoginCredentials, ResultAccount} from '../../models';
+import {SlowFetch} from '../../utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class AccountGateway {

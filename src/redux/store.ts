@@ -1,8 +1,11 @@
 import {Action, configureStore, ThunkAction} from '@reduxjs/toolkit';
-import rootReducer, {RootState} from './Slices';
+import rootReducer, {RootState} from './slices';
+// import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 
 const store = configureStore({
   reducer: rootReducer,
+  middleware: [thunk],
 });
 
 export type AppThunk<ReturnType = void> = ThunkAction<

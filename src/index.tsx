@@ -2,7 +2,9 @@ import React from 'react';
 import AppNavigator from './navigators';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {SafeAreaView} from 'react-native';
-import ShowAndFilterModal from './components/ShowAndFilterModal';
+import {Provider} from 'react-redux';
+import store from './redux/store';
+import InitGeneral from './InitGeneral';
 
 // import SystemNavigationBar from "react-native-system-navigation-bar";
 // SystemNavigationBar.stickyImmersive()
@@ -18,11 +20,14 @@ const theme = {
 
 const App = () => {
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <PaperProvider theme={theme}>
-        <AppNavigator />
-      </PaperProvider>
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={{flex: 1}}>
+        <PaperProvider theme={theme}>
+          <AppNavigator />
+          <InitGeneral />
+        </PaperProvider>
+      </SafeAreaView>
+    </Provider>
   );
 };
 

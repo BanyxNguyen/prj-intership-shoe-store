@@ -72,12 +72,13 @@ interface DataAllType {
 const temp: Product[] = [
   {
     //https://www.dsw.com/en/us/product/adidas-daily-3-training-shoe---mens/508057?activeColor=400
+    id: '8b7f9059-ede3-4ffa-a35d-f38cdcf6fd86',
     name: `DAILY 3 TRAINING SHOE - MEN'S`,
     brand: 'Adidas',
     price: 54.99,
-    type: ['school', 'kid', 'men'],
-    size: ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13'],
-    color: ['#285199'],
+    types: ['school', 'kid', 'men'],
+    sizes: ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13'],
+    colors: ['#285199'],
     description: `Workout in some vibrant style in the Daily 3 training shoe by Adidas. Made of washed canvas upper for breathable feel, this low-top sneaker features OrthoLite® sockliner footbed for plush cushioning with every step.\n\nItem # 508057\nUPC # 194830771060`,
     images: [
       `${driveLink}13eg0v9-5-d7lmXi3vzgNHqCV_uboCsRy`,
@@ -91,11 +92,12 @@ const temp: Product[] = [
   },
   {
     //https://www.dsw.com/en/us/product/dr.-martens-1460-combat-boot---womens/247425?activeColor=002
+    id: '0536750a-a7b4-4e64-a004-e9da014a647f',
     name: `1460 COMBAT BOOT - WOMEN'S`,
     brand: 'Dr.Martens',
     price: 139.99,
-    type: ['running', 'school', 'men'],
-    size: [
+    types: ['running', 'school', 'men'],
+    sizes: [
       'UK 3 / US 5',
       'UK 4 / US 6',
       'UK 5 / US 7',
@@ -104,7 +106,7 @@ const temp: Product[] = [
       'UK 8 / US 10',
       'UK 9 / US 11',
     ],
-    color: ['#4f4f4f'],
+    colors: ['#4f4f4f'],
     description: `The iconic 1460 8-eye combat boot from Dr. Martens allows you to embrace your inner rebel. With a Goodyear Welt construction for enhanced comfort and durability, this rugged boot emboldens your style.\n\nItem # 247425\nUPC # 800090795776`,
     images: [
       `${driveLink}1A1eCkXi8tTCZ0sQryZoS_GQfsaiOtrMw`,
@@ -138,6 +140,7 @@ const productTrends: ProductTrend[] = [
 ];
 
 export const TempData: DataAllType = {
-  sneakers: _.concat(temp, temp, temp, temp, temp),
+  sneakers: temp,
+  // sneakers: _.concat(temp, temp, temp, temp, temp),
   trends: productTrends,
 };

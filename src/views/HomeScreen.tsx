@@ -78,27 +78,27 @@ const HomeScreen: FC = () => {
     );
   };
 
-  useEffect(() => {
-    const fetchAPI = async () => {
-      try {
-        // console.log('fuck 1');
-        // // let res = await productService.gets();
-        // var ins1 = axios.create({
-        //   baseURL: 'http://192.168.1.80',
-        //   headers: {},
-        // });
-        // let res = await ins1
-        //   .get('/api/Product/GetProducts')
-        //   // .catch(x => console.log(x.response));
-        // console.log('fuck 2');
-        // console.log('data: ', res.data);
-        // TODO add real api
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchAPI();
-  }, []);
+  // useEffect(() => {
+  //   const fetchAPI = async () => {
+  //     try {
+  //       console.log('fuck 1');
+  //       // let res = await productService.gets();
+  //       var ins1 = axios.create({
+  //         baseURL: 'http://192.168.1.80',
+  //         headers: {},
+  //       });
+  //       let res = await ins1
+  //         .get('/api/Product/GetProducts')
+  //         // .catch(x => console.log(x.response));
+  //       console.log('fuck 2');
+  //       console.log('data: ', res.data);
+  //       // TODO add real api
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchAPI();
+  // }, []);
 
   return (
     <Container style={styles.container}>

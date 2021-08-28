@@ -10,6 +10,7 @@ export const PROFILESCREEN = 'PROFILESCREEN';
 export const LOGINLOGOUTSCREEN = 'LOGINLOGOUTSCREEN';
 export const SEARCHSCREEN = 'SEARCHSCREEN';
 export const SHOWANDFILTERSCREEN = 'SHOWANDFILTERSCREEN';
+export const CHECKOUTSCREEN = 'CHECKOUTSCREEN';
 
 export type ScreenName =
   | 'HOMESCREEN'
@@ -18,6 +19,7 @@ export type ScreenName =
   | 'DETAILSCREEN'
   | 'PROFILESCREEN'
   | 'WELCOMESCREEN'
+  | 'CHECKOUTSCREEN'
   | 'REGISTERSCREEN'
   | 'LOGINLOGOUTSCREEN'
   | 'SHOWANDFILTERSCREEN';
@@ -41,6 +43,7 @@ export interface IShowAndFilterScreenParams {
   options: FilterOptions;
 }
 export interface IProfileScreenParams {}
+export interface ICheckoutScreenParams {}
 
 export type StackParams = {
   [HOMESCREEN]: IHomeScreenParams;
@@ -48,6 +51,7 @@ export type StackParams = {
   [DETAILSCREEN]: IDetailScreenParams;
   [PROFILESCREEN]: IProfileScreenParams;
   [WELCOMESCREEN]: IWelcomeScreenParams;
+  [CHECKOUTSCREEN]: ICheckoutScreenParams;
   [LOGINLOGOUTSCREEN]: ILoginLogOutScreenParams;
   [SHOWANDFILTERSCREEN]: IShowAndFilterScreenParams;
 };
@@ -59,5 +63,6 @@ export type WelcomeScreenRouteProp = RouteProp<StackParams, 'WELCOMESCREEN'>;
 export type LoginLogOutScreenRouteProp = RouteProp<StackParams, 'LOGINLOGOUTSCREEN'>;
 export type HomeScreenRouteProp = RouteProp<StackParams, 'HOMESCREEN'>;
 export type SearchScreenRouteProp = RouteProp<StackParams, 'SEARCHSCREEN'>;
-export type ShowAndFilterRouteProp = RouteProp<StackParams, 'SHOWANDFILTERSCREEN'>;
-export type ProfileRouteProp = RouteProp<StackParams, 'PROFILESCREEN'>;
+export type ShowAndFilterScreenRouteProp = RouteProp<StackParams, 'SHOWANDFILTERSCREEN'>;
+export type ProfileScreenRouteProp = RouteProp<StackParams, 'PROFILESCREEN'>;
+export type CheckoutScreenRouteProp = RouteProp<StackParams, 'CHECKOUTSCREEN'>;

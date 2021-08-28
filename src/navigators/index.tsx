@@ -24,6 +24,7 @@ import {
   SEARCHSCREEN,
   SHOWANDFILTERSCREEN,
   TABCARTSCREEN,
+  CHECKOUTSCREEN,
 } from './config';
 import Icons, {TypeLibraryIcons} from '../components/Icons';
 import HeaderHoc, {ChangeTitleHeader} from '../hocs/HeaderHoc';
@@ -33,6 +34,7 @@ import SearchScreen from '../views/SearchScreen';
 import ShowAndFilterScreen from '../views/ShowAndFilterScreen';
 import WishlistScreen from '../views/WishlistScreen';
 import CartScreen from '../views/CartScreen';
+import CheckoutScreen from '../views/CheckoutScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -102,7 +104,7 @@ const HomeScreenTab: FC = () => {
 
 const Stack = createStackNavigator();
 
-export default function AppNavigator() {
+const AppNavigator: FC = () => {
   return (
     <>
       <NavigationContainer ref={navigationRef}>
@@ -117,8 +119,11 @@ export default function AppNavigator() {
           <Stack.Screen name={LOGINLOGOUTSCREEN} component={LoginLogOutScreen} />
           <Stack.Screen name={SEARCHSCREEN} component={SearchScreen} />
           <Stack.Screen name={SHOWANDFILTERSCREEN} component={ShowAndFilterScreen} />
+          <Stack.Screen name={CHECKOUTSCREEN} component={CheckoutScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </>
   );
-}
+};
+
+export default AppNavigator;

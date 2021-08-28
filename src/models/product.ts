@@ -1,12 +1,14 @@
 export interface Product {
+  id: string;
   name: string;
   price: number;
   brand: string;
   description: string;
-  type: string[];
-  size: string[];
-  color: string[];
+  types: string[];
+  sizes: string[];
+  colors: string[];
   images: string[];
+  selectedSize?: string;
 }
 
 export interface ProductTrend {
@@ -34,18 +36,19 @@ export type FilterOptionsKey = keyof FilterOptions;
 
 //Model filter
 export enum ELogic {
-    And, Or
+  And,
+  Or,
 }
 export interface PropFilter {
-    Logic: ELogic | null;
-    IsExactly: boolean | null;
-    FieldName: string;
-    Value: string;
-    Scopes: PropFilter[];
+  Logic: ELogic | null;
+  IsExactly: boolean | null;
+  FieldName: string;
+  Value: string;
+  Scopes: PropFilter[];
 }
 
-export interface ModelFilter{
-    Page: number;
-    Amount: number;
-    PropFilters: PropFilter[];
+export interface ModelFilter {
+  Page: number;
+  Amount: number;
+  PropFilters: PropFilter[];
 }

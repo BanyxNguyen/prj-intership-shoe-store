@@ -4,12 +4,13 @@ import {BackHandler, Button, StyleSheet, Text, TouchableOpacity, View} from 'rea
 import {ScrollView} from 'react-native-gesture-handler';
 import {Chip} from 'react-native-paper';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {OptionType, FilterOptions} from '../../models';
+import {OptionType, FilterOptions, FilterOptionsKey} from '../../models';
 import {navigate} from '../../navigators/navigationService';
 import {colors, constants, fonts, sizes} from '../../support/constants';
 import {Container} from '../../support/styledComponents';
 import {DefaultOptions, DefaultOptionsMenu} from '../../utilities/data';
 import Icons from '../Icons';
+import ChipsFilterOption, {IOptionType} from './ChipsFilterOption';
 import ItemsMenu from './ItemsMenu';
 
 interface Props {
@@ -30,6 +31,7 @@ class FilterBottomSheet extends Component<Props> {
   refRBSheet;
   refScrollView;
   refItemMenu;
+  refChips;
 
   filterOptions: FilterOptions = filterOptionsDefault;
 
@@ -38,6 +40,7 @@ class FilterBottomSheet extends Component<Props> {
     this.refRBSheet = createRef<RBSheet>();
     this.refScrollView = createRef<ScrollView>();
     this.refItemMenu = createRef<ItemsMenu>();
+    this.refChips = createRef<ChipsFilterOption>();
 
     this.state = {
       heightSheet: 100,
@@ -45,24 +48,36 @@ class FilterBottomSheet extends Component<Props> {
   }
 
   _submit = () => {
-    console.log(this.filterOptions);
+    console.log('filter BTS: ', this._checkEmptyFilterOption());
+    console.log('filter BTS: ', this.filterOptions);
+  };
+
+  _onChangeChips = (item: IOptionType) => {
+    const key = item.keyFather as FilterOptionsKey;
+    const arr = this.filterOptions[key];
+    arr && _.remove(arr, i => _.isEqual(i, {key: item.key, value: item.value}));
+    this.filterOptions[key] = arr;
+    this.refChips?.current?.ReRenderChips();
   };
 
   _open = () => {
-    if (this.refRBSheet && this.refRBSheet.current) {
-      this.refRBSheet.current.open();
-    }
+    this.refRBSheet?.current?.open();
   };
 
   _close = () => {
-    if (this.refRBSheet && this.refRBSheet.current) {
-      this.refRBSheet.current.close();
-    }
+    this.refRBSheet?.current?.close();
   };
 
   _getItems = (item: OptionType) => {
     let temp: OptionType[] = _.get(DefaultOptions, item.key, []);
     return temp;
+  };
+
+  _checkEmptyFilterOption = () => {
+    for (const key in this.filterOptions) {
+      if (!_.isEmpty(_.get(this.filterOptions, key))) return false;
+    }
+    return true;
   };
 
   _scrollViewToItemMenu = (item: OptionType) => () => {
@@ -71,16 +86,13 @@ class FilterBottomSheet extends Component<Props> {
         father: item,
         items: this._getItems(item),
       });
-      if (this.refScrollView && this.refScrollView.current) {
-        this.refScrollView.current.scrollToEnd();
-      }
+      this.refScrollView?.current?.scrollToEnd();
     }
   };
 
   _scrollViewBackMenu = () => {
-    if (this.refScrollView && this.refScrollView.current) {
-      this.refScrollView.current.scrollTo({x: 0, y: 0, animated: true});
-    }
+    this.refScrollView?.current?.scrollTo({x: 0, y: 0, animated: true});
+    this.refChips?.current?.ReRenderChips();
   };
 
   _renderMenu = () => {
@@ -134,24 +146,16 @@ class FilterBottomSheet extends Component<Props> {
                 </View>
                 <View style={{flex: 1}}>
                   <ScrollView contentContainerStyle={{paddingTop: 15, paddingBottom: 95}}>
-                    <View>
-                      <View style={styles.types}>
-                        <View style={styles.chip}>
-                          <Text style={styles.chipTxt}>Abc</Text>
-                          <Icons
-                            size={26}
-                            color={colors.black}
-                            name="close-outline"
-                            lib="Ionicons"
-                          />
-                        </View>
+                    <ChipsFilterOption
+                      ref={this.refChips}
+                      filterOptions={this.filterOptions}
+                      onChangeItem={this._onChangeChips}
+                    />
+                    <TouchableOpacity style={styles.btnClear}>
+                      <View style={styles.btnClearUnderline}>
+                        <Text style={styles.btnClearTxt}>CLEAR ALL</Text>
                       </View>
-                      <TouchableOpacity style={styles.btnClear}>
-                        <View style={styles.btnClearUnderline}>
-                          <Text style={styles.btnClearTxt}>CLEAR ALL</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.menu}>{this._renderMenu()}</View>
                   </ScrollView>
                 </View>
@@ -212,24 +216,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: -10,
     marginRight: -5,
-  },
-  types: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 10,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    // backgroundColor: colors.blueyGrey,
-    borderColor: colors.black,
-    borderWidth: 1,
-    borderRadius: 2,
-  },
-  chipTxt: {
-    fontSize: sizes.h7,
-    fontFamily: fonts.montserrat.light,
-    marginLeft: 3,
   },
   btnClear: {
     flexDirection: 'row',

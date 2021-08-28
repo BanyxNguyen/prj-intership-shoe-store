@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "CARTSCREEN",
+    "CHECKOUTSCREEN",
     "DETAILSCREEN",
     "HOMESCREEN",
     "Ionicons",
@@ -20,6 +21,7 @@
     "WISHLISH",
     "appbar",
     "hocs",
-    "jfif"
+    "jfif",
+    "serializable"
   ]
 }

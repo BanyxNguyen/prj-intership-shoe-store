@@ -1,4 +1,4 @@
-import {AccountGateway} from '../gateways/accountGateways';
+import {AccountGateway} from './gateways/accountGateways';
 import {LoginCredentials} from '../models';
 
 export class AccountService {

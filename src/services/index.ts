@@ -2,10 +2,10 @@ import axios from 'axios';
 import Config from 'react-native-config';
 
 import {AccountService} from './accountService';
-
-import {AccountGateway} from '../gateways/accountGateways';
-import {ProductGateway} from '../gateways/productGateways';
 import {ProductService} from './productService';
+
+import {AccountGateway} from './gateways/accountGateways';
+import {ProductGateway} from './gateways/productGateways';
 
 const restConnector = axios.create({baseURL: Config.API_URL});
 
