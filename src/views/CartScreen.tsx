@@ -1,18 +1,12 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View, ScrollView} from 'react-native';
 
+import _ from 'lodash';
+import {Checkbox} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 
-import {Product} from '../models';
-import Icons from '../components/Icons';
-import {TempData} from '../utilities/data';
-import {Container, Text} from '../support/styledComponents';
-import {colors, fonts, shadows, sizes} from '../support/constants';
-import {CHECKOUTSCREEN, DETAILSCREEN, StackNavigationProp} from '../navigators/config';
-import {Checkbox} from 'react-native-paper';
-import {RootState} from '../redux/slices';
-import {useDispatch, useSelector} from 'react-redux';
 import {
   changeAmountItemCart,
   changeSizeProductFromCart,
@@ -21,8 +15,13 @@ import {
   selectedAllItemCart,
   triggerSelectedItemCart,
 } from '../redux/slices/productSlice';
+import {Product} from '../models';
+import Icons from '../components/Icons';
+import {RootState} from '../redux/slices';
+import {Container, Text} from '../support/styledComponents';
+import {colors, fonts, shadows, sizes} from '../support/constants';
+import {CHECKOUTSCREEN, DETAILSCREEN, StackNavigationProp} from '../navigators/config';
 import SeeMoreBottomSheet from '../components/SeeMoreBottomSheet';
-import _ from 'lodash';
 
 interface CartItemProps {
   data: ProductReduxType;
@@ -54,7 +53,6 @@ const CartItem: FC<CartItemProps> = props => {
 
   return (
     <TouchableOpacity activeOpacity={0.85} style={[styles.itemBox, shadows.s1]}>
-      {/* <MyCheckBox checked={isSelected || false} onPress={}/> */}
       <Checkbox
         color={colors.black}
         status={isSelected ? 'checked' : 'unchecked'}
@@ -76,9 +74,11 @@ const CartItem: FC<CartItemProps> = props => {
           Price: ${price}
         </Text>
         <Text numberOfLines={1} style={styles.txt}>
-          Size: {selectedSize}
+          Size:{' '}
+          <Text style={[styles.txt, !selectedSize ? styles.txtNone : {}]}>
+            {selectedSize || 'None'}
+          </Text>
         </Text>
-
         <View style={styles.amountBox}>
           <TouchableOpacity activeOpacity={0.85} onPress={_changeAmount(-1)}>
             <Icons
@@ -112,6 +112,7 @@ const CartScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
   const {cart} = useSelector((state: RootState) => state.product);
   const [productCart, setProductCart] = useState<ProductReduxType[]>([]);
+  const [isCheckout, setIsCheckout] = useState(false);
   const refBTS = useRef<SeeMoreBottomSheet>(null);
   const dispatch = useDispatch();
 
@@ -123,11 +124,22 @@ const CartScreen: FC = () => {
     return Math.ceil(amount * 100) / 100;
   };
 
-  const _getStatusCheckAll = () => {
-    for (let i = 0; i < productCart.length; i++) {
-      if (!productCart[i].isSelected) return false;
+  const _getStatusCheckAll = (data: ProductReduxType[]) => {
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i].isSelected) return false;
     }
     return true;
+  };
+
+  const _getIsCheckout = (data: ProductReduxType[]) => {
+    if (_.findIndex(data, i => i.isSelected == true) > -1) {
+      for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        if (item.isSelected && !item.selectedSize) return false;
+      }
+      return true;
+    }
+    return false;
   };
 
   const _onMore = (data: Product) => {
@@ -154,15 +166,17 @@ const CartScreen: FC = () => {
   };
 
   const _onSelectedAll = () => {
-    const status = _getStatusCheckAll();
+    const status = _getStatusCheckAll(productCart);
     dispatch(selectedAllItemCart(!status));
   };
 
   const _onCheckout = () => {
+    
     stackNav.navigate(CHECKOUTSCREEN, {});
   };
 
   useEffect(() => {
+    setIsCheckout(_getIsCheckout(cart));
     setProductCart(cart);
   }, [cart]);
 
@@ -189,7 +203,7 @@ const CartScreen: FC = () => {
           <View style={styles.checkAllBox}>
             <Checkbox
               color={colors.black}
-              status={_getStatusCheckAll() ? 'checked' : 'unchecked'}
+              status={_getStatusCheckAll(productCart) ? 'checked' : 'unchecked'}
               onPress={_onSelectedAll}
             />
             <Text>Select all</Text>
@@ -202,9 +216,10 @@ const CartScreen: FC = () => {
       <View style={styles.cartControl}>
         <Text style={styles.price}>Total: ${_getTotal()}</Text>
         <TouchableOpacity
-          style={[styles.btn, shadows.s5]}
+          style={[styles.btn, shadows.s5, !isCheckout ? styles.btnDisable : {}]}
           activeOpacity={0.85}
-          onPress={_onCheckout}>
+          onPress={_onCheckout}
+          disabled={!isCheckout}>
           <Text style={styles.txtBtn}>CHECKOUT</Text>
         </TouchableOpacity>
       </View>
@@ -226,36 +241,40 @@ const styles = StyleSheet.create({
     paddingBottom: 90,
   },
   checkAllBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginTop: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   itemBox: {
-    backgroundColor: colors.white,
+    borderRadius: 5,
     marginBottom: 5,
     marginHorizontal: 5,
-    borderRadius: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    justifyContent: 'space-between',
   },
   itemContent: {
     flex: 1,
     paddingVertical: 10,
   },
   txt: {
-    fontFamily: fonts.montserrat.regular,
     fontSize: sizes.h55,
+    fontFamily: fonts.montserrat.regular,
+  },
+  txtNone: {
+    fontFamily: fonts.montserrat.semiBoldItalic,
+    color: colors.red,
   },
   txtName: {
     marginHorizontal: 3,
     fontFamily: fonts.montserrat.semiBold,
   },
   amountBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     marginTop: 5,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   txtAmount: {
     marginHorizontal: 10,
@@ -263,21 +282,21 @@ const styles = StyleSheet.create({
   },
   btnMore: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
+    justifyContent: 'center',
   },
   cartControl: {
+    left: 0,
+    bottom: 0,
     height: 65,
+    position: 'absolute',
     alignItems: 'center',
     flexDirection: 'row',
     width: sizes.wScreen,
     paddingHorizontal: 45,
     justifyContent: 'space-between',
     backgroundColor: colors.white85,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
   },
   price: {
     flex: 1,
@@ -287,15 +306,18 @@ const styles = StyleSheet.create({
   },
   btn: {
     height: 45,
-    width: sizes.wScreen * 0.3,
-    backgroundColor: colors.black,
+    borderRadius: 10,
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
+    width: sizes.wScreen * 0.3,
+    backgroundColor: colors.black,
+  },
+  btnDisable: {
+    backgroundColor: '#707070',
   },
   txtBtn: {
-    fontFamily: fonts.montserrat.semiBold,
     color: colors.white,
+    fontFamily: fonts.montserrat.semiBold,
   },
 });

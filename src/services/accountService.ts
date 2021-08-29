@@ -1,5 +1,5 @@
 import {AccountGateway} from './gateways/accountGateways';
-import {LoginCredentials} from '../models';
+import {Login, Register} from '../models';
 
 export class AccountService {
   private accountGateway: AccountGateway;
@@ -8,15 +8,22 @@ export class AccountService {
     this.accountGateway = accountGateway;
   }
 
-  async login(loginForm: LoginCredentials) {
-    // checkValidates(loginForm, settingValidateLogin);
-    const {token} = await this.accountGateway.login(loginForm);
-    await this.accountGateway.useAndSaveAccessToken(token);
-    return this.accountGateway.getLoginUser();
+  async login(loginForm: Login) {
+    const token = await this.accountGateway.login(loginForm);
+    return this.useSaveAndGetProfile(token);
   }
 
-  async getLoginUser() {
-    const user = await this.accountGateway.getLoginUser();
-    return user;
+  async register(registerForm: Register) {
+    const token = await this.accountGateway.register(registerForm);
+    return this.useSaveAndGetProfile(token);
+  }
+
+  async getProfile() {
+    return this.accountGateway.getProfile();
+  }
+
+  private async useSaveAndGetProfile(token: string) {
+    await this.accountGateway.useAndSaveAccessToken(token);
+    return this.getProfile();
   }
 }

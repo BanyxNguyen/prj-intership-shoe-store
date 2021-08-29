@@ -34,12 +34,12 @@ const HeaderHoc = <P extends object>(WrappedComponent: ComponentType<P>) => {
     };
 
     const _toProfile = async () => {
-      const user = await accountService.getLoginUser();
-      if (_.isEmpty(user)) {
+      // const user = await accountService.getProfile();
+      // if (_.isEmpty(user)) {
         stackNav.navigate(LOGINLOGOUTSCREEN, {page: 0});
-      } else {
-        stackNav.navigate(PROFILESCREEN, {});
-      }
+      // } else {
+      //   stackNav.navigate(PROFILESCREEN, {});
+      // }
     };
 
     return (

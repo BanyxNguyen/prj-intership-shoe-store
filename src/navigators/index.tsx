@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {Image} from 'react-native';
+import {Image, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -35,6 +35,8 @@ import ShowAndFilterScreen from '../views/ShowAndFilterScreen';
 import WishlistScreen from '../views/WishlistScreen';
 import CartScreen from '../views/CartScreen';
 import CheckoutScreen from '../views/CheckoutScreen';
+import {Text} from '../support/styledComponents';
+import {IconCart, TabIconParams} from './support';
 
 const Tab = createBottomTabNavigator();
 
@@ -42,9 +44,11 @@ export const InitTabBarNavigation = TABSHOP; //TABDROPS;
 
 const HomeScreenTab: FC = () => {
   const _tabIcon =
-    (name: string, lib: TypeLibraryIcons, size: number) =>
-    ({color}: any) =>
-      <Icons {...{name, lib, color, size}} />;
+    (data: TabIconParams) =>
+    ({color}: any) => {
+      const {name, lib, size} = data;
+      return <Icons {...{name, lib, color, size}} />;
+    };
 
   return (
     <Tab.Navigator
@@ -61,7 +65,11 @@ const HomeScreenTab: FC = () => {
         name={TABDROPS}
         component={HomeScreen}
         options={{
-          tabBarIcon: _tabIcon('fire', 'MaterialCommunityIcons', 36),
+          tabBarIcon: _tabIcon({
+            name: 'fire',
+            lib: 'MaterialCommunityIcons',
+            size: 36,
+          }),
         }}
         listeners={() => ({
           tabPress: ChangeTitleHeader(TABDROPS),
@@ -71,7 +79,11 @@ const HomeScreenTab: FC = () => {
         name={TABSHOP}
         component={ProductScreen}
         options={{
-          tabBarIcon: _tabIcon('shopping-search', 'MaterialCommunityIcons', 32),
+          tabBarIcon: _tabIcon({
+            name: 'shopping-search',
+            lib: 'MaterialCommunityIcons',
+            size: 32,
+          }),
         }}
         listeners={() => ({
           tabPress: ChangeTitleHeader(TABSHOP),
@@ -81,7 +93,11 @@ const HomeScreenTab: FC = () => {
         name={TABWISHLISH}
         component={WishlistScreen}
         options={{
-          tabBarIcon: _tabIcon('heart-outline', 'MaterialCommunityIcons', 32),
+          tabBarIcon: _tabIcon({
+            name: 'heart-outline',
+            lib: 'MaterialCommunityIcons',
+            size: 32,
+          }),
         }}
         listeners={() => ({
           tabPress: ChangeTitleHeader(TABWISHLISH),
@@ -91,8 +107,16 @@ const HomeScreenTab: FC = () => {
         name={TABCARTSCREEN}
         component={CartScreen}
         options={{
-          tabBarIcon: _tabIcon('ios-cart-outline', 'Ionicons', 32),
-          tabBarBadge: 10,
+          tabBarIcon: ({color}) => (
+            <IconCart
+              data={{
+                name: 'ios-cart-outline',
+                lib: 'Ionicons',
+                size: 32,
+                color,
+              }}
+            />
+          ),
         }}
         listeners={() => ({
           tabPress: ChangeTitleHeader(TABCARTSCREEN),

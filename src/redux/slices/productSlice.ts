@@ -1,7 +1,7 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {Alert} from 'react-native';
 import {AppThunk} from '../store';
-import {FilterOptions, Product} from '../../models';
+import {CustomerInfoCart, FilterOptions, Product} from '../../models';
 import {RootState} from './index';
 import {productService} from '../../services';
 import _ from 'lodash';
@@ -14,11 +14,13 @@ export interface ProductReduxType extends Product {
 interface InitState {
   wishlist: Product[];
   cart: ProductReduxType[];
+  customerInfoCart: CustomerInfoCart;
 }
 
 const initialState: InitState = {
   wishlist: [],
   cart: [],
+  customerInfoCart: {},
 };
 
 const Products = createSlice({

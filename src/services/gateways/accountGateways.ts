@@ -1,8 +1,11 @@
 import {AxiosInstance} from 'axios';
 import {AsyncStorageStatic} from 'react-native';
-import {LoginCredentials, ResultAccount} from '../../models';
+import {Account, Login, Register} from '../../models';
 import {SlowFetch} from '../../utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import _ from 'lodash';
+
+const accessTokenSaveName = 'authentication_accessToken';
 
 export class AccountGateway {
   private localStorageConnector: typeof AsyncStorage;
@@ -13,14 +16,20 @@ export class AccountGateway {
     this.localStorageConnector = AsyncStorage;
   }
 
-  async login(loginForm: LoginCredentials): Promise<{token: string}> {
+  async login(loginForm: Login): Promise<string> {
     try {
-      const {data}: any = await SlowFetch(this.restConnector.post('/accounts/login', loginForm));
-      return data;
+      return SlowFetch(this.restConnector.post('/Token/Login', loginForm));
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        return {token: ''};
-      }
+      console.log('login error', error);
+      throw error;
+    }
+  }
+
+  async register(registerForm: Register): Promise<string> {
+    try {
+      return SlowFetch(this.restConnector.post('/Token/Register', registerForm));
+    } catch (error) {
+      console.log('register error', error);
       throw error;
     }
   }
@@ -29,31 +38,30 @@ export class AccountGateway {
     // TODO-IMPORTANT: Remove hard code and use rest connector to connect to back-end API
   }
 
-  async getLoginUser(): Promise<ResultAccount | null> {
+  async getProfile(): Promise<Account | null> {
     try {
-      const accessToken: string | null = await this._loadAccessToken();
-      if (!accessToken || accessToken === '') {
-        return null;
-      }
-      this.restConnector.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-      const {data} = await this.restConnector.get('/accounts/me');
-      return data;
-    } catch (e) {
-      // if (e.response && e.response.status === 401) {
-      //   return null;
-      // }
-      // throw e;
-      return null;
+      const token: string = await this._loadAccessToken();
+      if (_.isEmpty(token)) return null;
+
+      this.useAccessToken(token);
+      return this.restConnector.get('/Token/GetProfile');
+    } catch (error) {
+      console.log('getProfile error', error);
+      throw error;
     }
   }
 
-  async useAndSaveAccessToken(token: string | null): Promise<void> {
+  useAccessToken(token: string = '') {
     this.restConnector.defaults.headers.common.Authorization = `Bearer ${token}`;
-    await this.localStorageConnector.setItem('authentication.accessToken', token || '');
+  }
+
+  async useAndSaveAccessToken(token: string = ''): Promise<void> {
+    this.useAccessToken(token);
+    await this.localStorageConnector.setItem(accessTokenSaveName, token);
   }
 
   async _loadAccessToken() {
-    const accessToken = await this.localStorageConnector.getItem('authentication.accessToken');
-    return accessToken;
+    const accessToken = await this.localStorageConnector.getItem(accessTokenSaveName);
+    return accessToken || '';
   }
 }

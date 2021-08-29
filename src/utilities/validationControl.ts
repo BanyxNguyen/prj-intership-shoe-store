@@ -12,17 +12,15 @@ const switchValidation = (data: string, validation: ValidationInput) => {
       break;
     }
     case 'email': {
-      const re = regexEmail;
-      const check = re.test(String(data).toLowerCase().trim());
+      const regExp = regexEmail;
+      const check = regExp.test(String(data).toLowerCase().trim());
       if (!check) return notify ? notify : 'Value is not Email';
       break;
     }
     case 'regex': {
-      const value = _.get(validation, 'value', '');
-      if (_.isRegExp(value)) {
-        const check = value.test(String(data).toLowerCase().trim());
-        if (check) return notify ? notify : 'Value is not equal';
-      }
+      const regExp = _.get(validation, 'value', RegExp(''));
+      const check = regExp.test(String(data).trim());
+      if (!check) return notify ? notify : 'Value is not equal';
       break;
     }
     case 'minLength': {

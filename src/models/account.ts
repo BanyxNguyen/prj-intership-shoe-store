@@ -1,34 +1,29 @@
-export interface LoginCredentials {
-  email: string;
-  password: string;
+export interface Login {
+  UserName: string;
+  PassWord: string;
 }
 
-export type EnumLogin = keyof LoginCredentials;
+export type EnumLogin = keyof Login;
 
-export interface LoginUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  imageUrl: string;
+export interface Register {
+  UserName: string;
+  PassWord: string;
+  FirstName: string;
+  LastName: string;
+  Gender: 0 | 1;
+  Birthday?: Date;
+  Address?: string;
 }
 
-export interface SignUp {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+export type EnumRegister = keyof Register;
+
+export interface Account {
+  FirstName: string;
+  LastName: string;
+  Birthday: Date;
+  Gender: 0 | 1;
+  Address: string;
+  UserName: string;
 }
 
-export interface ResultAccount {
-  id: string;
-  email: string;
-  role: string;
-  firstName: string;
-  lastName: string;
-  accountStatus: string;
-  emailVerified: boolean;
-  imageUrl: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export interface CustomerInfoCart {}

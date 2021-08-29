@@ -1,49 +1,37 @@
-import React, {FC, useRef} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 
-import {Button, TextInput} from '../../components';
-import {LoginCredentials, ValidationInput} from '../../models';
+import {Button, MyTextInput} from '../../components';
+import {EnumLogin, Login, ValidationInput} from '../../models';
 import {colors, sizes} from '../../support/constants';
 import {Text, Title} from '../../support/styledComponents';
+import {valPassword, valUsername} from './variable';
 
 interface Props {
   toRegister: () => void;
-  submit: (data: LoginCredentials) => void;
+  submit?: (data: Login) => void;
 }
-const valUsername: ValidationInput[] = [
-  {
-    name: 'noEmpty',
-  },
-  {
-    name: 'email',
-  },
-];
 
-const valPassword: ValidationInput[] = [
-  {
-    name: 'noEmpty',
-  },
-];
+const loginDefault = {
+  UserName: '',
+  PassWord: '',
+};
 
 const LoginPage: FC<Props> = ({toRegister, submit}) => {
-  const refTxtUsername = useRef<TextInput>(null);
-  const refTxtPassword = useRef<TextInput>(null);
+  const refTxtUsername = useRef<MyTextInput>(null);
+  const refTxtPassword = useRef<MyTextInput>(null);
   const refBtn = useRef<Button>(null);
+  const [login, setLogin] = useState<Login>(loginDefault);
 
-  const signIn: LoginCredentials = {
-    email: '',
-    password: '',
-  };
-
-  const _onChangeText = (name: 'email' | 'password') => (text: string) => {
-    signIn[name] = text;
+  const _onChangeText = (name: EnumLogin) => (text: string) => {
+    setLogin({...login, [name]: text});
   };
 
   const _submit = () => {
     const isErrTxtUsername = refTxtUsername.current?.validation();
     const isErrPassword = refTxtPassword.current?.validation();
     if (!isErrTxtUsername && !isErrPassword) {
-      submit(signIn);
+      submit && submit(login);
     } else {
       setTimeout(() => {
         refBtn.current?.done();
@@ -58,23 +46,24 @@ const LoginPage: FC<Props> = ({toRegister, submit}) => {
       </View>
       <View style={styles.main}>
         <View style={styles.inputBox}>
-          <TextInput
+          <MyTextInput
             label="Email/Username"
             style={styles.input}
             validation={valUsername}
-            onChangeText={_onChangeText('email')}
+            onChangeText={_onChangeText('UserName')}
+            value={login.UserName}
             ref={refTxtUsername}
           />
-          <TextInput
+          <MyTextInput
             label="Password"
             secureTextEntry={true}
             style={styles.input}
             validation={valPassword}
-            onChangeText={_onChangeText('password')}
+            onChangeText={_onChangeText('PassWord')}
+            value={login.PassWord}
             ref={refTxtPassword}
           />
         </View>
-
         <View style={styles.input}>
           <Button width={widthBtn} mod="black" onPress={_submit} ref={refBtn}>
             LOG IN

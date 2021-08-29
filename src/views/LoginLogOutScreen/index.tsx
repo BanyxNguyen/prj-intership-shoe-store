@@ -1,8 +1,7 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {FC, LegacyRef, MutableRefObject, useEffect, useRef} from 'react';
+import React, {FC, useEffect, useRef} from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   ScrollView,
   TouchableOpacity,
@@ -10,7 +9,7 @@ import {
   Platform,
   Keyboard,
 } from 'react-native';
-import {colors, sizes} from '../../support/constants';
+import {sizes} from '../../support/constants';
 import {Container, Header} from '../../support/styledComponents';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
@@ -19,8 +18,10 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StackNavigationProp} from '../../navigators/config';
 import {globalStyles} from '../../support/globalStyles';
-import Icons from '../../components/Icons';
-import {LoginCredentials, SignUp} from '../../models';
+import {Login, Register} from '../../models';
+import {accountService} from '../../services';
+import {loginUser, registerUser} from '../../redux/slices/accountsSlice';
+import {useDispatch} from 'react-redux';
 
 type Page = 0 | 1;
 
@@ -28,6 +29,7 @@ const LoginLogOutScreen: FC = () => {
   const route = useRoute();
   const stackNav = useNavigation<StackNavigationProp>();
   const refScrollView = useRef<ScrollView>(null);
+  const dispatch = useDispatch();
 
   const _goBack = () => {
     stackNav.goBack();
@@ -38,12 +40,35 @@ const LoginLogOutScreen: FC = () => {
     refScrollView.current?.scrollTo({x, y: 0, animated: true});
   };
 
-  const _submitSignIn = (data: LoginCredentials) => {
-    console.log('sign in sign out: ', data);
-    
+  const _submitLogin = async (data: Login) => {
+    try {
+      const temp = await accountService.login(data);
+      console.log(temp);
+
+      // dispatch(
+      //   loginUser(data, result => {
+      //     //callback
+      //     console.log('sign in: ', result);
+      //   }),
+      // );
+    } catch (error) {
+      console.log('fuck sign ip');
+      console.log(error);
+    }
   };
 
-  const _submitSignUp = (data: SignUp) => {};
+  const _submitSignUp = async (data: Register) => {
+    try {
+      console.log('sign out: ', data);
+      dispatch(
+        registerUser(data, () => {
+          //callback
+        }),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const page = _.get(route.params, 'page', 0);
@@ -52,40 +77,33 @@ const LoginLogOutScreen: FC = () => {
   }, []);
 
   return (
-    <Container style={globalStyles.gsFullScreen}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={globalStyles.gsFullScreen}
+      keyboardVerticalOffset={50}>
+      <ScrollView>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.headerBox}>
-            <TouchableOpacity style={styles.angleLeft} activeOpacity={0.85} onPress={_goBack}>
-              <Icon name="angle-left" size={40} color="#000" />
-            </TouchableOpacity>
-            <Header style={styles.header}>SHOE STORE</Header>
-          </View>
-          <ScrollView
-            ref={refScrollView}
-            horizontal={true}
-            // scrollEnabled={false}
-            pagingEnabled={true}>
-            <View
-              style={{
-                width: sizes.wScreen,
-                height: sizes.hScreen,
-              }}>
-              <LoginPage toRegister={_scrollTo(1)} submit={_submitSignIn}/>
+          <Container style={{flex: 1}}>
+            <View style={styles.headerBox}>
+              <TouchableOpacity style={styles.angleLeft} activeOpacity={0.85} onPress={_goBack}>
+                <Icon name="angle-left" size={40} color="#000" />
+              </TouchableOpacity>
+              <Header style={styles.header}>SHOE STORE</Header>
             </View>
-            <View
-              style={{
-                width: sizes.wScreen,
-                height: sizes.hScreen,
-              }}>
-              <RegisterPage toLogin={_scrollTo(0)} submit={_submitSignUp} />
+            <View style={{flex: 1}}>
+              <ScrollView ref={refScrollView} horizontal pagingEnabled scrollEnabled={false}>
+                <View style={styles.contentItem}>
+                  <LoginPage toRegister={_scrollTo(1)} submit={_submitLogin} />
+                </View>
+                <View style={styles.contentItem}>
+                  <RegisterPage toLogin={_scrollTo(0)} submit={_submitSignUp} />
+                </View>
+              </ScrollView>
             </View>
-          </ScrollView>
+          </Container>
         </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </Container>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -109,5 +127,10 @@ const styles = StyleSheet.create({
     left: 0,
     marginTop: 12,
     paddingHorizontal: 10,
+  },
+  contentItem: {
+    width: sizes.wScreen,
+
+    // minHeight: sizes.hScreen,
   },
 });

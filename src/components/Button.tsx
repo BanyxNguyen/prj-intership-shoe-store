@@ -26,6 +26,7 @@ class Button extends Component<Props, State> {
   }
 
   done() {
+    clearTimeout(this.isClear);
     this.setState({isLoading: false});
     this.isPress = true;
   }
@@ -40,7 +41,7 @@ class Button extends Component<Props, State> {
     clearTimeout(this.isClear);
     this.isClear = setTimeout(() => {
       this.done()
-    }, 3000);
+    }, 1000);
   };
 
   render() {

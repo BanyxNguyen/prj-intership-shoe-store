@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import React, {Component, FC, useState} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import {Keyboard, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {TextInput as Input} from 'react-native-paper';
 import {ValidationInput} from '../models';
 import {colors, fonts, sizes} from '../support/constants';
 import {Text} from '../support/styledComponents';
 import {checkValidation} from '../utilities';
+import Icons from './Icons';
 
 interface Props {
   label?: string;
@@ -19,47 +20,50 @@ interface Props {
 interface State {
   isError: boolean;
   txtError: string;
-  text: string;
+  secure: boolean;
 }
 
-const defaultInput = {
-  isError: false,
-  txtError: '',
-  text: '',
-};
-
-class TextInput extends Component<Props, State> {
+class MyTextInput extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = defaultInput;
+    this.state = {
+      isError: false,
+      txtError: '',
+      secure: _.get(props, 'secureTextEntry', false),
+    };
   }
 
   clear = () => {
-    this.setState(defaultInput);
+    const {onChangeText} = this.props;
+    onChangeText && onChangeText('');
+    this.setState({
+      ...this.state,
+      isError: false,
+      txtError: '',
+    });
   };
 
   validation = () => {
-    const {text} = this.state;
-    const {validation} = this.props;
+    const {validation, value} = this.props;
     const temp = {isError: false, txtError: ''};
-    const result = checkValidation(text, validation);
+    const result = checkValidation(value || '', validation);
     if (!_.isEmpty(result)) {
       temp.isError = true;
       temp.txtError = result;
     }
-    this.setState(temp);
+    this.setState({...this.state, ...temp});
     return temp.isError;
   };
 
   private _onChangeText = (text: string) => {
     const {validation, onChangeText} = this.props;
-    let temp: any = {text};
+    let temp: any = {};
     onChangeText && onChangeText(text);
     const result = checkValidation(text, validation);
     if (_.isEmpty(result)) {
       temp = {isError: false, txtError: '', ...temp};
     }
-    this.setState(temp);
+    this.setState({...this.state, ...temp});
   };
 
   private _onBlur = () => {
@@ -67,12 +71,38 @@ class TextInput extends Component<Props, State> {
   };
 
   private _onFocus = () => {
-    if (_.isEmpty(this.state.text)) this.clear();
+    if (_.isEmpty(this.props.value)) this.clear();
   };
 
+  private _onPressTriggerShowValue = () => {
+    const {secure} = this.state;
+    this.setState({...this.state, secure: !secure});
+  };
+
+  private _getIconPassword = () => {
+    const {secureTextEntry, value} = this.props;
+    if (!secureTextEntry || !value) return undefined;
+    let right = this.state.secure ? 'eye-off' : 'eye';
+    return (
+      <Input.Icon
+        forceTextInputFocus={false}
+        onPress={this._onPressTriggerShowValue}
+        name={right}
+      />
+    );
+  };
+
+  // componentDidMount() {
+  //   this.setState({
+  //     ...this.state,
+  //     secure: _.get(this.props, 'secureTextEntry', false),
+  //   });
+  // }
+
   render() {
-    const {text, txtError, isError} = this.state;
-    const {label, value, secureTextEntry, style, validation, onChangeText} = this.props;
+    const {txtError, isError, secure} = this.state;
+    const {label, value, style} = this.props;
+    let right = this._getIconPassword();
 
     return (
       <View style={[styles.container, style]}>
@@ -82,25 +112,26 @@ class TextInput extends Component<Props, State> {
         <Input
           error={isError}
           mode="outlined"
-          value={text}
+          value={value}
           onBlur={this._onBlur}
           onFocus={this._onFocus}
           onChangeText={this._onChangeText}
           autoCapitalize={'none'}
+          right={right}
           theme={{
             colors: {
               primary: '#202020',
               error: '#c62828',
             },
           }}
-          {...{label, value, secureTextEntry}}
+          {...{label, value, secureTextEntry: secure}}
         />
       </View>
     );
   }
 }
 
-export default TextInput;
+export default MyTextInput;
 
 const styles = StyleSheet.create({
   container: {
