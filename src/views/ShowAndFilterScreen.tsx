@@ -4,7 +4,7 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import _ from 'lodash';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
-import {Product, FilterOptions} from '../models';
+import {Product, OptionMenu} from '../models';
 import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {SEARCHSCREEN, StackNavigationProp} from '../navigators/config';
 import {Container, Text} from '../support/styledComponents';
@@ -14,33 +14,61 @@ import {ScrollView} from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image';
 import ItemProduct from './ProductScreen/ItemProduct';
 import FilterBottomSheet from '../components/FilterBottomSheet';
+import {parseOptionToModelFilterRequest} from '../utilities';
+import {productService} from '../services';
 
 const ShowAndFilterScreen: FC = () => {
   const route = useRoute();
   const stackNav = useNavigation<StackNavigationProp>();
   const [products, setProducts] = useState<Product[]>([]);
   const [title, setTitle] = useState<string>('');
-  const [options, setOptions] = useState<FilterOptions>({});
+  const [options, setOptions] = useState<OptionMenu>({});
 
   const _goBack = () => {
     stackNav.goBack();
   };
 
   const _initData = () => {
-    const result: any = _.get(route.params, 'options', {});
+    const options: any = _.get(route.params, 'options', {});
     const name: any = _.get(route.params, 'title', '');
     setProducts(TempData.sneakers);
     setTitle(name);
-    setOptions(result);
+    setOptions(options);
   };
 
   const _toSearchScreen = () => {
     stackNav.navigate(SEARCHSCREEN, {});
   };
 
+  const _onSubmit = (options: OptionMenu) => {
+    let title = '';
+    for (const key in options) {
+      for (let i = 0; i < options[key].length && i < 4; i++) {
+        title += options[key][i].value;
+      }
+    }
+    setTitle(title);
+    setOptions(options);
+  };
+
+  const fetchProduct = async () => {
+    let op = {...options};
+    delete options.sort;
+    const filter = parseOptionToModelFilterRequest(op);
+    const result = await productService.getProducts(filter);
+    setProducts(result);
+    if(!_.isEmpty(options.sort)) {
+      //TODO sort
+    }
+  };
+
   useEffect(() => {
     _initData();
   }, []);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [options]);
 
   return (
     <Container style={styles.container}>
@@ -56,7 +84,7 @@ const ShowAndFilterScreen: FC = () => {
       <View style={{flex: 1}}>
         <View style={styles.resultBox}>
           <Text style={styles.txtResult}>{products.length} RESULTS</Text>
-          <FilterBottomSheet options={options}>
+          <FilterBottomSheet options={options} onSubmit={_onSubmit}>
             <View style={styles.btn}>
               <Icons size={26} color={colors.black} name="options-outline" lib="Ionicons" />
             </View>

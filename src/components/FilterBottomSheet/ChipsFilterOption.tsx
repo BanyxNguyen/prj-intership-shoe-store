@@ -1,17 +1,17 @@
 import _ from 'lodash';
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {FilterOptions, OptionType} from '../../models';
+import {OptionMenu, OptionItemMenuType} from '../../models';
 import {colors, fonts, sizes} from '../../support/constants';
 import Icons from '../Icons';
 
-export interface IOptionType extends OptionType {
+export interface IOptionType extends OptionItemMenuType {
   keyFather: string;
 }
 
 interface Props {
   onChangeItem?: (item: IOptionType) => void;
-  filterOptions: FilterOptions;
+  filterOptions: OptionMenu;
 }
 
 interface State {
@@ -25,13 +25,13 @@ class ChipsFilterOption extends Component<Props, State> {
     this.state = {optionTypes: this._convertToArr(props.filterOptions)};
   }
 
-  private _convertToArr = (filterOptions: FilterOptions) => {
+  private _convertToArr = (filterOptions: OptionMenu) => {
     if (_.isEmpty(filterOptions)) return [];
 
     let arr: IOptionType[] = [];
 
     for (const key in filterOptions) {
-      const arrTemp = _.get(filterOptions, key, []).map((item: OptionType) => {
+      const arrTemp = _.get(filterOptions, key, []).map((item: OptionItemMenuType) => {
         const temp: IOptionType = {keyFather: key, ...item};
         return temp;
       });

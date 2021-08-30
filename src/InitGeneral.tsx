@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
+import {loadLoginUser} from './redux/slices/accountsSlice';
 import {loadWishlist} from './redux/slices/productSlice';
 
 const InitGeneral = () => {
@@ -8,6 +9,7 @@ const InitGeneral = () => {
 
   useEffect(() => {
     dispatch(loadWishlist());
+    dispatch(loadLoginUser());
   }, []);
 
   return <></>;

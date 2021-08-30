@@ -1,8 +1,7 @@
-import React, {Component, FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
-  Image,
   ScrollView,
   TouchableOpacity,
   NativeScrollEvent,
@@ -10,41 +9,15 @@ import {
 } from 'react-native';
 
 import _ from 'lodash';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
 import {Product} from '../models';
-import {Button} from '../components';
 import {StackNavigationProp} from '../navigators/config';
 import {Container, Text} from '../support/styledComponents';
 import {colors, fonts, shadows, sizes} from '../support/constants';
 import FastImage from 'react-native-fast-image';
 import Icons from '../components/Icons';
-
-const driveLink = 'https://drive.google.com/uc?export=view&id=';
-const defaultProduct = {
-  //https://www.dsw.com/en/us/product/adidas-daily-3-training-shoe---mens/508057?activeColor=400
-  name: `DAILY 3 TRAINING SHOE - MEN'S`,
-  brand: 'Adidas',
-  price: 54.99,
-  types: ['school', 'kid', 'men'],
-  sizes: ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13'],
-  colors: ['#285199'],
-  description: `Workout in some vibrant style in the Daily 3 training shoe by Adidas. Made of washed canvas 
-  upper for breathable feel, this low-top sneaker features OrthoLite® sockliner footbed for plush cushioning 
-  with every step.
-  \n\nItem # 508057
-  \nUPC # 194830771060`,
-  images: [
-    `${driveLink}13eg0v9-5-d7lmXi3vzgNHqCV_uboCsRy`,
-    `${driveLink}112uxP52_xPiXuT719eLjw1r7HNv1o9iZ`,
-    `${driveLink}17kgCJv1H0kfvMSew6PBauNBlWI0xjEPf`,
-    `${driveLink}1d0i_HxUgNCTSk87PTf1c8LD6qFHc2u6F`,
-    `${driveLink}1_m70asBfmWdp6LhgvPGtcpJjqFxgF7On`,
-    `${driveLink}1yei05ASpKfrSe39qA_ysX3ZXv_qgN12Z`,
-    `${driveLink}18-mk9AigNOdpfi89xvsyEYeEePSHcXdm`,
-  ],
-};
+import {parseColorStringToArr} from '../utilities';
 
 interface SliderImagesProps {
   data: string[];
@@ -100,8 +73,7 @@ const SliderImages: FC<SliderImagesProps> = props => {
 const DetailScreen: FC = () => {
   const route = useRoute();
   const stackNav = useNavigation<StackNavigationProp>();
-  const [product, setProduct] = useState(defaultProduct);
-  const {name, images, brand, description, colors: cls} = product;
+  const [product, setProduct] = useState({} as Product);
 
   const _goBack = () => {
     stackNav.goBack();
@@ -115,6 +87,7 @@ const DetailScreen: FC = () => {
   };
 
   const _renderColorsLabel = () => {
+    const cls = parseColorStringToArr(product.Mau);
     return cls.map((item, index) => {
       return <View style={[styles.circle, {backgroundColor: item}]} key={index.toString()} />;
     });
@@ -123,6 +96,8 @@ const DetailScreen: FC = () => {
   useEffect(() => {
     _initData();
   }, []);
+
+  const images: string[] = JSON.parse(product.HinhAnh);
 
   return (
     <Container style={styles.container}>
@@ -136,11 +111,11 @@ const DetailScreen: FC = () => {
         <SliderImages data={images} />
         <View style={styles.content}>
           <View style={styles.boxTitle}>
-            <Text style={styles.bigTitle}>{name}</Text>
-            <Text style={styles.smallTitle}>{brand}</Text>
+            <Text style={styles.bigTitle}>{product.Ten}</Text>
+            <Text style={styles.smallTitle}>{product.ThuongHieu}</Text>
           </View>
           <View style={styles.circles}>{_renderColorsLabel()}</View>
-          <Text>{description}</Text>
+          <Text>{product.MoTa}</Text>
         </View>
       </ScrollView>
       <View style={[styles.cartControl, shadows.s24]}>

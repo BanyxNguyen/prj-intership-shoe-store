@@ -40,21 +40,12 @@ const LoginLogOutScreen: FC = () => {
     refScrollView.current?.scrollTo({x, y: 0, animated: true});
   };
 
-  const _submitLogin = async (data: Login) => {
-    try {
-      const temp = await accountService.login(data);
-      console.log(temp);
+  const loginCallback = (result: boolean) => {
+    if (result) _goBack();
+  };
 
-      // dispatch(
-      //   loginUser(data, result => {
-      //     //callback
-      //     console.log('sign in: ', result);
-      //   }),
-      // );
-    } catch (error) {
-      console.log('fuck sign ip');
-      console.log(error);
-    }
+  const _submitLogin = async (data: Login) => {
+    dispatch(loginUser(data, loginCallback));
   };
 
   const _submitSignUp = async (data: Register) => {

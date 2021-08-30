@@ -2,6 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import _ from 'lodash';
 import React, {ComponentType, FC, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {useSelector} from 'react-redux';
 import Icons from '../components/Icons';
 import {InitTabBarNavigation} from '../navigators';
 import {
@@ -10,6 +11,7 @@ import {
   StackNavigationProp,
   TABDROPS,
 } from '../navigators/config';
+import {RootState, selectors} from '../redux/slices';
 import {accountService} from '../services';
 import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text} from '../support/styledComponents';
@@ -24,6 +26,7 @@ const HeaderHoc = <P extends object>(WrappedComponent: ComponentType<P>) => {
     const {...props} = _props;
     const [title, setTitle] = useState(InitTabBarNavigation);
     const [isSearchIcon, setIsSearchIcon] = useState(false);
+    const {profile: account} = useSelector(selectors.account.select);
 
     const _changeTitle = (name: string) => {
       setTitle(name);
@@ -34,12 +37,11 @@ const HeaderHoc = <P extends object>(WrappedComponent: ComponentType<P>) => {
     };
 
     const _toProfile = async () => {
-      // const user = await accountService.getProfile();
-      // if (_.isEmpty(user)) {
+      if (_.isEmpty(account)) {
         stackNav.navigate(LOGINLOGOUTSCREEN, {page: 0});
-      // } else {
-      //   stackNav.navigate(PROFILESCREEN, {});
-      // }
+      } else {
+        stackNav.navigate(PROFILESCREEN, {});
+      }
     };
 
     return (

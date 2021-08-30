@@ -3,7 +3,7 @@ import AccountsSlice, {accountSelectors} from './accountsSlice';
 import productSlice, {productSelectors} from './productSlice';
 
 const rootReducer = combineReducers({
-  accounts: AccountsSlice,
+  account: AccountsSlice,
   product: productSlice,
 });
 

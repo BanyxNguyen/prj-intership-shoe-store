@@ -1,5 +1,6 @@
 import axios from 'axios';
-import Config from 'react-native-config';
+// import Config from 'react-native-config';
+import {Config} from '../../appConfig';
 
 import {AccountService} from './accountService';
 import {ProductService} from './productService';
@@ -7,9 +8,14 @@ import {ProductService} from './productService';
 import {AccountGateway} from './gateways/accountGateways';
 import {ProductGateway} from './gateways/productGateways';
 
-console.log('API_URL', Config.API_URL, process.env.REACT_APP_API_URL);
+// console.log('API_URL', Config.API_URL);
 
-const restConnector = axios.create({baseURL: Config.API_URL});
+const restConnector = axios.create({
+  baseURL: Config.API_URL,
+  headers: {
+    'Content-type': 'application/json',
+  },
+});
 
 const accountGateway = new AccountGateway(restConnector);
 const productGateway = new ProductGateway(restConnector);

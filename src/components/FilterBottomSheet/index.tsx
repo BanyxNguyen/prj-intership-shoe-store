@@ -4,36 +4,41 @@ import {BackHandler, Button, StyleSheet, Text, TouchableOpacity, View} from 'rea
 import {ScrollView} from 'react-native-gesture-handler';
 import {Chip} from 'react-native-paper';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {OptionType, FilterOptions, FilterOptionsKey} from '../../models';
+import {OptionItemMenuType, OptionMenu} from '../../models';
 import {navigate} from '../../navigators/navigationService';
 import {colors, constants, fonts, sizes} from '../../support/constants';
 import {Container} from '../../support/styledComponents';
+import {parseOptionToModelFilterRequest} from '../../utilities';
 import {DefaultOptions, DefaultOptionsMenu} from '../../utilities/data';
 import Icons from '../Icons';
 import ChipsFilterOption, {IOptionType} from './ChipsFilterOption';
 import ItemsMenu from './ItemsMenu';
 
 interface Props {
-  options: FilterOptions;
+  options: OptionMenu;
+  amountProduct?: number;
+  onSubmit?: (options: OptionMenu) => void;
 }
 
-const filterOptionsDefault: FilterOptions = {
-  sort: [],
-  gender: [],
-  types: [],
-  colors: [],
-  sizes: [],
-  brands: [],
-  categories: [],
+interface State {}
+
+const optionsDefault: OptionMenu = {
+  // sort: [],
+  // gender: [],
+  // types: [],
+  // colors: [],
+  // sizes: [],
+  // brands: [],
+  // categories: [],
 };
 
-class FilterBottomSheet extends Component<Props> {
+class FilterBottomSheet extends Component<Props, State> {
   refRBSheet;
   refScrollView;
   refItemMenu;
   refChips;
 
-  filterOptions: FilterOptions = filterOptionsDefault;
+  options: OptionMenu = optionsDefault;
 
   constructor(props: Props) {
     super(props);
@@ -41,22 +46,20 @@ class FilterBottomSheet extends Component<Props> {
     this.refScrollView = createRef<ScrollView>();
     this.refItemMenu = createRef<ItemsMenu>();
     this.refChips = createRef<ChipsFilterOption>();
-
-    this.state = {
-      heightSheet: 100,
-    };
   }
 
   _submit = () => {
-    console.log('filter BTS: ', this._checkEmptyFilterOption());
-    console.log('filter BTS: ', this.filterOptions);
+    // this._checkEmptyFilterOption()
+    const {onSubmit} = this.props;
+    onSubmit && onSubmit(this.options);
+    this._close();
   };
 
   _onChangeChips = (item: IOptionType) => {
-    const key = item.keyFather as FilterOptionsKey;
-    const arr = this.filterOptions[key];
+    const key = item.keyFather;
+    const arr = this.options[key];
     arr && _.remove(arr, i => _.isEqual(i, {key: item.key, value: item.value}));
-    this.filterOptions[key] = arr;
+    this.options[key] = arr;
     this.refChips?.current?.ReRenderChips();
   };
 
@@ -68,19 +71,19 @@ class FilterBottomSheet extends Component<Props> {
     this.refRBSheet?.current?.close();
   };
 
-  _getItems = (item: OptionType) => {
-    let temp: OptionType[] = _.get(DefaultOptions, item.key, []);
+  _getItems = (item: OptionItemMenuType) => {
+    let temp: OptionItemMenuType[] = _.get(DefaultOptions, item.key, []);
     return temp;
   };
 
   _checkEmptyFilterOption = () => {
-    for (const key in this.filterOptions) {
-      if (!_.isEmpty(_.get(this.filterOptions, key))) return false;
+    for (const key in this.options) {
+      if (!_.isEmpty(_.get(this.options, key))) return false;
     }
     return true;
   };
 
-  _scrollViewToItemMenu = (item: OptionType) => () => {
+  _scrollViewToItemMenu = (item: OptionItemMenuType) => () => {
     if (this.refItemMenu && this.refItemMenu.current) {
       this.refItemMenu.current.RenderItemsMenu({
         father: item,
@@ -110,6 +113,7 @@ class FilterBottomSheet extends Component<Props> {
   };
 
   render() {
+    const {amountProduct} = this.props;
     return (
       <>
         <TouchableOpacity activeOpacity={0.85} onPress={this._open}>
@@ -135,7 +139,7 @@ class FilterBottomSheet extends Component<Props> {
                 <View style={styles.topBox}>
                   <View style={{flex: 1}}>
                     <Text style={styles.title}>REFINE RESULTS</Text>
-                    <Text style={styles.amountResult}>520 products</Text>
+                    <Text style={styles.amountResult}>{amountProduct || 0} products</Text>
                   </View>
                   <TouchableOpacity
                     activeOpacity={0.85}
@@ -148,7 +152,7 @@ class FilterBottomSheet extends Component<Props> {
                   <ScrollView contentContainerStyle={{paddingTop: 15, paddingBottom: 95}}>
                     <ChipsFilterOption
                       ref={this.refChips}
-                      filterOptions={this.filterOptions}
+                      filterOptions={this.options}
                       onChangeItem={this._onChangeChips}
                     />
                     <TouchableOpacity style={styles.btnClear}>
@@ -164,7 +168,7 @@ class FilterBottomSheet extends Component<Props> {
                 <ItemsMenu
                   ref={this.refItemMenu}
                   onBack={this._scrollViewBackMenu}
-                  filterOptions={this.filterOptions}
+                  filterOptions={this.options}
                 />
               </View>
             </ScrollView>

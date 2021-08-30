@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 
 import _ from 'lodash';
@@ -11,22 +11,50 @@ import {navigate} from '../../navigators/navigationService';
 import {SEARCHSCREEN, SHOWANDFILTERSCREEN, StackNavigationProp} from '../../navigators/config';
 import {Container, Text} from '../../support/styledComponents';
 import {colors, fonts, shadows, sizes} from '../../support/constants';
-import {Product, FilterOptions} from '../../models';
+import {Product, OptionMenu, ModelFilterProduct, ELogic} from '../../models';
 import ItemProduct from './ItemProduct';
+import {productService} from '../../services';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchProducts} from '../../redux/slices/productSlice';
+import {RootState, selectors} from '../../redux/slices';
+
+const filterGetAllProduct: ModelFilterProduct = {
+  Amount: 100,
+  Page: 0,
+  PropFilters: [],
+};
 
 const ProductScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
-  const data = TempData.sneakers;
+  // const data = TempData.sneakers;
+  const {products} = useSelector(selectors.product.select);
+  const [bestSeller, setBestSeller] = useState<Product[]>([]);
+  const dispatch = useDispatch();
 
   const _toSearchScreen = () => {
     // navigate('SEARCHSCREEN');
     stackNav.navigate(SEARCHSCREEN, {});
   };
 
-  const _seeMore = (_data: Product[]) => () => {
-    const options: FilterOptions = {};
-    stackNav.navigate(SHOWANDFILTERSCREEN, {title: 'Best sellers[10]', options});
+  const _seeMore = (options: OptionMenu) => () => {
+    stackNav.navigate(SHOWANDFILTERSCREEN, {title: `Best sellers[${bestSeller.length}]`, options});
   };
+
+  useEffect(() => {
+    // const funcAsync = async () => {
+    //   const filter = filterGetAllProduct;
+    //   const result = await productService.getProducts(filter);
+    //   setBestSeller(result);
+    // };
+    // funcAsync();
+    setTimeout(() => {
+      dispatch(fetchProducts(filterGetAllProduct));
+    }, 500);
+  }, []);
+
+  useEffect(() => {
+    setBestSeller(products);
+  }, [products]);
 
   return (
     <Container style={styles.container}>
@@ -45,14 +73,14 @@ const ProductScreen: FC = () => {
           <View>
             <View style={styles.titleBox}>
               <Text style={styles.title}>BEST SELLERS</Text>
-              <TouchableOpacity style={styles.btnSeeMore} onPress={_seeMore(data)}>
+              <TouchableOpacity style={styles.btnSeeMore} onPress={_seeMore({})}>
                 <Text style={styles.btnSeeMoreTxt}>SEE All</Text>
               </TouchableOpacity>
             </View>
             <ScrollView
               horizontal={true}
               contentContainerStyle={{paddingVertical: 5, paddingHorizontal: 20}}>
-              {data.map((item, index) => (
+              {bestSeller.map((item, index) => (
                 <ItemProduct
                   data={item}
                   key={index.toString()}

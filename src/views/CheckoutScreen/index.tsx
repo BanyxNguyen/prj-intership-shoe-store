@@ -41,10 +41,11 @@ const CheckoutScreen: FC = () => {
 
   const _renderItem = () => {
     return productCart
-      .filter(i => i.isSelected)
+      .filter(i => i.IsSelected)
       .map((item, index) => {
         // if (!item.isSelected) return <></>;
-        const {images, name, price, selectedSize} = item;
+        const {HinhAnh, Ten, SelectedSize, Gia} = item;
+        const images: string[] = JSON.parse(HinhAnh);
         return (
           <View style={[styles.itemBox, shadows.s1]} key={index.toString()}>
             <FastImage
@@ -57,13 +58,13 @@ const CheckoutScreen: FC = () => {
             />
             <View style={styles.itemContent}>
               <Text numberOfLines={1} style={styles.txtName}>
-                {name}
+                {Ten}
               </Text>
               <Text numberOfLines={1} style={styles.txt}>
-                Price: ${price}
+                Price: ${Gia}
               </Text>
               <Text numberOfLines={1} style={styles.txt}>
-                Size: {selectedSize}
+                Size: {SelectedSize}
               </Text>
             </View>
           </View>

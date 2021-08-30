@@ -1,26 +1,13 @@
 import React, {FC, useRef, useState} from 'react';
-import {
-  View,
-  Platform,
-  Keyboard,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  TextInput,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {StackActions, useNavigation} from '@react-navigation/native';
+import {View, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
 
+import _ from 'lodash';
+
+import {EnumRegister, Register} from '../../models';
 import {Button, MyTextInput} from '../../components';
 import {colors, sizes} from '../../support/constants';
-import {Container, Header, Text, Title} from '../../support/styledComponents';
-import {LOGINSCREEN, StackNavigationProp} from '../../navigators/config';
-import {EnumRegister, Register} from '../../models';
-import _ from 'lodash';
+import {Text, Title} from '../../support/styledComponents';
 import {valNoEmpty, valPassword, valUsername} from './variable';
-import {useDispatch} from 'react-redux';
-import {registerUser} from '../../redux/slices/accountsSlice';
 
 interface Props {
   toLogin: () => void;

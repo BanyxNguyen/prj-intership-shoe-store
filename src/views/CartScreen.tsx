@@ -22,6 +22,7 @@ import {Container, Text} from '../support/styledComponents';
 import {colors, fonts, shadows, sizes} from '../support/constants';
 import {CHECKOUTSCREEN, DETAILSCREEN, StackNavigationProp} from '../navigators/config';
 import SeeMoreBottomSheet from '../components/SeeMoreBottomSheet';
+import {parseImageStringToArr} from '../utilities';
 
 interface CartItemProps {
   data: ProductReduxType;
@@ -33,7 +34,6 @@ interface CartItemProps {
 const CartItem: FC<CartItemProps> = props => {
   // const stackNav = useNavigation<StackNavigationProp>();
   const {data, onMore, onChangeAmount, onTriggerSelect} = props;
-  const {name, price, images, amount, selectedSize, isSelected} = data;
 
   // const _toDetail = () => {
   //   stackNav.navigate(DETAILSCREEN, {data: props.data});
@@ -44,18 +44,20 @@ const CartItem: FC<CartItemProps> = props => {
   };
 
   const _changeAmount = (amount: number) => () => {
-    if (data.amount + amount > 0 && onChangeAmount) onChangeAmount(data.id, amount);
+    if (data.Amount + amount > 0 && onChangeAmount) onChangeAmount(data.Id, amount);
   };
 
   const _onTriggerSelect = () => {
-    onTriggerSelect && onTriggerSelect(data.id);
+    onTriggerSelect && onTriggerSelect(data.Id);
   };
+
+  const images = parseImageStringToArr(data.HinhAnh);
 
   return (
     <TouchableOpacity activeOpacity={0.85} style={[styles.itemBox, shadows.s1]}>
       <Checkbox
         color={colors.black}
-        status={isSelected ? 'checked' : 'unchecked'}
+        status={data.IsSelected ? 'checked' : 'unchecked'}
         onPress={_onTriggerSelect}
       />
       <FastImage
@@ -68,15 +70,15 @@ const CartItem: FC<CartItemProps> = props => {
       />
       <View style={styles.itemContent}>
         <Text numberOfLines={1} style={styles.txtName}>
-          {name}
+          {data.Ten}
         </Text>
         <Text numberOfLines={1} style={styles.txt}>
-          Price: ${price}
+          Price: ${data.Gia || ''}
         </Text>
         <Text numberOfLines={1} style={styles.txt}>
           Size:{' '}
-          <Text style={[styles.txt, !selectedSize ? styles.txtNone : {}]}>
-            {selectedSize || 'None'}
+          <Text style={[styles.txt, !data.SelectedSize ? styles.txtNone : {}]}>
+            {data.SelectedSize || 'None'}
           </Text>
         </Text>
         <View style={styles.amountBox}>
@@ -88,7 +90,7 @@ const CartItem: FC<CartItemProps> = props => {
               lib="MaterialCommunityIcons"
             />
           </TouchableOpacity>
-          <Text style={styles.txtAmount}>{amount}</Text>
+          <Text style={styles.txtAmount}>{data.Amount}</Text>
           <TouchableOpacity activeOpacity={0.85} onPress={_changeAmount(1)}>
             <Icons
               size={30}
@@ -119,23 +121,23 @@ const CartScreen: FC = () => {
   const _getTotal = () => {
     let amount = 0;
     for (const item of productCart) {
-      if (item.isSelected) amount += item.price * item.amount;
+      if (item.IsSelected && item.Gia) amount += item.Gia * item.Amount;
     }
     return Math.ceil(amount * 100) / 100;
   };
 
   const _getStatusCheckAll = (data: ProductReduxType[]) => {
     for (let i = 0; i < data.length; i++) {
-      if (!data[i].isSelected) return false;
+      if (!data[i].IsSelected) return false;
     }
     return true;
   };
 
   const _getIsCheckout = (data: ProductReduxType[]) => {
-    if (_.findIndex(data, i => i.isSelected == true) > -1) {
+    if (_.findIndex(data, i => i.IsSelected == true) > -1) {
       for (let i = 0; i < data.length; i++) {
         const item = data[i];
-        if (item.isSelected && !item.selectedSize) return false;
+        if (item.IsSelected && !item.SelectedSize) return false;
       }
       return true;
     }
@@ -160,7 +162,7 @@ const CartScreen: FC = () => {
 
   const _onSubmitBTS = (data: Product) => {
     const check = _.findIndex(productCart, i => {
-      return i.id == data.id && i.selectedSize != data.selectedSize;
+      return i.Id == data.Id && i.SelectedSize != data.SelectedSize;
     });
     check > -1 && dispatch(changeSizeProductFromCart(data));
   };
@@ -171,7 +173,6 @@ const CartScreen: FC = () => {
   };
 
   const _onCheckout = () => {
-    
     stackNav.navigate(CHECKOUTSCREEN, {});
   };
 

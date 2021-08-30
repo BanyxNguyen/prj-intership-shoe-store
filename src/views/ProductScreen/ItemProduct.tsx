@@ -4,12 +4,14 @@ import React, {FC} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {useDispatch, useSelector} from 'react-redux';
+import {Config} from '../../../appConfig';
 import Icons from '../../components/Icons';
 import {Product} from '../../models';
 import {DETAILSCREEN, StackNavigationProp} from '../../navigators/config';
 import {RootState} from '../../redux/slices';
 import {triggerProductToWishlist} from '../../redux/slices/productSlice';
 import {colors, fonts, shadows, sizes} from '../../support/constants';
+import {parseImageStringToArr} from '../../utilities';
 
 interface Props {
   data: Product;
@@ -36,39 +38,49 @@ const ItemProduct: FC<Props> = props => {
   };
 
   const _checkFavorite = (id: string) => {
-    return _.findIndex(wishlist, i => i.id == id) > -1;
+    return _.findIndex(wishlist, i => i.Id == id) > -1;
   };
 
   const _iconFavorite = () => {
     let st = {color: colors.black, name: 'heart-outline'};
-    if (_checkFavorite(data.id)) st = {color: colors.blueyGrey, name: 'heart'};
+    if (_checkFavorite(data.Id)) st = {color: colors.blueyGrey, name: 'heart'};
     return <Icons size={24} {...st} lib="MaterialCommunityIcons" />;
   };
+
+  const images = parseImageStringToArr(data.HinhAnh);
 
   return (
     <View style={[styles.container, size]}>
       <TouchableOpacity activeOpacity={0.85} style={[styles.item, shadows.s1]} onPress={_toDetail}>
         <View style={[styles.imageItemBox, sizeImg]}>
-          <TouchableOpacity activeOpacity={0.85} style={styles.btnFavorite} onPress={_triggerWishlish}>
+          <TouchableOpacity
+            activeOpacity={0.85}
+            style={styles.btnFavorite}
+            onPress={_triggerWishlish}>
             {_iconFavorite()}
           </TouchableOpacity>
-          <FastImage
-            style={[styles.imageItemBox, sizeImg]}
-            source={{
-              uri: data.images[0],
-              priority: FastImage.priority.normal,
-            }}
-            resizeMode={FastImage.resizeMode.cover}
-          />
+          {!_.isEmpty(images) ? (
+            <FastImage
+              style={[styles.imageItemBox, sizeImg]}
+              source={{
+                uri: images[0],
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+            />
+          ) : (
+            <View style={[styles.imageItemBox, sizeImg]} />
+          )}
+
           <View style={styles.priceBox}>
-            <Text style={styles.priceText}>${data.price}</Text>
+            <Text style={styles.priceText}>${data.Gia}</Text>
           </View>
         </View>
         <View style={styles.itemContent}>
           <View style={{flex: 1}}>
-            <Text style={styles.titleItem}>{data.name}</Text>
+            <Text style={styles.titleItem}>{data.Ten}</Text>
           </View>
-          <Text style={styles.txtBrand}>{data.brand}</Text>
+          <Text style={styles.txtBrand}>{data.ThuongHieu}</Text>
         </View>
       </TouchableOpacity>
     </View>

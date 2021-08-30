@@ -2,6 +2,8 @@
 import {Share, Platform} from 'react-native';
 // import Config from 'react-native-config';
 import _, {findIndex} from 'lodash';
+import {Config} from '../../appConfig';
+import {ELogic, ModelFilterProduct, OptionMenu, Product, PropFilterProduct} from '../models';
 export * from './validationControl';
 
 export const Sleep = async (second: number) => {
@@ -33,6 +35,46 @@ export const isExistArrayForId = (arr: Array<any>, id: any) => {
 
 export const keyExtractor = (item: any, index: number) => {
   return index.toString();
+};
+
+/**
+ * @param str exp: 000,fff
+ */
+export const parseColorStringToArr = (str: string) => {
+  const colors = str.split(str);
+  return colors.map(i => i.trim());
+};
+
+export const parseImageStringToArr = (str: string) => {
+  const images: string[] = JSON.parse(str);
+  return images.map(i => Config.API_URL + i);
+};
+
+export const parseOptionToModelFilterRequest = (
+  options: OptionMenu,
+  config?: {amount: number; page: number},
+) => {
+  const pipeFilters: PropFilterProduct[] = [];
+
+  for (const key in options) {
+    const temps = options[key];
+    for (let i = 0; i < temps.length; i++) {
+      const elm = temps[i];
+      const t: PropFilterProduct = {
+        Logic: ELogic.Or,
+        FieldName: key as keyof Product,
+        Value: elm.key,
+      };
+      pipeFilters.push(t);
+    }
+  }
+
+  const filterGetAllProduct: ModelFilterProduct = {
+    Amount: config?.amount || 15,
+    Page: config?.page || 0,
+    PropFilters: pipeFilters,
+  };
+  return filterGetAllProduct;
 };
 
 export const shareApp = () => {

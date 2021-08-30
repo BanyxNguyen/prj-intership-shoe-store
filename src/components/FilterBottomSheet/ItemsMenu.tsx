@@ -2,7 +2,7 @@ import _, {concat} from 'lodash';
 import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {FilterOptions, FilterOptionsKey, OptionType} from '../../models';
+import {OptionMenu, OptionItemMenuType, OptionTypeMenu} from '../../models';
 import {colors, fonts, sizes} from '../../support/constants';
 import {Container, Text} from '../../support/styledComponents';
 import {triggerArray} from '../../utilities';
@@ -10,18 +10,18 @@ import Icons from '../Icons';
 
 interface Props {
   onBack?: () => void;
-  filterOptions: FilterOptions;
+  filterOptions: OptionMenu;
 }
 
 interface State {
-  father: OptionType;
-  items: OptionType[];
-  itemsActive: OptionType[];
+  father: OptionTypeMenu;
+  items: OptionItemMenuType[];
+  itemsActive: OptionItemMenuType[];
 }
 
 interface ParamRenderFunc {
-  father: OptionType;
-  items: OptionType[];
+  father: OptionTypeMenu;
+  items: OptionItemMenuType[];
 }
 
 export class ItemsMenu extends Component<Props, State> {
@@ -29,7 +29,7 @@ export class ItemsMenu extends Component<Props, State> {
     super(props);
 
     this.state = {
-      father: {key: '', value: ''},
+      father: {key: '', value: '', isOnly: false},
       items: [],
       itemsActive: [],
     };
@@ -42,10 +42,15 @@ export class ItemsMenu extends Component<Props, State> {
     this.setState({items, itemsActive, father});
   };
 
-  private _onPress = (item: OptionType) => () => {
-    const {itemsActive} = this.state;
-    const key = this.state.father.key as FilterOptionsKey;
-    const temp = triggerArray(itemsActive, item);
+  private _onPress = (item: OptionItemMenuType) => () => {
+    const {itemsActive, father} = this.state;
+    const key = this.state.father.key;
+    let temp;
+    if (father.isOnly) {
+      temp = [item];
+    } else {
+      temp = triggerArray(itemsActive, item);
+    }
     this.props.filterOptions[key] = temp;
     this.setState({itemsActive: temp});
   };

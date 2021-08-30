@@ -5,10 +5,16 @@ import {Account, Login, Register} from '../../models';
 import {RootState} from './index';
 import {accountService} from '../../services';
 
-const defaultAccount = {} as Account;
+interface InitialState {
+  profile: Account;
+}
+
+const defaultAccount: InitialState = {
+  profile: {} as Account,
+};
 
 const AccountReducer = createSlice({
-  name: 'accounts',
+  name: 'account',
   initialState: defaultAccount,
   reducers: {
     setAccount(state, action) {
@@ -19,16 +25,27 @@ const AccountReducer = createSlice({
 
 export const {setAccount} = AccountReducer.actions;
 
-export const loadLoginUser = () => async (dispatch: Dispatch) => {};
+export const loadLoginUser = () => async (dispatch: Dispatch) => {
+  const account = await accountService.getProfile();
+  dispatch(setAccount(account));
+};
 
 export const loginUser =
-  (loginForm: Login, callback = (emit: Account | null) => {}): AppThunk =>
+  (loginForm: Login, callback = (emit: boolean) => {}): AppThunk =>
   async (dispatch: Dispatch) => {
-    const user = await accountService.login(loginForm);
-    if (!user) Alert.alert('Wrong email or password, please try again');
-    callback(user);
-    dispatch(setAccount(user));
-    return user;
+    const notify = 'Wrong email or password, please try again';
+    try {
+      const user = await accountService.login(loginForm);
+      if (!user) Alert.alert(notify);
+      console.log('user :', user);
+      callback(true);
+      dispatch(setAccount({profile: user}));
+      return user;
+    } catch (error) {
+      callback(false);
+      Alert.alert(notify);
+      console.log('login', error);
+    }
   };
 
 export const registerUser =
@@ -50,7 +67,7 @@ export const registerUser =
   };
 
 export const accountSelectors = {
-  select: (state: RootState): Account | null => state.accounts,
+  select: (state: RootState): InitialState => state.account,
 };
 
 export default AccountReducer.reducer;

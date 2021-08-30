@@ -5,6 +5,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {Product} from '../models';
 import {colors, fonts, sizes} from '../support/constants';
+import {parseColorStringToArr} from '../utilities';
 import Icons from './Icons';
 
 interface Props {
@@ -53,17 +54,17 @@ class SeeMoreBottomSheet extends Component<Props, State> {
     this._close();
   };
 
-  private _onPressSelectSize = (item: string) => () => {
-    const product: Product = {...this.state.product, selectedSize: item};
+  private _onPressSelectSize = (item: number) => () => {
+    const product: Product = {...this.state.product, SelectedSize: item};
     this.setState({product});
   };
 
   private _renderSizes = () => {
     const {product} = this.state;
     if (_.isEmpty(product)) return <></>;
-    return product.sizes.map((item, index) => {
+    return product.KichThuocs.map((item, index) => {
       let st = {};
-      if (product.selectedSize && item == product.selectedSize) st = styles.txtItemActive;
+      if (product.SelectedSize && _.isEqual(item, product.SelectedSize)) st = styles.txtItemActive;
       return (
         <TouchableOpacity
           activeOpacity={0.85}

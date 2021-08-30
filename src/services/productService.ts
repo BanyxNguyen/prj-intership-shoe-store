@@ -1,4 +1,4 @@
-import {Product} from '../models';
+import {ELogic, ExternalProduct, ModelFilterProduct, Product} from '../models';
 import {ProductGateway} from './gateways/productGateways';
 
 export class ProductService {
@@ -8,12 +8,15 @@ export class ProductService {
     this.productGateway = productGateway;
   }
 
-  async gets(filter: any = {}) {
-    const data: any = await this.productGateway.gets();
-    return data;
+  getProducts(filter: ModelFilterProduct) {
+    return this.productGateway.getProducts(filter);
   }
 
-  async loadWishlist() {
+  getExternalProductInfo(params: ExternalProduct[]) {
+    return this.productGateway.getExternalProductInfo(params)
+  }
+
+  loadWishlist() {
     return this.productGateway.loadWishlist();
   }
 

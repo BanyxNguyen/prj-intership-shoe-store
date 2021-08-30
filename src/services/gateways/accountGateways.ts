@@ -1,5 +1,4 @@
-import {AxiosInstance} from 'axios';
-import {AsyncStorageStatic} from 'react-native';
+import axios, {AxiosInstance} from 'axios';
 import {Account, Login, Register} from '../../models';
 import {SlowFetch} from '../../utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,7 +17,8 @@ export class AccountGateway {
 
   async login(loginForm: Login): Promise<string> {
     try {
-      return SlowFetch(this.restConnector.post('/Token/Login', loginForm));
+      const {data}: any = await SlowFetch(this.restConnector.post('/api/Token/Login', loginForm));
+      return data;
     } catch (error) {
       console.log('login error', error);
       throw error;
@@ -27,7 +27,7 @@ export class AccountGateway {
 
   async register(registerForm: Register): Promise<string> {
     try {
-      return SlowFetch(this.restConnector.post('/Token/Register', registerForm));
+      return SlowFetch(this.restConnector.post('/api/Token/Register', registerForm));
     } catch (error) {
       console.log('register error', error);
       throw error;
@@ -42,9 +42,10 @@ export class AccountGateway {
     try {
       const token: string = await this._loadAccessToken();
       if (_.isEmpty(token)) return null;
-
       this.useAccessToken(token);
-      return this.restConnector.get('/Token/GetProfile');
+      const {data}: any = await this.restConnector.get('/api/Token/GetProfile');
+      delete data.PassWord;
+      return data;
     } catch (error) {
       console.log('getProfile error', error);
       throw error;
@@ -52,6 +53,7 @@ export class AccountGateway {
   }
 
   useAccessToken(token: string = '') {
+    console.log('token: ', token);
     this.restConnector.defaults.headers.common.Authorization = `Bearer ${token}`;
   }
 

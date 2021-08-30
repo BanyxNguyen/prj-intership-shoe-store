@@ -1,18 +1,41 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import FastImage from 'react-native-fast-image';
+import {useSelector} from 'react-redux';
 import Icons from '../components/Icons';
+import {Account} from '../models';
 import {StackNavigationProp} from '../navigators/config';
+import {selectors} from '../redux/slices';
 import {colors, constants, driveLink, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text} from '../support/styledComponents';
+import moment from 'moment';
+import {Button} from '../components';
 
 const ProfileScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
+  const [profile, setProfile] = useState<Account | null>(null);
+  const [isEdit, setIsEdit] = useState(false);
+  const account = useSelector(selectors.account.select);
 
   const _goBack = () => {
     stackNav.goBack();
   };
+
+  const _getBirthday = () => {
+    if (profile?.Birthday) {
+      return moment(profile?.Birthday).subtract(10, 'days').calendar();
+    }
+    return '';
+  };
+
+  const _triggerEdit = () => {
+    setIsEdit(!isEdit);
+  };
+
+  useEffect(() => {
+    setProfile(account);
+  }, [profile]);
 
   return (
     <Container style={styles.container}>
@@ -21,9 +44,13 @@ const ProfileScreen: FC = () => {
           <Icons size={26} color={colors.black} name="arrow-left" lib="Feather" />
         </TouchableOpacity>
         <Text style={styles.title}>Profile</Text>
-        <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-          <Icons size={26} color={colors.black} name="edit" lib="AntDesign" />
-        </TouchableOpacity>
+        {!isEdit ? (
+          <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={_triggerEdit}>
+            <Icons size={26} color={colors.black} name="edit" lib="AntDesign" />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.btn} />
+        )}
       </View>
       <View style={styles.content}>
         <View style={styles.avtBox}>
@@ -36,10 +63,20 @@ const ProfileScreen: FC = () => {
             resizeMode={FastImage.resizeMode.cover}
           />
         </View>
-        <View style={styles.info}>
-          <Text style={styles.name}>Nguyen Duy Thai</Text>
-          <Text style={styles.birthday}>04/12/1997</Text>
-        </View>
+        {!isEdit ? (
+          <View style={styles.info}>
+            <Text style={styles.name}>
+              {profile?.FirstName} {profile?.LastName}
+            </Text>
+            <Text style={styles.birthday}>{_getBirthday()}</Text>
+            <Text style={styles.birthday}>{profile?.Address}</Text>
+          </View>
+        ) : (
+          <View style={styles.info}>
+            <Text style={styles.birthday}>Edit Profile</Text>
+            <Button mod="black" onPress={_triggerEdit}>Save</Button>
+          </View>
+        )}
       </View>
     </Container>
   );
