@@ -10,110 +10,23 @@ import FastImage from 'react-native-fast-image';
 import {
   changeAmountItemCart,
   changeSizeProductFromCart,
-  ProductReduxType,
   removeItemCart,
   selectedAllItemCart,
   triggerSelectedItemCart,
 } from '../redux/slices/productSlice';
-import {Product} from '../models';
 import Icons from '../components/Icons';
 import {RootState} from '../redux/slices';
+import {parseImageStringToArr} from '../utilities';
+import {Product, ProductCartCheckout} from '../models';
 import {Container, Text} from '../support/styledComponents';
+import SeeMoreBottomSheet from '../components/SeeMoreBottomSheet';
 import {colors, fonts, shadows, sizes} from '../support/constants';
 import {CHECKOUTSCREEN, DETAILSCREEN, StackNavigationProp} from '../navigators/config';
-import SeeMoreBottomSheet from '../components/SeeMoreBottomSheet';
-import {parseImageStringToArr} from '../utilities';
-
-interface CartItemProps {
-  data: ProductReduxType;
-  onMore?: (product: Product) => void;
-  onChangeAmount?: (productId: string, amount: number) => void;
-  onTriggerSelect?: (productId: string) => void;
-}
-
-const CartItem: FC<CartItemProps> = props => {
-  // const stackNav = useNavigation<StackNavigationProp>();
-  const {data, onMore, onChangeAmount, onTriggerSelect} = props;
-
-  // const _toDetail = () => {
-  //   stackNav.navigate(DETAILSCREEN, {data: props.data});
-  // };
-
-  const _onMore = () => {
-    onMore && onMore(data);
-  };
-
-  const _changeAmount = (amount: number) => () => {
-    if (data.Amount + amount > 0 && onChangeAmount) onChangeAmount(data.Id, amount);
-  };
-
-  const _onTriggerSelect = () => {
-    onTriggerSelect && onTriggerSelect(data.Id);
-  };
-
-  const images = parseImageStringToArr(data.HinhAnh);
-
-  return (
-    <TouchableOpacity activeOpacity={0.85} style={[styles.itemBox, shadows.s1]}>
-      <Checkbox
-        color={colors.black}
-        status={data.IsSelected ? 'checked' : 'unchecked'}
-        onPress={_onTriggerSelect}
-      />
-      <FastImage
-        style={{height: hItem, width: wItem}}
-        source={{
-          uri: images[0],
-          priority: FastImage.priority.normal,
-        }}
-        resizeMode={FastImage.resizeMode.cover}
-      />
-      <View style={styles.itemContent}>
-        <Text numberOfLines={1} style={styles.txtName}>
-          {data.Ten}
-        </Text>
-        <Text numberOfLines={1} style={styles.txt}>
-          Price: ${data.Gia || ''}
-        </Text>
-        <Text numberOfLines={1} style={styles.txt}>
-          Size:{' '}
-          <Text style={[styles.txt, !data.SelectedSize ? styles.txtNone : {}]}>
-            {data.SelectedSize || 'None'}
-          </Text>
-        </Text>
-        <View style={styles.amountBox}>
-          <TouchableOpacity activeOpacity={0.85} onPress={_changeAmount(-1)}>
-            <Icons
-              size={30}
-              color={colors.black_75}
-              name="minus-circle-outline"
-              lib="MaterialCommunityIcons"
-            />
-          </TouchableOpacity>
-          <Text style={styles.txtAmount}>{data.Amount}</Text>
-          <TouchableOpacity activeOpacity={0.85} onPress={_changeAmount(1)}>
-            <Icons
-              size={30}
-              color={colors.black_75}
-              name="plus-circle-outline"
-              lib="MaterialCommunityIcons"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View>
-        <TouchableOpacity activeOpacity={0.85} style={styles.btnMore} onPress={_onMore}>
-          <Icons size={24} color={colors.black} name="dots-vertical" lib="MaterialCommunityIcons" />
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
-};
 
 const CartScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
   const {cart} = useSelector((state: RootState) => state.product);
-  const [productCart, setProductCart] = useState<ProductReduxType[]>([]);
+  const [productCart, setProductCart] = useState<ProductCartCheckout[]>([]);
   const [isCheckout, setIsCheckout] = useState(false);
   const refBTS = useRef<SeeMoreBottomSheet>(null);
   const dispatch = useDispatch();
@@ -126,14 +39,14 @@ const CartScreen: FC = () => {
     return Math.ceil(amount * 100) / 100;
   };
 
-  const _getStatusCheckAll = (data: ProductReduxType[]) => {
+  const _getStatusCheckAll = (data: ProductCartCheckout[]) => {
     for (let i = 0; i < data.length; i++) {
       if (!data[i].IsSelected) return false;
     }
     return true;
   };
 
-  const _getIsCheckout = (data: ProductReduxType[]) => {
+  const _getIsCheckout = (data: ProductCartCheckout[]) => {
     if (_.findIndex(data, i => i.IsSelected == true) > -1) {
       for (let i = 0; i < data.length; i++) {
         const item = data[i];
@@ -229,6 +142,92 @@ const CartScreen: FC = () => {
 };
 
 export default CartScreen;
+
+interface CartItemProps {
+  data: ProductCartCheckout;
+  onMore?: (product: Product) => void;
+  onChangeAmount?: (productId: string, amount: number) => void;
+  onTriggerSelect?: (productId: string) => void;
+}
+
+const CartItem: FC<CartItemProps> = props => {
+  const stackNav = useNavigation<StackNavigationProp>();
+  const {data, onMore, onChangeAmount, onTriggerSelect} = props;
+
+  const _toDetail = () => {
+    stackNav.navigate(DETAILSCREEN, {data: props.data, readOnly: true});
+  };
+
+  const _onMore = () => {
+    onMore && onMore(data);
+  };
+
+  const _changeAmount = (amount: number) => () => {
+    if (data.Amount + amount > 0 && onChangeAmount) onChangeAmount(data.Id, amount);
+  };
+
+  const _onTriggerSelect = () => {
+    onTriggerSelect && onTriggerSelect(data.Id);
+  };
+
+  const images = parseImageStringToArr(data.HinhAnh);
+
+  return (
+    <TouchableOpacity activeOpacity={0.85} style={[styles.itemBox, shadows.s1]} onPress={_toDetail}>
+      <Checkbox
+        color={colors.black}
+        status={data.IsSelected ? 'checked' : 'unchecked'}
+        onPress={_onTriggerSelect}
+      />
+      <FastImage
+        style={{height: hItem, width: wItem}}
+        source={{
+          uri: images[0],
+          priority: FastImage.priority.normal,
+        }}
+        resizeMode={FastImage.resizeMode.cover}
+      />
+      <View style={styles.itemContent}>
+        <Text numberOfLines={1} style={styles.txtName}>
+          {data.Ten}
+        </Text>
+        <Text numberOfLines={1} style={styles.txt}>
+          Price: ${data.Gia || ''}
+        </Text>
+        <Text numberOfLines={1} style={styles.txt}>
+          Size:{' '}
+          <Text style={[styles.txt, !data.SelectedSize ? styles.txtNone : {}]}>
+            {data.SelectedSize || 'None'}
+          </Text>
+        </Text>
+        <View style={styles.amountBox}>
+          <TouchableOpacity activeOpacity={0.85} onPress={_changeAmount(-1)}>
+            <Icons
+              size={30}
+              color={colors.black_75}
+              name="minus-circle-outline"
+              lib="MaterialCommunityIcons"
+            />
+          </TouchableOpacity>
+          <Text style={styles.txtAmount}>{data.Amount}</Text>
+          <TouchableOpacity activeOpacity={0.85} onPress={_changeAmount(1)}>
+            <Icons
+              size={30}
+              color={colors.black_75}
+              name="plus-circle-outline"
+              lib="MaterialCommunityIcons"
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View>
+        <TouchableOpacity activeOpacity={0.85} style={styles.btnMore} onPress={_onMore}>
+          <Icons size={24} color={colors.black} name="dots-vertical" lib="MaterialCommunityIcons" />
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const hItem = 100;
 const wItem = 120;

@@ -1,21 +1,18 @@
-import _ from 'lodash';
 import React, {Component, createRef} from 'react';
-import {BackHandler, Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {Chip} from 'react-native-paper';
+import {StyleSheet, TouchableOpacity, View, ScrollView} from 'react-native';
+
+import _ from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {OptionItemMenuType, OptionMenu} from '../../models';
-import {navigate} from '../../navigators/navigationService';
-import {colors, constants, fonts, sizes} from '../../support/constants';
-import {Container} from '../../support/styledComponents';
-import {parseOptionToModelFilterRequest} from '../../utilities';
-import {DefaultOptions, DefaultOptionsMenu} from '../../utilities/data';
+
 import Icons from '../Icons';
-import ChipsFilterOption, {IOptionType} from './ChipsFilterOption';
 import ItemsMenu from './ItemsMenu';
+import {OptionItemMenuType, OptionMenu} from '../../models';
+import {Container, Text} from '../../support/styledComponents';
+import ChipsFilterOption, {IOptionType} from './ChipsFilterOption';
+import {colors, constants, fonts, sizes} from '../../support/constants';
+import {DefaultOptions, DefaultOptionsMenu} from '../../utilities/data';
 
 interface Props {
-  options: OptionMenu;
   amountProduct?: number;
   onSubmit?: (options: OptionMenu) => void;
 }
@@ -49,7 +46,6 @@ class FilterBottomSheet extends Component<Props, State> {
   }
 
   _submit = () => {
-    // this._checkEmptyFilterOption()
     const {onSubmit} = this.props;
     onSubmit && onSubmit(this.options);
     this._close();
@@ -64,6 +60,7 @@ class FilterBottomSheet extends Component<Props, State> {
   };
 
   _open = () => {
+    this.refChips?.current?.ReRenderChips();
     this.refRBSheet?.current?.open();
   };
 

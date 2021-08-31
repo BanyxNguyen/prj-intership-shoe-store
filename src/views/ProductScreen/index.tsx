@@ -2,21 +2,17 @@ import React, {FC, useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 
 import _ from 'lodash';
-import FastImage from 'react-native-fast-image';
+import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 
-import Icons from '../../components/Icons';
-import {TempData} from '../../utilities/data';
-import {navigate} from '../../navigators/navigationService';
-import {SEARCHSCREEN, SHOWANDFILTERSCREEN, StackNavigationProp} from '../../navigators/config';
-import {Container, Text} from '../../support/styledComponents';
-import {colors, fonts, shadows, sizes} from '../../support/constants';
-import {Product, OptionMenu, ModelFilterProduct, ELogic} from '../../models';
 import ItemProduct from './ItemProduct';
-import {productService} from '../../services';
-import {useDispatch, useSelector} from 'react-redux';
+import Icons from '../../components/Icons';
+import {selectors} from '../../redux/slices';
 import {fetchProducts} from '../../redux/slices/productSlice';
-import {RootState, selectors} from '../../redux/slices';
+import {Container, Text} from '../../support/styledComponents';
+import {Product, OptionMenu, ModelFilterProduct} from '../../models';
+import {colors, fonts, shadows, sizes} from '../../support/constants';
+import {SEARCHSCREEN, SHOWANDFILTERSCREEN, StackNavigationProp} from '../../navigators/config';
 
 const filterGetAllProduct: ModelFilterProduct = {
   Amount: 100,
@@ -26,13 +22,11 @@ const filterGetAllProduct: ModelFilterProduct = {
 
 const ProductScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
-  // const data = TempData.sneakers;
   const {products} = useSelector(selectors.product.select);
   const [bestSeller, setBestSeller] = useState<Product[]>([]);
   const dispatch = useDispatch();
 
   const _toSearchScreen = () => {
-    // navigate('SEARCHSCREEN');
     stackNav.navigate(SEARCHSCREEN, {});
   };
 
@@ -41,12 +35,6 @@ const ProductScreen: FC = () => {
   };
 
   useEffect(() => {
-    // const funcAsync = async () => {
-    //   const filter = filterGetAllProduct;
-    //   const result = await productService.getProducts(filter);
-    //   setBestSeller(result);
-    // };
-    // funcAsync();
     setTimeout(() => {
       dispatch(fetchProducts(filterGetAllProduct));
     }, 500);

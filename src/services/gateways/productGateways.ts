@@ -1,9 +1,15 @@
+import _ from 'lodash';
 import {AxiosInstance} from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {ELogic, ModelFilterProduct, ExternalProduct, Product} from '../../models';
+import {
+  ModelFilterProduct,
+  ExternalProduct,
+  Product,
+  ExternalProductCart,
+  OrderProduct,
+} from '../../models';
 import {SlowFetch} from '../../utilities';
-import _ from 'lodash';
 
 const PRODUCT_WISHLISH = 'product_wishlist';
 
@@ -46,18 +52,29 @@ export class ProductGateway {
     }
   }
 
-  async getExternalProductInfo(params: ExternalProduct[]) {
+  async getExternalProductInfo(params: ExternalProduct[]): Promise<ExternalProductCart[]> {
+    try {
+      const {data}: any = await this.restConnector.post('/api/Order/GetOrderProduct', params);
+      return data;
+    } catch (error) {
+      console.log('getExternalProductInfo :', error);
+      throw error;
+    }
+  }
+  //cart
+  async createOrderProduct(params: OrderProduct): Promise<any> {
     try {
       const {data}: any = await SlowFetch(
-        this.restConnector.post('/api/Order/GetOrderProduct', params),
+        this.restConnector.post('/api/Order/CreateOrder', params),
       );
       return data;
     } catch (error) {
-      console.log(error);
+      console.log('getExternalProductInfo :', error);
       throw error;
     }
   }
 
+  // wishlish
   async loadWishlist(): Promise<Product[]> {
     const result = await this.localStorageConnector.getItem(PRODUCT_WISHLISH);
     if (!result || result === '') return [];

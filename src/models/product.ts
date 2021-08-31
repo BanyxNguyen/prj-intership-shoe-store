@@ -13,6 +13,13 @@ export interface Product {
   SelectedSize?: number;
 }
 
+export interface ProductCartCheckout extends Product {
+  StockAmount?: number;
+  RealPrice?: number;
+  Amount: number;
+  IsSelected?: boolean;
+}
+
 export interface ProductTrend {
   name: string;
   image: string;
@@ -35,14 +42,12 @@ export interface OptionMenu {
 export interface ExternalProduct {
   Id: string;
   Size: number;
-  // AmountStock: number;
 }
 
-export interface ExternalProductCart extends ExternalProduct{
+export interface ExternalProductCart extends ExternalProduct {
   Amount: number;
   Price: number;
 }
-
 
 //Model filter
 export enum ELogic {
@@ -71,3 +76,32 @@ export interface ModelFilter<TModel> {
 }
 export type PropFilterProduct = PropFilter<Product>;
 export type ModelFilterProduct = ModelFilter<Product>;
+
+// check out
+export interface CartCheckout {
+  Id: string;
+  Amount: number;
+  Price: number;
+  Size: number;
+}
+
+/**
+ * @Prepay credit card
+ * @PostPaid ship
+ */
+export enum EPaymentType {
+  Prepay,
+  PostPaid,
+}
+
+export interface InfoOrder {
+  TenNguoiNhan: string;
+  DiaChiNguoiNhan: string;
+  SoDienThoai: string;
+}
+
+export interface OrderProduct extends InfoOrder {
+  PaymentType: EPaymentType;
+  NgayLap: Date | string;
+  CartList: CartCheckout[];
+}

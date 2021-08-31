@@ -1,21 +1,20 @@
 import React, {FC, useEffect, useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, ScrollView} from 'react-native';
 
 import _ from 'lodash';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
-import {Product, OptionMenu} from '../models';
-import {colors, constants, fonts, shadows, sizes} from '../support/constants';
-import {SEARCHSCREEN, StackNavigationProp} from '../navigators/config';
-import {Container, Text} from '../support/styledComponents';
 import Icons from '../components/Icons';
 import {TempData} from '../utilities/data';
-import {ScrollView} from 'react-native-gesture-handler';
-import FastImage from 'react-native-fast-image';
-import ItemProduct from './ProductScreen/ItemProduct';
-import FilterBottomSheet from '../components/FilterBottomSheet';
-import {parseOptionToModelFilterRequest} from '../utilities';
 import {productService} from '../services';
+import {LoadingScreen} from '../InitGeneral';
+import {Product, OptionMenu} from '../models';
+import ItemProduct from './ProductScreen/ItemProduct';
+import {Container, Text} from '../support/styledComponents';
+import FilterBottomSheet from '../components/FilterBottomSheet';
+import {SEARCHSCREEN, StackNavigationProp} from '../navigators/config';
+import {parseOptionToModelFilterRequest, SlowFetch} from '../utilities';
+import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 
 const ShowAndFilterScreen: FC = () => {
   const route = useRoute();
@@ -28,14 +27,6 @@ const ShowAndFilterScreen: FC = () => {
     stackNav.goBack();
   };
 
-  const _initData = () => {
-    const options: any = _.get(route.params, 'options', {});
-    const name: any = _.get(route.params, 'title', '');
-    setProducts(TempData.sneakers);
-    setTitle(name);
-    setOptions(options);
-  };
-
   const _toSearchScreen = () => {
     stackNav.navigate(SEARCHSCREEN, {});
   };
@@ -44,31 +35,44 @@ const ShowAndFilterScreen: FC = () => {
     let title = '';
     for (const key in options) {
       for (let i = 0; i < options[key].length && i < 4; i++) {
-        title += options[key][i].value;
+        title += ' * ' + options[key][i].value;
       }
+    }
+    if (_.isEmpty(title)) {
+      title = 'All product';
+    } else {
+      title = title.slice(3, title.length);
     }
     setTitle(title);
     setOptions(options);
+    fetchProduct(options);
   };
 
-  const fetchProduct = async () => {
-    let op = {...options};
-    delete options.sort;
-    const filter = parseOptionToModelFilterRequest(op);
-    const result = await productService.getProducts(filter);
-    setProducts(result);
-    if(!_.isEmpty(options.sort)) {
-      //TODO sort
+  const fetchProduct = async (opt: OptionMenu) => {
+    try {
+      LoadingScreen.start();
+      delete options.sort;
+      const filter = parseOptionToModelFilterRequest(opt, {page: 0, amount: 50});
+      const result = await SlowFetch(productService.getProducts(filter), 700);
+      setProducts(result);
+      if (!_.isEmpty(options.sort)) {
+        //TODO sort
+      }
+    } catch (error) {
+      console.log(error);
+      setProducts([]);
     }
+    LoadingScreen.stop();
   };
 
   useEffect(() => {
-    _initData();
+    const options: any = _.get(route.params, 'options', {});
+    const name: any = _.get(route.params, 'title', '');
+    setProducts(TempData.sneakers);
+    setTitle(name);
+    setOptions(options);
+    fetchProduct(options);
   }, []);
-
-  useEffect(() => {
-    fetchProduct();
-  }, [options]);
 
   return (
     <Container style={styles.container}>
@@ -84,7 +88,7 @@ const ShowAndFilterScreen: FC = () => {
       <View style={{flex: 1}}>
         <View style={styles.resultBox}>
           <Text style={styles.txtResult}>{products.length} RESULTS</Text>
-          <FilterBottomSheet options={options} onSubmit={_onSubmit}>
+          <FilterBottomSheet amountProduct={products.length} onSubmit={_onSubmit}>
             <View style={styles.btn}>
               <Icons size={26} color={colors.black} name="options-outline" lib="Ionicons" />
             </View>

@@ -1,12 +1,13 @@
-import _, {size} from 'lodash';
-import React, {Component, createRef, FC, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import React, {Component, createRef} from 'react';
+import {StyleSheet, TouchableOpacity, View, ScrollView} from 'react-native';
+
+import _ from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {Product} from '../models';
-import {colors, fonts, sizes} from '../support/constants';
-import {parseColorStringToArr} from '../utilities';
+
 import Icons from './Icons';
+import {Product} from '../models';
+import {Text} from '../support/styledComponents';
+import {colors, fonts, sizes} from '../support/constants';
 
 interface Props {
   onSubmit?: (product: Product) => void;
@@ -30,7 +31,6 @@ class SeeMoreBottomSheet extends Component<Props, State> {
 
   ShowMore = (product: Product) => {
     this._open();
-
     this.setState({product});
   };
 

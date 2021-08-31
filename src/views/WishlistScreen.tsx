@@ -2,24 +2,23 @@ import React, {FC, useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, TouchableOpacity, View, ScrollView} from 'react-native';
 
+import _ from 'lodash';
 import FastImage from 'react-native-fast-image';
-
-import {Product} from '../models';
-import Icons from '../components/Icons';
-import {TempData} from '../utilities/data';
-import {Container, Text} from '../support/styledComponents';
-import {colors, fonts, shadows, sizes} from '../support/constants';
-import {DETAILSCREEN, StackNavigationProp} from '../navigators/config';
 import {useDispatch, useSelector} from 'react-redux';
-import {addItemCart, updateWishlish} from '../redux/slices/productSlice';
-import SeeMoreBottomSheet from '../components/SeeMoreBottomSheet';
-import {RootState, selectors} from '../redux/slices';
+
 import {
   changeSizeProductFromWishlish,
   triggerProductToWishlist,
 } from '../redux/slices/productSlice';
-import _ from 'lodash';
+import {Product} from '../models';
+import Icons from '../components/Icons';
+import {selectors} from '../redux/slices';
 import {parseImageStringToArr} from '../utilities';
+import {Container, Text} from '../support/styledComponents';
+import SeeMoreBottomSheet from '../components/SeeMoreBottomSheet';
+import {colors, fonts, shadows, sizes} from '../support/constants';
+import {DETAILSCREEN, StackNavigationProp} from '../navigators/config';
+import {addItemCart, updateWishlish} from '../redux/slices/productSlice';
 
 const WishlistScreen: FC = () => {
   const {wishlist, products: prod} = useSelector(selectors.product.select);
@@ -43,6 +42,14 @@ const WishlistScreen: FC = () => {
   };
 
   const _renderProducts = () => {
+    if (_.isEmpty(products))
+      return (
+        <View style={{flex: 1}}>
+          <Text style={{fontSize: sizes.h4, textAlign: 'center', color: colors.blueyGrey}}>
+            Nothing Saved Yet
+          </Text>
+        </View>
+      );
     return products.map((item, index) => {
       return <WishItem data={item} key={index.toString()} onMore={_onMore} />;
     });

@@ -1,10 +1,12 @@
-import React from 'react';
-import AppNavigator from './navigators';
-import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {SafeAreaView} from 'react-native';
+import React, {FC, useEffect} from 'react';
+
 import {Provider} from 'react-redux';
+import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
+
 import store from './redux/store';
-import InitGeneral from './InitGeneral';
+import AppNavigator from './navigators';
+import InitGeneral, {LoadingScreen} from './InitGeneral';
 
 // import SystemNavigationBar from "react-native-system-navigation-bar";
 // SystemNavigationBar.stickyImmersive()
@@ -18,13 +20,16 @@ const theme = {
   },
 };
 
-const App = () => {
+const App: FC = () => {
+  useEffect(() => {
+    LoadingScreen.stop();
+  }, []);
   return (
     <Provider store={store}>
+      <InitGeneral />
       <SafeAreaView style={{flex: 1}}>
         <PaperProvider theme={theme}>
           <AppNavigator />
-          <InitGeneral />
         </PaperProvider>
       </SafeAreaView>
     </Provider>

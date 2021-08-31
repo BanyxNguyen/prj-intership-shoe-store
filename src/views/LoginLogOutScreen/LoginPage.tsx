@@ -1,11 +1,11 @@
 import React, {FC, useRef, useState} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 
+import {EnumLogin, Login} from '../../models';
 import {Button, MyTextInput} from '../../components';
-import {EnumLogin, Login, ValidationInput} from '../../models';
 import {colors, sizes} from '../../support/constants';
 import {Text, Title} from '../../support/styledComponents';
-import {valPassword, valUsername} from './variable';
+import {valPassword, valUsername} from '../../utilities/variable';
 
 interface Props {
   toRegister: () => void;

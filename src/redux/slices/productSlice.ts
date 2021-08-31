@@ -1,27 +1,23 @@
+import _ from 'lodash';
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
+
 import {AppThunk} from '../store';
-import {CustomerInfoCart, ModelFilterProduct, Product} from '../../models';
 import {RootState} from './index';
 import {productService} from '../../services';
-import _ from 'lodash';
-
-export interface ProductReduxType extends Product {
-  Amount: number;
-  IsSelected?: boolean;
-}
+import {LoadingScreen} from '../../InitGeneral';
+import {NotifySnackbar} from '../../components/MyNotify';
+import {ModelFilterProduct, Product, ProductCartCheckout} from '../../models';
 
 interface InitStateType {
   wishlist: Product[];
-  cart: ProductReduxType[];
+  cart: ProductCartCheckout[];
   products: Product[];
-  customerInfoCart: CustomerInfoCart;
 }
 
 const initialState: InitStateType = {
   wishlist: [],
   cart: [],
   products: [],
-  customerInfoCart: {},
 };
 
 const Products = createSlice({
@@ -47,7 +43,7 @@ export const addItemCart =
       temp = _.concat(product.cart, {Amount: 1, ...data});
     } else {
       temp = product.cart.map(item => {
-        if (item.Id == data.Id) return {...item, amount: item.Amount + 1};
+        if (item.Id == data.Id) return {...item, Amount: item.Amount + 1};
         return item;
       });
     }
@@ -78,7 +74,7 @@ export const changeAmountItemCart =
       let temp = cart.map(item => {
         const amount = item.Amount + amountChange;
         if (item.Id == productId) {
-          return {...item, amount};
+          return {...item, Amount: amount};
         }
         return item;
       });
@@ -95,7 +91,7 @@ export const triggerSelectedItemCart =
     if (index > -1) {
       let temp = cart.map(item => {
         if (item.Id == productId) {
-          return {...item, isSelected: !item.IsSelected};
+          return {...item, IsSelected: !item.IsSelected};
         }
         return item;
       });
@@ -109,7 +105,7 @@ export const selectedAllItemCart =
     const {product} = getState();
     const {cart} = product;
     let temp = cart.map(item => {
-      return {...item, isSelected: status};
+      return {...item, IsSelected: status};
     });
     dispatch(setProduct({...product, cart: temp}));
   };
@@ -135,6 +131,7 @@ export const clearCart = (): AppThunk => async (dispatch: Dispatch, getState) =>
 export const fetchProducts =
   (filter: ModelFilterProduct): AppThunk =>
   async (dispatch: Dispatch, getState) => {
+    LoadingScreen.start();
     try {
       const {product} = getState();
       const products = await productService.getProducts(filter);
@@ -142,6 +139,7 @@ export const fetchProducts =
     } catch (error) {
       console.log(error);
     }
+    LoadingScreen.stop();
   };
 
 // Wishlist
@@ -154,10 +152,11 @@ export const loadWishlist = (): AppThunk => async (dispatch: Dispatch, getState)
 export const updateWishlish = (): AppThunk => async (dispatch: Dispatch, getState) => {
   const {product} = getState();
   const temp: Product[] = [];
+  if (_.isEmpty(product.products)) return;
   for (let i = 0; i < product.wishlist.length; i++) {
     const elm = product.wishlist[i];
     const index = _.findIndex(product.products, j => j.Id == elm.Id);
-    temp.push({...product.products[index]});
+    temp.push({...product.products[index], SelectedSize: elm.SelectedSize});
   }
   productService.saveWishlist(temp);
   dispatch(setProduct({...product, wishlist: temp}));
@@ -170,10 +169,11 @@ export const triggerProductToWishlist =
     let temp: Product[] = [];
     if (_.findIndex(product.wishlist, data) < 0) {
       temp = _.concat(product.wishlist, data);
+      NotifySnackbar({text: 'Add product to your wishlish'});
     } else {
       temp = product.wishlist.map(i => i);
       _.remove(temp, i => i.Id == data.Id);
-      console.log(temp);
+      NotifySnackbar({text: 'Remove product to your wishlish'});
     }
     productService.saveWishlist(temp);
     dispatch(setProduct({...product, wishlist: temp}));

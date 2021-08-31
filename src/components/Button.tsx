@@ -40,7 +40,7 @@ class Button extends Component<Props, State> {
     }
     clearTimeout(this.isClear);
     this.isClear = setTimeout(() => {
-      this.done()
+      this.done();
     }, 1000);
   };
 
@@ -49,6 +49,7 @@ class Button extends Component<Props, State> {
     const {children, styles: style, mod, width} = this.props;
     const btn = mod == 'black' ? styles.btnBgBlack : styles.btnOutlineBlack;
     const txt = mod == 'black' ? styles.txtWhite : styles.txtBlack;
+    const clIndicator = mod == 'black' ? colors.white : colors.black;
     const _width = width ? width : 160;
     return (
       <TouchableOpacity
@@ -56,7 +57,7 @@ class Button extends Component<Props, State> {
         activeOpacity={0.8}
         style={[style, styles.btn, btn, {width: _width}]}>
         <Text style={[styles.txt, txt]}>{children}</Text>
-        {isLoading && <ActivityIndicator size="small" color={colors.white} />}
+        {isLoading && <ActivityIndicator size="small" color={clIndicator} />}
       </TouchableOpacity>
     );
   }

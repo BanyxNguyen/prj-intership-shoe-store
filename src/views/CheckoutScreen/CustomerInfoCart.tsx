@@ -1,59 +1,78 @@
-import React, {FC, useRef} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
+import React, {FC, useEffect, useRef, useState} from 'react';
+
+import {useDispatch, useSelector} from 'react-redux';
+
+import {InfoOrder} from '../../models';
+import {selectors} from '../../redux/slices';
 import {MyTextInput} from '../../components';
-import {ValidationInput} from '../../models';
+import {valNoEmpty, valPhoneNumber} from '../../utilities/variable';
+import {checkAndGetInfoOrder, saveInfoOrder} from '../../redux/slices/accountsSlice';
 
-const valName: ValidationInput[] = [
-  {
-    name: 'noEmpty',
-  },
-];
+export interface OnChangeOtherParams {
+  key: keyof InfoOrder;
+  value: string;
+}
 
-const valPhone: ValidationInput[] = [
-  {
-    name: 'noEmpty',
-  },
-  {
-    name: 'regex',
-    value: /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/,
-    notify: 'Value is not phone number',
-  },
-];
+interface Props {}
 
-const valAddress: ValidationInput[] = [
-  {
-    name: 'noEmpty',
-  },
-];
+const infoOrderDefault: InfoOrder = {
+  TenNguoiNhan: '',
+  DiaChiNguoiNhan: '',
+  SoDienThoai: '',
+};
 
-const CustomerInfoCart: FC = () => {
+const CustomerInfoCart: FC<Props> = props => {
   const refTxtName = useRef<MyTextInput>(null);
   const refTxtPhone = useRef<MyTextInput>(null);
   const refTxtAddress = useRef<MyTextInput>(null);
+  const {infoOrderHistory} = useSelector(selectors.account.select);
+  const [infoOrder, setInfoOrder] = useState(infoOrderDefault);
+  const dispatch = useDispatch();
 
-  const _onChangeText = (name: 'name' | 'phone' | 'address') => (text: string) => {};
+  const _onChangeText = (key: keyof InfoOrder) => (value: string) => {
+    setInfoOrder({...infoOrder, [key]: value});
+  };
+
+  const _save = () => {
+    dispatch(saveInfoOrder(infoOrder));
+  };
+
+  useEffect(() => {
+    setInfoOrder(infoOrderHistory);
+  }, [infoOrderHistory]);
+
+  useEffect(() => {
+    dispatch(checkAndGetInfoOrder());
+  }, []);
 
   return (
     <>
       <MyTextInput
         label="Name"
         style={styles.input}
-        validation={valName}
-        onChangeText={_onChangeText('name')}
+        validation={valNoEmpty}
+        value={infoOrder.TenNguoiNhan}
+        onBlur={_save}
+        onChangeText={_onChangeText('TenNguoiNhan')}
         ref={refTxtName}
       />
       <MyTextInput
         label="Phone number"
         style={styles.input}
-        validation={valPhone}
-        onChangeText={_onChangeText('phone')}
+        validation={valPhoneNumber}
+        value={infoOrder.SoDienThoai}
+        onBlur={_save}
+        onChangeText={_onChangeText('SoDienThoai')}
         ref={refTxtPhone}
       />
       <MyTextInput
         label="Address"
         style={styles.input}
-        validation={valAddress}
-        onChangeText={_onChangeText('address')}
+        validation={valNoEmpty}
+        value={infoOrder.DiaChiNguoiNhan}
+        onBlur={_save}
+        onChangeText={_onChangeText('DiaChiNguoiNhan')}
         ref={refTxtAddress}
       />
     </>

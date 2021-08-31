@@ -1,4 +1,4 @@
-import {ValidationInput} from '../../models';
+import {ValidationInput} from '../models';
 
 export const valNoEmpty: ValidationInput[] = [
   {
@@ -48,4 +48,15 @@ export const valPassword: ValidationInput[] = [
   //   value: /[@#$%^&*!_()-+{}~<>,.|\\\/\s]/g,
   //   notify: 'Password requires non alphanumeric',
   // },
+];
+
+export const valPhoneNumber: ValidationInput[] = [
+  {
+    name: 'noEmpty',
+  },
+  {
+    name: 'regex',
+    value: /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/,
+    notify: 'Value is not phone number',
+  },
 ];

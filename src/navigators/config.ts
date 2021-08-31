@@ -1,5 +1,5 @@
-import {NavigationProp, NavigatorScreenParams, RouteProp} from '@react-navigation/native';
 import {Product, OptionMenu} from '../models';
+import {NavigationProp, NavigatorScreenParams, RouteProp} from '@react-navigation/native';
 
 export const WELCOMESCREEN = 'WELCOMESCREEN';
 export const LOGINSCREEN = 'LOGINSCREEN';
@@ -33,6 +33,7 @@ export interface IWelcomeScreenParams {}
 export interface IHomeScreenParams {}
 export interface IDetailScreenParams {
   data: Product;
+  readOnly?: boolean;
 }
 export interface ISearchScreenParams {}
 export interface ILoginLogOutScreenParams {
@@ -54,6 +55,12 @@ export type StackParams = {
   [CHECKOUTSCREEN]: ICheckoutScreenParams;
   [LOGINLOGOUTSCREEN]: ILoginLogOutScreenParams;
   [SHOWANDFILTERSCREEN]: IShowAndFilterScreenParams;
+
+  // TAB
+  [TABSHOP]: {};
+  [TABDROPS]: {};
+  [TABWISHLISH]: {};
+  [TABCARTSCREEN]: {};
 };
 
 export type StackNavigationProp = NavigationProp<StackParams>;

@@ -1,5 +1,5 @@
+import {InfoOrder, Login, Register} from '../models';
 import {AccountGateway} from './gateways/accountGateways';
-import {Login, Register} from '../models';
 
 export class AccountService {
   private accountGateway: AccountGateway;
@@ -18,12 +18,22 @@ export class AccountService {
     return this.useSaveAndGetProfile(token);
   }
 
-  async getProfile() {
+  getProfile() {
     return this.accountGateway.getProfile();
   }
 
   private async useSaveAndGetProfile(token: string) {
     await this.accountGateway.useAndSaveAccessToken(token);
     return this.getProfile();
+  }
+
+  // info order
+  getInfoOrder() {
+    return this.accountGateway.getInfoOrder();
+  }
+
+  saveInfoOrder(data: InfoOrder) {
+    const str = JSON.stringify(data);
+    return this.accountGateway.saveInfoOrder(str);
   }
 }

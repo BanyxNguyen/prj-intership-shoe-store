@@ -49,14 +49,13 @@ export const DefaultOptions: OptionMenu = {
   ],
 };
 
-
 export const DefaultOptionsMenu: OptionTypeMenu[] = [
-  {value: 'Sort By', key: 'sort', isOnly: true},
+  // {value: 'Sort By', key: 'sort', isOnly: true},
   // {value: 'Gender', key: 'gender'},
   {value: 'Brand', key: 'ThuongHieu'},
   {value: 'Category', key: 'LoaiSP'},
   // {value: 'Product Type', key: 'types'},
-  {value: 'Color', key: 'Mau'},
+  // {value: 'Color', key: 'Mau'},
   {value: 'Size', key: 'KichThuocs'},
 ];
 

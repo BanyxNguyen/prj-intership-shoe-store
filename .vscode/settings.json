@@ -3,6 +3,7 @@
     "CARTSCREEN",
     "CHECKOUTSCREEN",
     "DETAILSCREEN",
+    "Dien",
     "HOMESCREEN",
     "Hieu",
     "Hinh",
@@ -11,6 +12,9 @@
     "LOGINLOGOUTSCREEN",
     "LOGINSCREEN",
     "Loai",
+    "Ngay",
+    "Nguoi",
+    "Nhan",
     "Otomanopee",
     "PROFILESCREEN",
     "Pham",
@@ -23,6 +27,7 @@
     "TABDROPS",
     "TABSHOP",
     "TABWISHLISH",
+    "Thoai",
     "Thuocs",
     "Thuong",
     "WELCOMESCREEN",
@@ -30,6 +35,8 @@
     "appbar",
     "hocs",
     "jfif",
+    "paypal",
+    "reduxjs",
     "serializable"
   ]
 }

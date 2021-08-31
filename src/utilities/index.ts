@@ -41,11 +41,13 @@ export const keyExtractor = (item: any, index: number) => {
  * @param str exp: 000,fff
  */
 export const parseColorStringToArr = (str: string) => {
-  const colors = str.split(str);
-  return colors.map(i => i.trim());
+  if (_.isEmpty(str)) return [];
+  const cls = str.split(',');
+  return cls.map(i => i.trim());
 };
 
 export const parseImageStringToArr = (str: string) => {
+  if (_.isEmpty(str)) return [];
   const images: string[] = JSON.parse(str);
   return images.map(i => Config.API_URL + i);
 };

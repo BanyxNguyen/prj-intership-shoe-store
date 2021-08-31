@@ -1,25 +1,99 @@
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import React, {Component, FC, useEffect, useRef, useState} from 'react';
-import {KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import _ from 'lodash';
 import FastImage from 'react-native-fast-image';
+import {useDispatch, useSelector} from 'react-redux';
 import {ScrollView} from 'react-native-gesture-handler';
-import {useSelector} from 'react-redux';
+
 import {Button} from '../../components';
 import Icons from '../../components/Icons';
-import {StackNavigationProp} from '../../navigators/config';
-import {RootState} from '../../redux/slices';
-import {ProductReduxType} from '../../redux/slices/productSlice';
-import {colors, constants, fonts, shadows, sizes} from '../../support/constants';
-import {Container, Text} from '../../support/styledComponents';
+import {selectors} from '../../redux/slices';
+import {productService} from '../../services';
+import {LoadingScreen} from '../../InitGeneral';
 import CustomerInfoCart from './CustomerInfoCart';
+import {parseImageStringToArr} from '../../utilities';
+import {clearCart} from '../../redux/slices/productSlice';
+import {Container, Text} from '../../support/styledComponents';
+import {StackNavigationProp, TABDROPS} from '../../navigators/config';
 import ProgressCartNumber, {PageIndexType} from './ProgressCartNumber';
+import {colors, constants, fonts, shadows, sizes} from '../../support/constants';
+import {CartCheckout, EPaymentType, OrderProduct, ProductCartCheckout} from '../../models';
 
 const CheckoutScreen: FC = () => {
-  const {cart} = useSelector((state: RootState) => state.product);
-  const [productCart, setProductCart] = useState<ProductReduxType[]>([]);
+  const {cart} = useSelector(selectors.product.select);
+  const {infoOrderHistory} = useSelector(selectors.account.select);
+  const [productCart, setProductCart] = useState<ProductCartCheckout[]>([]);
   const stackNav = useNavigation<StackNavigationProp>();
   const refScrollView = useRef<ScrollView>(null);
   const refProgressCartNumber = useRef<ProgressCartNumber>(null);
+  const dispatch = useDispatch();
+
+  const _getTotal = () => {
+    let total = 0;
+    productCart.map(i => {
+      if (i.StockAmount && i.StockAmount > 0) {
+        const price = _.get(i, 'RealPrice', 0);
+        total += price * i.Amount;
+      }
+    });
+    return total;
+  };
+
+  const _submitOther = async (paymentType: EPaymentType) => {
+    try {
+      LoadingScreen.start();
+      const cartCheckout: CartCheckout[] = productCart
+        .filter(i => {
+          return i.StockAmount && i.StockAmount > 0;
+        })
+        .map(i => ({
+          Id: i.Id,
+          Amount: i.Amount,
+          Price: i.RealPrice as number,
+          Size: i.SelectedSize as number,
+        }));
+      console.log('cartCheckout', cartCheckout);
+
+      if (cartCheckout.length <= 0) {
+        Alert.alert(`Can't make order!!!`);
+        return;
+      }
+
+      const temp: OrderProduct = {
+        ...infoOrderHistory,
+        PaymentType: paymentType,
+        NgayLap: new Date(),
+        CartList: cartCheckout,
+      };
+      const result = await productService.createOrderProduct(temp);
+      console.log('result order: ', result);
+      Alert.alert('Other product success!!!');
+      stackNav.navigate(TABDROPS, {});
+      dispatch(clearCart());
+      if (paymentType == EPaymentType.Prepay) {
+        //TODO paypal
+      }
+      return result;
+    } catch (error) {
+      console.log('error submit order: ', error.response);
+    }
+    LoadingScreen.stop();
+  };
+
+  const _submitOtherPostPaid = () => {
+    // TODO check account login
+    // if (_.isEmpty(profile)) return;
+    _submitOther(EPaymentType.PostPaid);
+  };
 
   const _goBack = () => {
     stackNav.goBack();
@@ -36,41 +110,91 @@ const CheckoutScreen: FC = () => {
   };
 
   useEffect(() => {
-    setProductCart(cart);
+    const funcAsync = async () => {
+      const _cart = cart.filter(i => i.IsSelected);
+      try {
+        const result = await productService.getExternalProductInfo(_cart);
+        setProductCart(result);
+      } catch (error) {
+        console.log('_cart:', error.response);
+        setProductCart([]);
+      }
+    };
+    funcAsync();
   }, [cart]);
 
-  const _renderItem = () => {
-    return productCart
-      .filter(i => i.IsSelected)
-      .map((item, index) => {
-        // if (!item.isSelected) return <></>;
-        const {HinhAnh, Ten, SelectedSize, Gia} = item;
-        const images: string[] = JSON.parse(HinhAnh);
-        return (
-          <View style={[styles.itemBox, shadows.s1]} key={index.toString()}>
-            <FastImage
-              style={{height: hItem, width: wItem}}
-              source={{
-                uri: images[0],
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-            <View style={styles.itemContent}>
-              <Text numberOfLines={1} style={styles.txtName}>
-                {Ten}
-              </Text>
-              <Text numberOfLines={1} style={styles.txt}>
-                Price: ${Gia}
-              </Text>
-              <Text numberOfLines={1} style={styles.txt}>
-                Size: {SelectedSize}
-              </Text>
-            </View>
+  const _renderItemFunc = (data: ProductCartCheckout[]) => {
+    return data.map((item, index) => {
+      const {HinhAnh, Ten, SelectedSize, Gia} = item;
+      const images = parseImageStringToArr(HinhAnh);
+      return (
+        <View style={[styles.itemBox, shadows.s1]} key={index.toString()}>
+          <FastImage
+            style={{height: hItem, width: wItem}}
+            source={{
+              uri: images[0],
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+          <View style={styles.itemContent}>
+            <Text numberOfLines={1} style={styles.txtName}>
+              {Ten}
+            </Text>
+            <Text numberOfLines={1} style={styles.txt}>
+              Price: ${item.RealPrice || 0}
+            </Text>
+            <Text numberOfLines={1} style={styles.txt}>
+              Size: {SelectedSize} - Amount: {item.Amount}
+            </Text>
+            <Text numberOfLines={1} style={styles.txt}>
+              Status:{' '}
+              {item.StockAmount && item.StockAmount > 0 ? (
+                <Text style={styles.txtGreen}>Stocking</Text>
+              ) : (
+                <Text style={styles.txtRed}>Out of stock</Text>
+              )}
+            </Text>
           </View>
-        );
-      });
+        </View>
+      );
+    });
   };
+
+  const _renderItem = () => {
+    const stocking: ProductCartCheckout[] = [];
+    const outOfStock: ProductCartCheckout[] = [];
+
+    for (let i = 0; i < productCart.length; i++) {
+      const elm = productCart[i];
+      if (elm.StockAmount != undefined) {
+        if (elm.StockAmount > 0) {
+          stocking.push(elm);
+        } else {
+          outOfStock.push(elm);
+        }
+      }
+    }
+
+    return (
+      <View>
+        {outOfStock.length > 0 && <Text style={styles.titleSmall}>Your cart</Text>}
+        {_renderItemFunc(stocking)}
+        {outOfStock.length > 0 && (
+          <View>
+            <Text style={styles.titleSmall}>Product is out of stock</Text>
+            {_renderItemFunc(outOfStock)}
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  if (_.isEmpty(cart)) {
+    <Container style={[styles.container, styles.errorBox]}>
+      <Text style={styles.errTxt}>Network Error. Please connected internet.</Text>
+    </Container>;
+  }
 
   return (
     <Container style={styles.container}>
@@ -94,7 +218,7 @@ const CheckoutScreen: FC = () => {
               showsVerticalScrollIndicator={false}>
               <View style={styles.contentBox}>
                 <View style={styles.totalBox}>
-                  <Text style={styles.total}>Total: $ sum price from server</Text>
+                  <Text style={styles.total}>Total: ${_getTotal()}</Text>
                 </View>
                 <ScrollView>{_renderItem()}</ScrollView>
                 <View style={styles.btnNext}>
@@ -122,14 +246,21 @@ const CheckoutScreen: FC = () => {
                 </View>
               </View>
               <View style={styles.contentBox}>
-                <View style={styles.btnNext}>
-                  <Button width={sizes.wScreen - 30}>pay on delivery</Button>
+                <View style={{flex: 1}}>
+                  <View style={styles.btnNext}>
+                    <Button width={sizes.wScreen - 30} onPress={_submitOtherPostPaid}>
+                      pay on delivery
+                    </Button>
+                  </View>
+                  <View style={styles.btnNext}>
+                    <Button mod="black" width={sizes.wScreen - 30}>
+                      Paypal
+                    </Button>
+                  </View>
                 </View>
-                <View style={styles.btnNext}>
-                  <Button mod="black" width={sizes.wScreen - 30}>
-                    Paypal
-                  </Button>
-                </View>
+                <Button mod="black" width={sizes.wScreen - 30} onPress={_onNext(1)}>
+                  Back
+                </Button>
               </View>
             </ScrollView>
           </View>
@@ -186,7 +317,10 @@ const styles = StyleSheet.create({
     fontSize: sizes.h4,
     textTransform: 'uppercase',
   },
-
+  titleSmall: {
+    fontFamily: fonts.montserrat.semiBold,
+    fontSize: sizes.h55,
+  },
   itemContent: {
     flex: 1,
     paddingVertical: 10,
@@ -213,5 +347,23 @@ const styles = StyleSheet.create({
   btnNextGroup: {
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  errorBox: {},
+  errTxt: {
+    fontSize: sizes.h4,
+    textAlign: 'center',
+  },
+  txtGreen: {
+    fontSize: sizes.h55,
+    fontFamily: fonts.montserrat.regular,
+    color: colors.green,
+  },
+  txtRed: {
+    fontSize: sizes.h55,
+    fontFamily: fonts.montserrat.regular,
+    color: colors.red,
+  },
+  opacityItem: {
+    opacity: 0.25,
   },
 });

@@ -7,7 +7,7 @@ import {EnumRegister, Register} from '../../models';
 import {Button, MyTextInput} from '../../components';
 import {colors, sizes} from '../../support/constants';
 import {Text, Title} from '../../support/styledComponents';
-import {valNoEmpty, valPassword, valUsername} from './variable';
+import {valNoEmpty, valPassword, valUsername} from '../../utilities/variable';
 
 interface Props {
   toLogin: () => void;

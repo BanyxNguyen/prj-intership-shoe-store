@@ -1,12 +1,13 @@
+import React, {Component} from 'react';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+
 import _ from 'lodash';
-import React, {Component, FC, useState} from 'react';
-import {Keyboard, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {TextInput as Input} from 'react-native-paper';
+
 import {ValidationInput} from '../models';
-import {colors, fonts, sizes} from '../support/constants';
-import {Text} from '../support/styledComponents';
 import {checkValidation} from '../utilities';
-import Icons from './Icons';
+import {Text} from '../support/styledComponents';
+import {fonts, sizes} from '../support/constants';
 
 interface Props {
   label?: string;
@@ -15,6 +16,7 @@ interface Props {
   style?: StyleProp<ViewStyle>;
   validation?: ValidationInput[];
   onChangeText?: (text: string) => void;
+  onBlur?: () => void;
 }
 
 interface State {
@@ -67,6 +69,8 @@ class MyTextInput extends Component<Props, State> {
   };
 
   private _onBlur = () => {
+    const {onBlur} = this.props;
+    onBlur && onBlur();
     this.validation();
   };
 

@@ -1,10 +1,12 @@
-import axios, {AxiosInstance} from 'axios';
-import {Account, Login, Register} from '../../models';
-import {SlowFetch} from '../../utilities';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import _ from 'lodash';
+import {AxiosInstance} from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {SlowFetch} from '../../utilities';
+import {Account, InfoOrder, Login, Register} from '../../models';
 
 const accessTokenSaveName = 'authentication_accessToken';
+const infoOrderSaveName = 'history_info_order';
 
 export class AccountGateway {
   private localStorageConnector: typeof AsyncStorage;
@@ -65,5 +67,22 @@ export class AccountGateway {
   async _loadAccessToken() {
     const accessToken = await this.localStorageConnector.getItem(accessTokenSaveName);
     return accessToken || '';
+  }
+
+  // info order
+
+  async getInfoOrder(): Promise<InfoOrder | null> {
+    const infoOrder: string = await this._loadInfoOrder();
+    if (_.isEmpty(infoOrder)) return null;
+    return JSON.parse(infoOrder);
+  }
+
+  async saveInfoOrder(infoOrder = '') {
+    await this.localStorageConnector.setItem(infoOrderSaveName, infoOrder);
+  }
+
+  async _loadInfoOrder() {
+    const infoOrder = await this.localStorageConnector.getItem(infoOrderSaveName);
+    return infoOrder || '';
   }
 }

@@ -1,3 +1,5 @@
+import {CartCheckout} from './product';
+
 export interface Login {
   UserName: string;
   PassWord: string;
@@ -18,12 +20,12 @@ export interface Register {
 export type EnumRegister = keyof Register;
 
 export interface Account {
+  UserName: string;
   FirstName: string;
   LastName: string;
   Birthday: Date;
   Gender: 0 | 1;
   Address: string;
-  UserName: string;
 }
 
-export interface CustomerInfoCart {}
+export type EnumAccount = keyof Account;
