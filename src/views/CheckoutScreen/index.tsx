@@ -27,6 +27,10 @@ import {StackNavigationProp, TABDROPS} from '../../navigators/config';
 import ProgressCartNumber, {PageIndexType} from './ProgressCartNumber';
 import {colors, constants, fonts, shadows, sizes} from '../../support/constants';
 import {CartCheckout, EPaymentType, OrderProduct, ProductCartCheckout} from '../../models';
+import PayPalButton from '../PayPal/PayPalButton';
+import {OrderApproved} from '../PayPal/types';
+import {NotifySnackbar} from '../../components/MyNotify';
+import {TokenAccessory} from '../../services/TokenAccessory';
 
 const CheckoutScreen: FC = () => {
   const {cart} = useSelector(selectors.product.select);
@@ -65,6 +69,7 @@ const CheckoutScreen: FC = () => {
 
       if (cartCheckout.length <= 0) {
         Alert.alert(`Can't make order!!!`);
+        LoadingScreen.stop();
         return;
       }
 
@@ -76,19 +81,56 @@ const CheckoutScreen: FC = () => {
       };
       const result = await productService.createOrderProduct(temp);
       console.log('result order: ', result);
-      Alert.alert('Other product success!!!');
+      // Alert.alert('Other product success!!!');
+      NotifySnackbar({text: 'Other product success!!!', duration: 1500});
       stackNav.navigate(TABDROPS, {});
       dispatch(clearCart());
       if (paymentType == EPaymentType.Prepay) {
         //TODO paypal
       }
+      LoadingScreen.stop();
       return result;
     } catch (error) {
       console.log('error submit order: ', error.response);
+      LoadingScreen.stop();
     }
-    LoadingScreen.stop();
   };
 
+  const _submitOther_v2 = async (paymentType: EPaymentType) => {
+    try {
+      LoadingScreen.start();
+      console.log({productCart});
+      const cartCheckout: CartCheckout[] = productCart
+        .filter(i => {
+          return i.StockAmount && i.StockAmount > 0;
+        })
+        .map(i => ({
+          Id: i.Id,
+          Amount: i.Amount,
+          Price: i.RealPrice as number,
+          Size: i.SelectedSize as number,
+        }));
+      if (cartCheckout.length <= 0) {
+        Alert.alert(`Can't make order!!!`);
+        LoadingScreen.stop();
+        return;
+      }
+      const temp: OrderProduct = {
+        ...infoOrderHistory,
+        PaymentType: paymentType,
+        NgayLap: new Date(),
+        CartList: cartCheckout,
+      };
+      const result = await productService.createOrderProduct(temp);
+      console.log({result});
+      dispatch(clearCart());
+      LoadingScreen.stop();
+      return result;
+    } catch (error) {
+      console.log('error submit order: ', error.response);
+      LoadingScreen.stop();
+    }
+  };
   const _submitOtherPostPaid = () => {
     // TODO check account login
     // if (_.isEmpty(profile)) return;
@@ -111,6 +153,7 @@ const CheckoutScreen: FC = () => {
 
   useEffect(() => {
     const funcAsync = async () => {
+      LoadingScreen.start();
       const _cart = cart.filter(i => i.IsSelected);
       try {
         const result = await productService.getExternalProductInfo(_cart);
@@ -119,6 +162,7 @@ const CheckoutScreen: FC = () => {
         console.log('_cart:', error.response);
         setProductCart([]);
       }
+      LoadingScreen.stop();
     };
     funcAsync();
   }, [cart]);
@@ -252,15 +296,42 @@ const CheckoutScreen: FC = () => {
                       pay on delivery
                     </Button>
                   </View>
-                  <View style={styles.btnNext}>
-                    <Button mod="black" width={sizes.wScreen - 30}>
-                      Paypal
-                    </Button>
+                  <View style={[styles.btnNext, {flex: 1}]}>
+                    <PayPalButton
+                      token={TokenAccessory.bearerToken}
+                      ButtonType={(props: any) => {
+                        return (
+                          <Button
+                            onPress={async () => {
+                              const OrderID = await _submitOther_v2(EPaymentType.Prepay);
+                              console.log({OrderID});
+                              if (OrderID) {
+                                props.onPress(OrderID);
+                              }
+                            }}
+                            mod="black"
+                            width={sizes.wScreen - 30}>
+                            Paypal
+                          </Button>
+                        );
+                      }}
+                      urlBase={'http://192.168.1.100:5000'}
+                      onApproved={async (data: OrderApproved) => {
+                        console.log(data);
+                        await fetch(
+                          'http://192.168.1.100:5000/api/Payment/CaptureOrder?ApprovedOrderId=' +
+                            data.orderID,
+                        );
+                        NotifySnackbar({text: 'Other product success!!!', duration: 1500});
+                        stackNav.navigate(TABDROPS, {});
+                      }}></PayPalButton>
                   </View>
                 </View>
-                <Button mod="black" width={sizes.wScreen - 30} onPress={_onNext(1)}>
-                  Back
-                </Button>
+                <View style={styles.btnNext}>
+                  <Button mod="black" width={sizes.wScreen - 30} onPress={_onNext(1)}>
+                    Back
+                  </Button>
+                </View>
               </View>
             </ScrollView>
           </View>

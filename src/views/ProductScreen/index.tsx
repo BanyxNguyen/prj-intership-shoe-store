@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, ScrollView, TouchableOpacity, Alert} from 'react-native';
 
 import _ from 'lodash';
 import {useDispatch, useSelector} from 'react-redux';
@@ -78,6 +78,7 @@ const ProductScreen: FC = () => {
               ))}
             </ScrollView>
           </View>
+
         </View>
       </ScrollView>
     </Container>

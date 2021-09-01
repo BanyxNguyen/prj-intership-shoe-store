@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {SlowFetch} from '../../utilities';
 import {Account, InfoOrder, Login, Register} from '../../models';
+import {TokenAccessory} from '../TokenAccessory';
 
 const accessTokenSaveName = 'authentication_accessToken';
 const infoOrderSaveName = 'history_info_order';
@@ -57,6 +58,7 @@ export class AccountGateway {
   useAccessToken(token: string = '') {
     console.log('token: ', token);
     this.restConnector.defaults.headers.common.Authorization = `Bearer ${token}`;
+    TokenAccessory.bearerToken = `Bearer ${token}`;
   }
 
   async useAndSaveAccessToken(token: string = ''): Promise<void> {

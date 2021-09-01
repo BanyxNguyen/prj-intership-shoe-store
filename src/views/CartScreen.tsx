@@ -15,17 +15,23 @@ import {
   triggerSelectedItemCart,
 } from '../redux/slices/productSlice';
 import Icons from '../components/Icons';
-import {RootState} from '../redux/slices';
+import {RootState, selectors} from '../redux/slices';
 import {parseImageStringToArr} from '../utilities';
 import {Product, ProductCartCheckout} from '../models';
 import {Container, Text} from '../support/styledComponents';
 import SeeMoreBottomSheet from '../components/SeeMoreBottomSheet';
 import {colors, fonts, shadows, sizes} from '../support/constants';
-import {CHECKOUTSCREEN, DETAILSCREEN, StackNavigationProp} from '../navigators/config';
+import {
+  CHECKOUTSCREEN,
+  DETAILSCREEN,
+  LOGINLOGOUTSCREEN,
+  StackNavigationProp,
+} from '../navigators/config';
 
 const CartScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
-  const {cart} = useSelector((state: RootState) => state.product);
+  const {cart} = useSelector(selectors.product.select);
+  const {profile} = useSelector(selectors.account.select);
   const [productCart, setProductCart] = useState<ProductCartCheckout[]>([]);
   const [isCheckout, setIsCheckout] = useState(false);
   const refBTS = useRef<SeeMoreBottomSheet>(null);
@@ -86,7 +92,11 @@ const CartScreen: FC = () => {
   };
 
   const _onCheckout = () => {
-    stackNav.navigate(CHECKOUTSCREEN, {});
+    if (!_.isEmpty(profile)) {
+      stackNav.navigate(CHECKOUTSCREEN, {});
+    } else {
+      stackNav.navigate(LOGINLOGOUTSCREEN, {page: 1});
+    }
   };
 
   useEffect(() => {
