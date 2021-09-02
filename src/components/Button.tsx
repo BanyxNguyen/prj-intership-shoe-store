@@ -33,7 +33,7 @@ class Button extends Component<Props, State> {
 
   private _onPress = () => {
     const {onPress} = this.props;
-    if (!this.state.isLoading) this.setState({isLoading: true});
+    // if (!this.state.isLoading) this.setState({isLoading: true});
     if (this.isPress) {
       onPress && onPress();
       this.isPress = false;

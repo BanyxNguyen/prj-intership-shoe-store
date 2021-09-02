@@ -61,7 +61,7 @@ class SeeMoreBottomSheet extends Component<Props, State> {
 
   private _renderSizes = () => {
     const {product} = this.state;
-    if (_.isEmpty(product)) return <></>;
+    if (_.isEmpty(product) || _.isEmpty(product.KichThuocs)) return <></>;
     return product.KichThuocs.map((item, index) => {
       let st = {};
       if (product.SelectedSize && _.isEqual(item, product.SelectedSize)) st = styles.txtItemActive;

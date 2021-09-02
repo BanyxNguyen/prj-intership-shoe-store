@@ -30,7 +30,22 @@ export class AccountGateway {
 
   async register(registerForm: Register): Promise<string> {
     try {
-      return SlowFetch(this.restConnector.post('/api/Token/Register', registerForm));
+      const {data}: any = await SlowFetch(
+        this.restConnector.post('/api/Token/Register', registerForm),
+      );
+      return data;
+    } catch (error) {
+      console.log('register error', error);
+      throw error;
+    }
+  }
+
+  async update(newProfileForm: Account): Promise<string> {
+    try {
+      const {data}: any = await SlowFetch(
+        this.restConnector.post('/api/Token/UpdateProfile', newProfileForm),
+      );
+      return data;
     } catch (error) {
       console.log('register error', error);
       throw error;
@@ -38,7 +53,7 @@ export class AccountGateway {
   }
 
   async logout() {
-    // TODO-IMPORTANT: Remove hard code and use rest connector to connect to back-end API
+    await this.localStorageConnector.removeItem(accessTokenSaveName);
   }
 
   async getProfile(): Promise<Account | null> {

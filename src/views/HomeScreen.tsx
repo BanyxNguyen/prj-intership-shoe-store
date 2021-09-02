@@ -18,7 +18,7 @@ import {
 
 import {productService} from '../services';
 import {globalStyles} from '../support/globalStyles';
-import {StackNavigationProp} from '../navigators/config';
+import {SHOWANDFILTERSCREEN, StackNavigationProp} from '../navigators/config';
 import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text, Title} from '../support/styledComponents';
 import Icons from '../components/Icons';
@@ -29,12 +29,15 @@ import {TempData} from '../utilities/data';
 const {hHeader, hFooter, statusBar} = constants;
 
 const hItem = sizes.hScreen - hHeader - hFooter - statusBar;
-// console.log(sizes.hScreen, hItem);
 
 const HomeScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
 
   const _data = TempData.trends;
+
+  const _onSeeMore = (name: string) => () => {
+    stackNav.navigate(SHOWANDFILTERSCREEN, {title: name, options: {}});
+  };
 
   const _renderItem = (item: ProductTrend, index: any) => {
     const test = ['red', 'blue', 'violet'];
@@ -50,7 +53,8 @@ const HomeScreen: FC = () => {
         />
         <View style={[StyleSheet.absoluteFill, styles.itemContent]}>
           <View style={styles.label}>
-            <Text style={[styles.labelTxtType, styles.labelTxt]}>{item.type}</Text>
+            {/* TODO add feature tab */}
+            {/* <Text style={[styles.labelTxtType, styles.labelTxt]}>{item.type}</Text> */}
           </View>
           <View style={styles.bottomBox}>
             <View style={styles.label}>
@@ -64,12 +68,15 @@ const HomeScreen: FC = () => {
                 <View style={styles.btnDetailLine} />
               </View>
               <View style={[styles.btnBox, StyleSheet.absoluteFill]}>
-                <View style={styles.btnDetailContent}>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={styles.btnDetailContent}
+                  onPress={_onSeeMore(item.name.toUpperCase())}>
                   <Text style={styles.btnDetailText}>SEE MORE</Text>
                   <View style={[globalStyles.gsFlexCenter]}>
                     <Icons size={24} color={colors.black} name="arrow-right-l" lib="Fontisto" />
                   </View>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

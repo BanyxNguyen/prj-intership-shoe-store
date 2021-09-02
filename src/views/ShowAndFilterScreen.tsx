@@ -81,9 +81,11 @@ const ShowAndFilterScreen: FC = () => {
           <Icons size={26} color={colors.black} name="arrow-left" lib="Feather" />
         </TouchableOpacity>
         <Text style={styles.titleHeader}>{title}</Text>
-        <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={_toSearchScreen}>
+        {/* TODO update feature search */}
+        {/* <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={_toSearchScreen}>
           <Icons size={26} color={colors.black} name="md-search-outline" lib="Ionicons" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View style={styles.btn} />
       </View>
       <View style={{flex: 1}}>
         <View style={styles.resultBox}>

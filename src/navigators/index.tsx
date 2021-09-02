@@ -40,7 +40,7 @@ import {IconCart, TabIconParams} from './support';
 
 const Tab = createBottomTabNavigator();
 
-export const InitTabBarNavigation = TABSHOP; //TABDROPS;
+export const InitTabBarNavigation = TABDROPS;
 
 const HomeScreenTab: FC = () => {
   const _tabIcon =

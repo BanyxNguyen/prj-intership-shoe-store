@@ -42,7 +42,7 @@ const RegisterPage: FC<Props> = ({toLogin, submit}) => {
     const isErrFirstName = refTxtFirstName.current?.validation();
     const isErrLastName = refTxtLastName.current?.validation();
     if (!isErrTxtUsername && !isErrPassword && !isErrFirstName && !isErrLastName) {
-      submit && submit(register);
+      submit && submit({...register, Birthday: new Date()});
     } else {
       setTimeout(() => {
         refBtn.current?.done();
@@ -89,7 +89,6 @@ const RegisterPage: FC<Props> = ({toLogin, submit}) => {
           value={register.LastName}
           onChangeText={_onChangeText('LastName')}
         />
-        <TextInput />
         <View style={styles.input}>
           <Button width={widthBtn} mod="black" onPress={_submit}>
             Create Account

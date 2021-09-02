@@ -1,4 +1,4 @@
-import {InfoOrder, Login, Register} from '../models';
+import {Account, InfoOrder, Login, Register} from '../models';
 import {AccountGateway} from './gateways/accountGateways';
 
 export class AccountService {
@@ -16,6 +16,13 @@ export class AccountService {
   async register(registerForm: Register) {
     const token = await this.accountGateway.register(registerForm);
     return this.useSaveAndGetProfile(token);
+  }
+
+  update(newProfileForm: Account) {
+    return this.accountGateway.update(newProfileForm);
+  }
+  logout() {
+    return this.accountGateway.logout();
   }
 
   getProfile() {

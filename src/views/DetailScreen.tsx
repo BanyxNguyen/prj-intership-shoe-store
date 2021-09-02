@@ -66,7 +66,12 @@ const SliderImages: FC<SliderImagesProps> = props => {
 
   return (
     <View>
-      <ScrollView horizontal pagingEnabled onMomentumScrollEnd={_onScrollEndDrag}>
+      <ScrollView
+        horizontal
+        pagingEnabled
+        onMomentumScrollEnd={_onScrollEndDrag}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}>
         {_renderImagesSlider()}
       </ScrollView>
       <View style={styles.dots}>{_renderDots()}</View>

@@ -40,25 +40,18 @@ const LoginLogOutScreen: FC = () => {
     refScrollView.current?.scrollTo({x, y: 0, animated: true});
   };
 
-  const loginCallback = (result: boolean) => {
+  const _callback = (result: boolean) => {
     if (result) _goBack();
   };
 
   const _submitLogin = async (data: Login) => {
-    dispatch(loginUser(data, loginCallback));
+    dispatch(loginUser(data, _callback));
   };
 
   const _submitSignUp = async (data: Register) => {
-    try {
-      console.log('sign out: ', data);
-      dispatch(
-        registerUser(data, () => {
-          //callback
-        }),
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    console.log(data);
+
+    dispatch(registerUser(data, _callback));
   };
 
   useEffect(() => {
@@ -82,7 +75,13 @@ const LoginLogOutScreen: FC = () => {
               <Header style={styles.header}>SHOE STORE</Header>
             </View>
             <View style={{flex: 1}}>
-              <ScrollView ref={refScrollView} horizontal pagingEnabled scrollEnabled={false}>
+              <ScrollView
+                ref={refScrollView}
+                horizontal
+                pagingEnabled
+                scrollEnabled={false}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}>
                 <View style={styles.contentItem}>
                   <LoginPage toRegister={_scrollTo(1)} submit={_submitLogin} />
                 </View>

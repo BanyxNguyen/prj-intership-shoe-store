@@ -9,9 +9,9 @@ import {
   Keyboard,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Icons from '../components/Icons';
-import {Account, EnumAccount} from '../models';
+import {Account, EnumAccount, Register} from '../models';
 import {StackNavigationProp} from '../navigators/config';
 import {selectors} from '../redux/slices';
 import {colors, constants, driveLink, fonts, shadows, sizes} from '../support/constants';
@@ -21,12 +21,15 @@ import {Button, MyTextInput} from '../components';
 import {valNoEmpty} from '../utilities/variable';
 import {globalStyles} from '../support/globalStyles';
 import {ScrollView, TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {editProfile, logout} from '../redux/slices/accountsSlice';
 
 const ProfileScreen: FC = () => {
   const stackNav = useNavigation<StackNavigationProp>();
   const [profile, setProfile] = useState<Account | null>(null);
   const [isEdit, setIsEdit] = useState(false);
   const {profile: account} = useSelector(selectors.account.select);
+  const dispatch = useDispatch();
 
   const _goBack = () => {
     stackNav.goBack();
@@ -39,40 +42,53 @@ const ProfileScreen: FC = () => {
     return '';
   };
 
-  const _triggerEdit = () => {
-    setIsEdit(!isEdit);
+  const _triggerEdit = (status: boolean) => () => {
+    setIsEdit(status);
+  };
+
+  const _logout = () => {
+    dispatch(logout(_goBack));
+  };
+
+  const _onSubmitProfile = (data: Account) => {
+    console.log(data);
+    dispatch(
+      editProfile(data, status => {
+        if (status) _triggerEdit(true);
+      }),
+    );
   };
 
   useEffect(() => {
     setProfile(account);
-  }, [profile]);
+  }, [account]);
 
   return (
-    <Container style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={globalStyles.gsFullScreen}
-        keyboardVerticalOffset={50}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+      keyboardVerticalOffset={50}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={[styles.header, shadows.s2]}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.btnHeader} onPress={_goBack}>
+            <Icons size={26} color={colors.black} name="arrow-left" lib="Feather" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Profile</Text>
+          {!isEdit ? (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.btnHeader}
+              onPress={_triggerEdit(true)}>
+              <Icons size={26} color={colors.black} name="edit" lib="AntDesign" />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.btn} />
+          )}
+        </View>
         <ScrollView>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={[styles.header, shadows.s2]}>
-              <TouchableOpacity activeOpacity={0.8} style={styles.btnHeader} onPress={_goBack}>
-                <Icons size={26} color={colors.black} name="arrow-left" lib="Feather" />
-              </TouchableOpacity>
-              <Text style={styles.title}>Profile</Text>
-              {!isEdit ? (
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.btnHeader}
-                  onPress={_triggerEdit}>
-                  <Icons size={26} color={colors.black} name="edit" lib="AntDesign" />
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.btn} />
-              )}
-            </View>
+          <Container style={globalStyles.gsFullScreen}>
             <View style={styles.content}>
-              <View style={styles.avtBox}>
+              {/* <View style={styles.avtBox}>
                 <FastImage
                   style={[styles.avt]}
                   source={{
@@ -81,23 +97,30 @@ const ProfileScreen: FC = () => {
                   }}
                   resizeMode={FastImage.resizeMode.cover}
                 />
-              </View>
+              </View> */}
               {!isEdit ? (
                 <View style={styles.info}>
-                  <Text style={styles.name}>
-                    {profile?.FirstName} {profile?.LastName}
+                  <Text style={[styles.txt, styles.name]}>
+                    Full name: {profile?.FirstName} {profile?.LastName}
                   </Text>
-                  <Text style={styles.birthday}>{_getBirthday()}</Text>
-                  <Text style={styles.birthday}>{profile?.Address}</Text>
+                  <Text style={[styles.txt, styles.birthday]}>Birthday: {_getBirthday()}</Text>
+                  <Text style={[styles.txt, styles.birthday]}>Address: {profile?.Address}</Text>
+                  <Button
+                    mod="black"
+                    width={sizes.wScreen - 30}
+                    onPress={_logout}
+                    styles={{marginTop: 20}}>
+                    LOGOUT
+                  </Button>
                 </View>
               ) : (
-                <EditProfile />
+                <EditProfile onCancel={_triggerEdit(false)} onSubmit={_onSubmitProfile} />
               )}
             </View>
-          </TouchableWithoutFeedback>
+          </Container>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </Container>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -112,10 +135,20 @@ const EditProfile: FC<Props> = props => {
   const refTxtFirstName = useRef<MyTextInput>(null);
   const refTxtLastName = useRef<MyTextInput>(null);
   const [profile, setProfile] = useState<Account>({} as Account);
+  const [date, setDate] = useState(new Date());
+  const [isShowDatePicker, setIsShowDatePicker] = useState(false);
+  const {profile: account} = useSelector(selectors.account.select);
 
   const _onChangeText = (key: EnumAccount) => (text: string) => {
     const temp: Account = {...profile, [key]: text};
     setProfile(temp);
+  };
+
+  const _onChangeDatePicker = (event: any, selectedDate: any) => {
+    const currentDate = selectedDate || date;
+    setIsShowDatePicker(Platform.OS === 'ios');
+    setDate(currentDate);
+    setProfile({...profile, Birthday: new Date(currentDate)});
   };
 
   const _onCancel = () => {
@@ -127,6 +160,18 @@ const EditProfile: FC<Props> = props => {
     const {onSubmit} = props;
     onSubmit && onSubmit(profile);
   };
+
+  const _triggerDatePicker = (status: boolean) => () => {
+    setIsShowDatePicker(status);
+  };
+
+  const _parseDate = (date: Date | string) => {
+    return moment(date).format('MM-DD-YYYY');
+  };
+
+  useEffect(() => {
+    setProfile(account);
+  }, [account]);
 
   return (
     <View style={[styles.info, styles.editBox]}>
@@ -148,13 +193,42 @@ const EditProfile: FC<Props> = props => {
           value={profile?.LastName}
           onChangeText={_onChangeText('LastName')}
         />
+        <MyTextInput
+          label="Address"
+          style={styles.input}
+          validation={valNoEmpty}
+          ref={refTxtLastName}
+          value={profile?.Address}
+          onChangeText={_onChangeText('Address')}
+        />
+        {profile && (
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.btnBirthday}
+            onPress={_triggerDatePicker(true)}>
+            <View style={styles.txtBtnBirthdayBox}>
+              <Text style={styles.txtBtnBirthday}>Birthday</Text>
+            </View>
+            <Text>{_parseDate(profile.Birthday)}</Text>
+            <Icons size={30} color={colors.black} name="edit" lib="AntDesign" />
+          </TouchableOpacity>
+        )}
+        {isShowDatePicker && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode="date"
+            is24Hour={true}
+            display="default"
+            onChange={_onChangeDatePicker}
+          />
+        )}
       </View>
       <View style={styles.groupBtn}>
-        <MyTextInput label="L" />
-        <Button styles={styles.btn} onPress={_onCancel}>
+        <Button styles={styles.btn} width={btnWith} onPress={_onCancel}>
           Cancel
         </Button>
-        <Button styles={styles.btn} mod="black" onPress={_onSubmit}>
+        <Button styles={styles.btn} mod="black" width={btnWith} onPress={_onSubmit}>
           Save
         </Button>
       </View>
@@ -163,11 +237,13 @@ const EditProfile: FC<Props> = props => {
 };
 
 const sizeImg = 200;
+const btnWith = (sizes.wScreen - 40) / 2;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  main: {},
   header: {
     height: constants.hHeader,
     flexDirection: 'row',
@@ -187,26 +263,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    padding: 15,
     flex: 1,
-    alignItems: 'center',
+    padding: 15,
   },
   avtBox: {
-    width: sizeImg,
-    height: sizeImg,
-    borderRadius: sizeImg / 2,
-    overflow: 'hidden',
+    alignItems: 'center',
   },
   avt: {
     width: sizeImg,
     height: sizeImg,
+    borderRadius: sizeImg / 2,
   },
   info: {
-    marginTop: 15,
-    alignItems: 'center',
+    flex: 1,
+    marginTop: 10,
   },
   editBox: {
     flex: 1,
+  },
+  txt: {
+    // textAlign: 'center',
+    marginBottom: 10,
   },
   name: {
     fontSize: sizes.h5,
@@ -217,9 +294,34 @@ const styles = StyleSheet.create({
   },
   groupBtn: {
     flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 25,
   },
   btn: {
     marginHorizontal: 5,
   },
   input: {},
+  btnBirthday: {
+    height: 55,
+    marginTop: 18,
+    borderWidth: 1,
+    borderRadius: 5,
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 13,
+    borderColor: colors.black,
+    justifyContent: 'space-between',
+  },
+  txtBtnBirthdayBox: {
+    left: 8,
+    top: -10,
+    position: 'absolute',
+    paddingHorizontal: 3,
+    backgroundColor: colors.bgScreen,
+  },
+  txtBtnBirthday: {
+    fontSize: 12,
+    fontFamily: 'unset',
+    color: colors.blueyGrey,
+  },
 });

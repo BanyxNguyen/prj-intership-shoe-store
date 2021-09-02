@@ -47,7 +47,8 @@ const ProductScreen: FC = () => {
   return (
     <Container style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-        <TouchableOpacity
+        {/* TODO update feature search */}
+        {/* <TouchableOpacity
           activeOpacity={0.9}
           onPress={_toSearchScreen}
           style={[styles.searchBox, shadows.s1]}>
@@ -55,7 +56,7 @@ const ProductScreen: FC = () => {
             <Icons size={26} color={colors.black} name="md-search-outline" lib="Ionicons" />
           </View>
           <Text style={styles.inputSearch}>Find products...</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.content}>
           <View>
@@ -67,7 +68,9 @@ const ProductScreen: FC = () => {
             </View>
             <ScrollView
               horizontal={true}
-              contentContainerStyle={{paddingVertical: 5, paddingHorizontal: 20}}>
+              contentContainerStyle={{paddingVertical: 5, paddingHorizontal: 20}}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}>
               {bestSeller.map((item, index) => (
                 <ItemProduct
                   data={item}
@@ -78,7 +81,6 @@ const ProductScreen: FC = () => {
               ))}
             </ScrollView>
           </View>
-
         </View>
       </ScrollView>
     </Container>
