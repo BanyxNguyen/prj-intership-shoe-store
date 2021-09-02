@@ -1,8 +1,7 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {LegacyRef, MutableRefObject, useEffect, useRef} from 'react';
+import React, {FC, useEffect, useRef} from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   ScrollView,
   TouchableOpacity,
@@ -19,13 +18,18 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StackNavigationProp} from '../../navigators/config';
 import {globalStyles} from '../../support/globalStyles';
+import {Login, Register} from '../../models';
+import {accountService} from '../../services';
+import {loginUser, registerUser} from '../../redux/slices/accountsSlice';
+import {useDispatch} from 'react-redux';
 
 type Page = 0 | 1;
 
-const LoginLogOutScreen = () => {
+const LoginLogOutScreen: FC = () => {
   const route = useRoute();
   const stackNav = useNavigation<StackNavigationProp>();
-  const refScrollView: MutableRefObject<ScrollView | null> = useRef(null);
+  const refScrollView = useRef<ScrollView>(null);
+  const dispatch = useDispatch();
 
   const _goBack = () => {
     stackNav.goBack();
@@ -36,6 +40,20 @@ const LoginLogOutScreen = () => {
     refScrollView.current?.scrollTo({x, y: 0, animated: true});
   };
 
+  const _callback = (result: boolean) => {
+    if (result) _goBack();
+  };
+
+  const _submitLogin = async (data: Login) => {
+    dispatch(loginUser(data, _callback));
+  };
+
+  const _submitSignUp = async (data: Register) => {
+    console.log(data);
+
+    dispatch(registerUser(data, _callback));
+  };
+
   useEffect(() => {
     const page = _.get(route.params, 'page', 0);
     const x = sizes.wScreen * page;
@@ -43,43 +61,39 @@ const LoginLogOutScreen = () => {
   }, []);
 
   return (
-    <Container style={globalStyles.gsFullScreen}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={globalStyles.gsFullScreen}
+      keyboardVerticalOffset={50}>
+      <ScrollView>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.angleLeft}
-              activeOpacity={0.3}
-              onPress={_goBack}>
-              <Icon name="angle-left" size={40} color="#000" />
-            </TouchableOpacity>
-            <Header>WELCOME</Header>
-          </View>
-          <ScrollView
-            ref={refScrollView}
-            horizontal={true}
-            // scrollEnabled={false}
-            pagingEnabled={true}>
-            <View
-              style={{
-                width: sizes.wScreen,
-                height: sizes.hScreen,
-              }}>
-              <LoginPage toRegister={_scrollTo(1)} />
+          <Container style={{flex: 1}}>
+            <View style={styles.headerBox}>
+              <TouchableOpacity style={styles.angleLeft} activeOpacity={0.85} onPress={_goBack}>
+                <Icon name="angle-left" size={40} color="#000" />
+              </TouchableOpacity>
+              <Header style={styles.header}>SHOE STORE</Header>
             </View>
-            <View
-              style={{
-                width: sizes.wScreen,
-                height: sizes.hScreen,
-              }}>
-              <RegisterPage toLogin={_scrollTo(0)} />
+            <View style={{flex: 1}}>
+              <ScrollView
+                ref={refScrollView}
+                horizontal
+                pagingEnabled
+                scrollEnabled={false}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}>
+                <View style={styles.contentItem}>
+                  <LoginPage toRegister={_scrollTo(1)} submit={_submitLogin} />
+                </View>
+                <View style={styles.contentItem}>
+                  <RegisterPage toLogin={_scrollTo(0)} submit={_submitSignUp} />
+                </View>
+              </ScrollView>
             </View>
-          </ScrollView>
+          </Container>
         </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </Container>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -89,16 +103,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
+  headerBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  header: {
+    fontSize: sizes.h2,
   },
   angleLeft: {
     position: 'absolute',
     top: 0,
     left: 0,
-    marginTop: 18,
+    marginTop: 12,
     paddingHorizontal: 10,
+  },
+  contentItem: {
+    width: sizes.wScreen,
+
+    // minHeight: sizes.hScreen,
   },
 });

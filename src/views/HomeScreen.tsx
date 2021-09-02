@@ -1,115 +1,215 @@
-import React, {FC} from 'react';
-import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {colors, fonts, sizes} from '../support/constants';
-import {globalStyles} from '../support/globalStyles';
+import axios from 'axios';
+import React, {FC, PureComponent, useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ListRenderItem,
+  FlatList,
+  NativeSyntheticEvent,
+  Animated,
+  NativeScrollEvent,
+  StatusBar,
+  NativeModules,
+} from 'react-native';
 
+import {productService} from '../services';
+import {globalStyles} from '../support/globalStyles';
+import {SHOWANDFILTERSCREEN, StackNavigationProp} from '../navigators/config';
+import {colors, constants, fonts, shadows, sizes} from '../support/constants';
 import {Container, Text, Title} from '../support/styledComponents';
+import Icons from '../components/Icons';
+import FastImage from 'react-native-fast-image';
+import {ProductTrend} from '../models';
+import {TempData} from '../utilities/data';
+
+const {hHeader, hFooter, statusBar} = constants;
+
+const hItem = sizes.hScreen - hHeader - hFooter - statusBar;
 
 const HomeScreen: FC = () => {
+  const stackNav = useNavigation<StackNavigationProp>();
+
+  const _data = TempData.trends;
+
+  const _onSeeMore = (name: string) => () => {
+    stackNav.navigate(SHOWANDFILTERSCREEN, {title: name, options: {}});
+  };
+
+  const _renderItem = (item: ProductTrend, index: any) => {
+    const test = ['red', 'blue', 'violet'];
+    return (
+      <View style={[styles.itemDrop]} key={index.toString()}>
+        <FastImage
+          style={{height: hItem, width: sizes.wScreen}}
+          source={{
+            uri: item.image,
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+        <View style={[StyleSheet.absoluteFill, styles.itemContent]}>
+          <View style={styles.label}>
+            {/* TODO add feature tab */}
+            {/* <Text style={[styles.labelTxtType, styles.labelTxt]}>{item.type}</Text> */}
+          </View>
+          <View style={styles.bottomBox}>
+            <View style={styles.label}>
+              <Text style={[styles.labelTxtName, styles.labelTxt, shadows.s1]}>{item.name}</Text>
+            </View>
+            <View style={styles.label}>
+              <Text style={[styles.labelTxtNew, styles.labelTxt, shadows.s1]}>JUST DROPPED</Text>
+            </View>
+            <View>
+              <View style={styles.btnBoxLine}>
+                <View style={styles.btnDetailLine} />
+              </View>
+              <View style={[styles.btnBox, StyleSheet.absoluteFill]}>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={styles.btnDetailContent}
+                  onPress={_onSeeMore(item.name.toUpperCase())}>
+                  <Text style={styles.btnDetailText}>SEE MORE</Text>
+                  <View style={[globalStyles.gsFlexCenter]}>
+                    <Icons size={24} color={colors.black} name="arrow-right-l" lib="Fontisto" />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <Container style={styles.container}>
-      <TouchableOpacity style={styles.btnMenu}>
-        <Image
-          style={{width: 50, height: 50, tintColor: '#fff'}}
-          source={{uri: 'asset:/images/menu-icon.png'}}
-        />
-      </TouchableOpacity>
-      <View>
-        <Image
-          style={{width: sizes.wScreen, height: sizes.hScreen * 0.56}}
-          source={{uri: 'asset:/images/shoes-3.png'}}
-        />
-        <View style={[StyleSheet.absoluteFill, styles.boxItemSlider]}>
-          <Text style={styles.bigTitle}>Nike One 2020</Text>
-          <Text style={styles.smallTitle}>Running shoe store</Text>
-        </View>
-      </View>
-      <View style={styles.new}>
-        <View style={[StyleSheet.absoluteFill, globalStyles.gsFlexCenter]}>
-          <View style={styles.newLine} />
-        </View>
-        <Title style={styles.newText}>New Trend</Title>
-      </View>
-      <View style={styles.productList}>
-        <View style={{flexDirection: 'row'}}>
-          <Image
-            style={styles.productImage}
-            source={{uri: 'asset:/images/p-shoe-1.jpg'}}
-          />
-          <View style={styles.productDetail}>
-            <Text style={styles.bigTitle}>Nike One 2020</Text>
-            <Text style={styles.smallTitle}>Running shoe store</Text>
-          </View>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          <Image
-            style={styles.productImage}
-            source={{uri: 'asset:/images/p-shoe-1.jpg'}}
-          />
-          <View style={styles.productDetail}>
-            <Text style={styles.bigTitle}>Nike One 2020</Text>
-            <Text style={styles.smallTitle}>Running shoe store</Text>
-          </View>
-        </View>
-      </View>
+      <CustomScrollView HeightItem={hItem}>{_data.map(_renderItem)}</CustomScrollView>
     </Container>
   );
 };
+
+interface CustomScrollViewProps {
+  HeightItem: number;
+}
+
+class CustomScrollView extends PureComponent<CustomScrollViewProps> {
+  refScrollView = React.createRef<ScrollView>();
+  ScrollValue: Animated.ValueXY;
+  constructor(props: CustomScrollViewProps) {
+    super(props);
+    this.ScrollValue = new Animated.ValueXY();
+  }
+  onScrollEvent = ({
+    nativeEvent: {
+      contentOffset: {y: CurrentY},
+      velocity,
+    },
+  }: NativeSyntheticEvent<NativeScrollEvent>) => {
+    let index = Math.floor(CurrentY / this.props.HeightItem);
+    const offset = CurrentY % this.props.HeightItem;
+
+    if ((velocity?.y ?? 0) < 0) {
+      index = offset > 100 ? index + 1 : index;
+    } else {
+      index = this.props.HeightItem - offset > 100 ? index : index + 1;
+    }
+
+    this.refScrollView?.current?.scrollTo({
+      y: index * this.props.HeightItem,
+      animated: true,
+    });
+  };
+  render() {
+    return (
+      <ScrollView
+        ref={this.refScrollView}
+        showsVerticalScrollIndicator={false}
+        decelerationRate={0}
+        overScrollMode="always"
+        onScrollEndDrag={this.onScrollEvent}>
+        {this.props.children}
+      </ScrollView>
+    );
+  }
+}
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: hItem,
+    width: sizes.wScreen,
   },
-  btnMenu: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    // backgroundColor: 'red',
+  itemDrop: {
+    height: hItem,
+    width: sizes.wScreen,
+  },
+  itemContent: {
+    flex: 1,
+    padding: 15,
+    justifyContent: 'space-between',
+  },
+  label: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  labelTxt: {
     padding: 5,
-    zIndex: 5,
+    textTransform: 'uppercase',
   },
-  boxItemSlider: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingHorizontal: 20,
+  labelTxtType: {
+    color: colors.whiteGray,
+    backgroundColor: colors.black,
+    fontFamily: fonts.montserrat.bold,
+  },
+  labelTxtName: {
+    color: colors.txtBlack,
+    backgroundColor: colors.whiteGray,
+    fontFamily: fonts.montserrat.semiBoldItalic,
+    fontSize: sizes.h5,
+    marginBottom: 3,
+  },
+  labelTxtNew: {
+    color: colors.txtBlack,
+    backgroundColor: colors.whiteGray,
+    fontFamily: fonts.montserrat.mediumItalic,
+    fontSize: sizes.h8,
+    marginBottom: 20,
+  },
+  bottomBox: {
+    marginBottom: 15,
+    paddingHorizontal: 45,
+  },
+  btnBox: {
+    height: 50,
+    paddingRight: 5,
     paddingBottom: 5,
   },
-  bigTitle: {
-    fontSize: sizes.h2,
-    fontFamily: fonts.roboto.bold,
-  },
-  smallTitle: {
-    fontSize: sizes.h5,
-    color: colors.blueyGrey,
-  },
-  new: {
-    justifyContent: 'center',
+  btnDetailContent: {
+    flex: 1,
+    padding: 5,
     alignItems: 'center',
-    marginTop: 25,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.whiteGray,
   },
-  newText: {
-    textAlign: 'center',
-    backgroundColor: colors.bgScreen,
-    paddingHorizontal: 5,
+  btnDetailText: {
+    fontSize: sizes.h6,
+    textTransform: 'uppercase',
+    fontFamily: fonts.montserrat.medium,
   },
-  newLine: {
-    height: 1.5,
-    width: sizes.wScreen - 100,
-    backgroundColor: colors.shark,
+  btnBoxLine: {
+    height: 50,
+    paddingTop: 5,
+    paddingLeft: 5,
   },
-  productList: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+  btnDetailLine: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: colors.whiteGray,
   },
-  productImage: {
-    width: 75,
-    height: 90,
-  },
-  productDetail:{
-    paddingHorizontal: 10,
-    paddingVertical: 15
-  }
 });

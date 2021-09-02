@@ -1,32 +1,53 @@
-import React, {FC} from 'react';
-import {
-  View,
-  Platform,
-  Keyboard,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {StackActions, useNavigation} from '@react-navigation/native';
+import React, {FC, useRef, useState} from 'react';
+import {View, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
 
-import {Button, TextInput} from '../../components';
+import _ from 'lodash';
+
+import {EnumRegister, Register} from '../../models';
+import {Button, MyTextInput} from '../../components';
 import {colors, sizes} from '../../support/constants';
-import {Container, Header, Text, Title} from '../../support/styledComponents';
-import {LOGINSCREEN, StackNavigationProp} from '../../navigators/config';
+import {Text, Title} from '../../support/styledComponents';
+import {valNoEmpty, valPassword, valUsername} from '../../utilities/variable';
 
 interface Props {
   toLogin: () => void;
+  submit?: (data: Register) => void;
 }
 
 const widthBtn = sizes.wScreen - 30;
 
-const RegisterPage: FC<Props> = ({toLogin}) => {
-  const stackNav = useNavigation<StackNavigationProp>();
+const signUpDefault: Register = {
+  UserName: '',
+  PassWord: '',
+  FirstName: '',
+  LastName: '',
+  Gender: 0,
+};
 
-  const _goBack = () => {
-    stackNav.goBack();
+const RegisterPage: FC<Props> = ({toLogin, submit}) => {
+  const refTxtUsername = useRef<MyTextInput>(null);
+  const refTxtPassword = useRef<MyTextInput>(null);
+  const refTxtFirstName = useRef<MyTextInput>(null);
+  const refTxtLastName = useRef<MyTextInput>(null);
+  const [register, setRegister] = useState(signUpDefault);
+  const refBtn = useRef<Button>(null);
+
+  const _onChangeText = (name: EnumRegister) => (text: string) => {
+    setRegister({...register, [name]: text});
+  };
+
+  const _submit = () => {
+    const isErrTxtUsername = refTxtUsername.current?.validation();
+    const isErrPassword = refTxtPassword.current?.validation();
+    const isErrFirstName = refTxtFirstName.current?.validation();
+    const isErrLastName = refTxtLastName.current?.validation();
+    if (!isErrTxtUsername && !isErrPassword && !isErrFirstName && !isErrLastName) {
+      submit && submit({...register, Birthday: new Date()});
+    } else {
+      setTimeout(() => {
+        refBtn.current?.done();
+      }, 1000);
+    }
   };
 
   return (
@@ -35,14 +56,44 @@ const RegisterPage: FC<Props> = ({toLogin}) => {
         <Title>Create account to continue</Title>
       </View>
       <View style={styles.main}>
-        <TextInput label="Email" style={styles.pv1} />
-        <TextInput label="Password" secureTextEntry={true} style={styles.pv1} />
-        <TextInput label="Username" secureTextEntry={true} style={styles.pv1} />
-        <View style={styles.pv1}>
-          <Button width={widthBtn} mod="black">
+        <MyTextInput
+          label="Username"
+          style={styles.input}
+          validation={valUsername}
+          ref={refTxtUsername}
+          value={register.UserName}
+          onChangeText={_onChangeText('UserName')}
+        />
+        <MyTextInput
+          label="Password"
+          secureTextEntry={true}
+          style={styles.input}
+          validation={valPassword}
+          ref={refTxtPassword}
+          value={register.PassWord}
+          onChangeText={_onChangeText('PassWord')}
+        />
+        <MyTextInput
+          label="First name"
+          style={styles.input}
+          validation={valNoEmpty}
+          ref={refTxtFirstName}
+          value={register.FirstName}
+          onChangeText={_onChangeText('FirstName')}
+        />
+        <MyTextInput
+          label="Last name"
+          style={styles.input}
+          validation={valNoEmpty}
+          ref={refTxtLastName}
+          value={register.LastName}
+          onChangeText={_onChangeText('LastName')}
+        />
+        <View style={styles.input}>
+          <Button width={widthBtn} mod="black" onPress={_submit}>
             Create Account
           </Button>
-          <View style={[styles.registerBox, styles.pv1]}>
+          <View style={[styles.registerBox, styles.input]}>
             <Text>Do you already have an account?</Text>
             <TouchableOpacity onPress={toLogin}>
               <Text style={styles.txtRegister}>LOG IN</Text>
@@ -76,9 +127,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 15,
   },
-  pv1: {
-    paddingVertical: sizes.s1,
-  },
+  input: {},
   registerBox: {
     flexDirection: 'row',
     alignItems: 'center',
