@@ -1,5 +1,5 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -11,30 +11,31 @@ import {
 
 import _ from 'lodash';
 import FastImage from 'react-native-fast-image';
-import {useDispatch, useSelector} from 'react-redux';
-import {ScrollView} from 'react-native-gesture-handler';
+import { useDispatch, useSelector } from 'react-redux';
+import { ScrollView } from 'react-native-gesture-handler';
 
-import {Button} from '../../components';
+import { Button } from '../../components';
 import Icons from '../../components/Icons';
-import {selectors} from '../../redux/slices';
-import {productService} from '../../services';
-import {LoadingScreen} from '../../InitGeneral';
+import { selectors } from '../../redux/slices';
+import { productService } from '../../services';
+import { LoadingScreen } from '../../InitGeneral';
 import CustomerInfoCart from './CustomerInfoCart';
-import {parseImageStringToArr} from '../../utilities';
-import {clearCart} from '../../redux/slices/productSlice';
-import {Container, Text} from '../../support/styledComponents';
-import {StackNavigationProp, TABDROPS} from '../../navigators/config';
-import ProgressCartNumber, {PageIndexType} from './ProgressCartNumber';
-import {colors, constants, fonts, shadows, sizes} from '../../support/constants';
-import {CartCheckout, EPaymentType, OrderProduct, ProductCartCheckout} from '../../models';
+import { parseImageStringToArr } from '../../utilities';
+import { clearCart } from '../../redux/slices/productSlice';
+import { Container, Text } from '../../support/styledComponents';
+import { StackNavigationProp, TABDROPS } from '../../navigators/config';
+import ProgressCartNumber, { PageIndexType } from './ProgressCartNumber';
+import { colors, constants, fonts, shadows, sizes } from '../../support/constants';
+import { CartCheckout, EPaymentType, OrderProduct, ProductCartCheckout } from '../../models';
 import PayPalButton from '../PayPal/PayPalButton';
-import {OrderApproved} from '../PayPal/types';
-import {NotifySnackbar} from '../../components/MyNotify';
-import {TokenAccessory} from '../../services/TokenAccessory';
+import { OrderApproved } from '../PayPal/types';
+import { NotifySnackbar } from '../../components/MyNotify';
+import { TokenAccessory } from '../../services/TokenAccessory';
+import { Config } from '../../../appConfig';
 
 const CheckoutScreen: FC = () => {
-  const {cart} = useSelector(selectors.product.select);
-  const {infoOrderHistory} = useSelector(selectors.account.select);
+  const { cart } = useSelector(selectors.product.select);
+  const { infoOrderHistory } = useSelector(selectors.account.select);
   const [productCart, setProductCart] = useState<ProductCartCheckout[]>([]);
   const stackNav = useNavigation<StackNavigationProp>();
   const refScrollView = useRef<ScrollView>(null);
@@ -44,7 +45,7 @@ const CheckoutScreen: FC = () => {
   const _getTotal = () => {
     let total = 0;
     productCart.map(i => {
-      if (i.StockAmount && i.StockAmount > 0) {
+      if (i.StockAmount && i.StockAmount > 0 && i.StockAmount - i.Amount > 0) {
         const price = _.get(i, 'RealPrice', 0);
         total += price * i.Amount;
       }
@@ -82,7 +83,7 @@ const CheckoutScreen: FC = () => {
       const result = await productService.createOrderProduct(temp);
       console.log('result order: ', result);
       // Alert.alert('Other product success!!!');
-      NotifySnackbar({text: 'Other product success!!!', duration: 1500});
+      NotifySnackbar({ text: 'Other product success!!!', duration: 1500 });
       stackNav.navigate(TABDROPS, {});
       dispatch(clearCart());
       if (paymentType == EPaymentType.Prepay) {
@@ -90,7 +91,7 @@ const CheckoutScreen: FC = () => {
       }
       LoadingScreen.stop();
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.log('error submit order: ', error.response);
       LoadingScreen.stop();
     }
@@ -99,7 +100,7 @@ const CheckoutScreen: FC = () => {
   const _submitOther_v2 = async (paymentType: EPaymentType) => {
     try {
       LoadingScreen.start();
-      console.log({productCart});
+      console.log({ productCart });
       const cartCheckout: CartCheckout[] = productCart
         .filter(i => {
           return i.StockAmount && i.StockAmount > 0;
@@ -122,11 +123,11 @@ const CheckoutScreen: FC = () => {
         CartList: cartCheckout,
       };
       const result = await productService.createOrderProduct(temp);
-      console.log({result});
+      console.log({ result });
       dispatch(clearCart());
       LoadingScreen.stop();
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.log('error submit order: ', error.response);
       LoadingScreen.stop();
     }
@@ -143,7 +144,7 @@ const CheckoutScreen: FC = () => {
 
   const _scrollViewTo = (page: PageIndexType) => {
     const x = sizes.wScreen * page;
-    refScrollView?.current?.scrollTo({x, y: 0, animated: true});
+    refScrollView?.current?.scrollTo({ x, y: 0, animated: true });
   };
 
   const _onNext = (page: PageIndexType) => () => {
@@ -158,7 +159,7 @@ const CheckoutScreen: FC = () => {
       try {
         const result = await productService.getExternalProductInfo(_cart);
         setProductCart(result);
-      } catch (error) {
+      } catch (error: any) {
         console.log('_cart:', error.response);
         setProductCart([]);
       }
@@ -167,14 +168,14 @@ const CheckoutScreen: FC = () => {
     funcAsync();
   }, [cart]);
 
-  const _renderItemFunc = (data: ProductCartCheckout[]) => {
+  const _renderItemFunc = (data: ProductCartCheckout[], isStock = true) => {
     return data.map((item, index) => {
-      const {HinhAnh, Ten, SelectedSize, Gia} = item;
+      const { HinhAnh, Ten, SelectedSize, Gia } = item;
       const images = parseImageStringToArr(HinhAnh);
       return (
         <View style={[styles.itemBox, shadows.s1]} key={index.toString()}>
           <FastImage
-            style={{height: hItem, width: wItem}}
+            style={{ height: hItem, width: wItem }}
             source={{
               uri: images[0],
               priority: FastImage.priority.normal,
@@ -193,7 +194,7 @@ const CheckoutScreen: FC = () => {
             </Text>
             <Text numberOfLines={1} style={styles.txt}>
               Status:{' '}
-              {item.StockAmount && item.StockAmount > 0 ? (
+              {isStock ? (
                 <Text style={styles.txtGreen}>Stocking</Text>
               ) : (
                 <Text style={styles.txtRed}>Out of stock</Text>
@@ -212,7 +213,7 @@ const CheckoutScreen: FC = () => {
     for (let i = 0; i < productCart.length; i++) {
       const elm = productCart[i];
       if (elm.StockAmount != undefined) {
-        if (elm.StockAmount > 0) {
+        if (elm.StockAmount > 0 && elm.StockAmount - elm.Amount > 0) {
           stocking.push(elm);
         } else {
           outOfStock.push(elm);
@@ -225,10 +226,10 @@ const CheckoutScreen: FC = () => {
         {outOfStock.length > 0 && <Text style={styles.titleSmall}>Your cart</Text>}
         {_renderItemFunc(stocking)}
         {outOfStock.length > 0 && (
-          <View>
+          <>
             <Text style={styles.titleSmall}>Product is out of stock</Text>
-            {_renderItemFunc(outOfStock)}
-          </View>
+            {_renderItemFunc(outOfStock, false)}
+          </>
         )}
       </View>
     );
@@ -253,7 +254,7 @@ const CheckoutScreen: FC = () => {
         </View>
         <View style={styles.content}>
           <ProgressCartNumber ref={refProgressCartNumber} />
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <ScrollView
               horizontal
               ref={refScrollView}
@@ -273,16 +274,16 @@ const CheckoutScreen: FC = () => {
               </View>
               <View style={styles.contentBox}>
                 <Text style={styles.total}>Customer Information</Text>
-                <ScrollView style={{minHeight: sizes.hScreen * 0.3}}>
+                <ScrollView style={{ minHeight: sizes.hScreen * 0.3 }}>
                   <CustomerInfoCart />
                 </ScrollView>
                 <View style={styles.btnNextGroup}>
-                  <View style={[styles.btnNext, {marginHorizontal: 5}]}>
+                  <View style={[styles.btnNext, { marginHorizontal: 5 }]}>
                     <Button mod="black" width={(sizes.wScreen - 40) / 2} onPress={_onNext(0)}>
                       Back
                     </Button>
                   </View>
-                  <View style={[styles.btnNext, {marginHorizontal: 5}]}>
+                  <View style={[styles.btnNext, { marginHorizontal: 5 }]}>
                     <Button mod="black" width={(sizes.wScreen - 40) / 2} onPress={_onNext(2)}>
                       Next
                     </Button>
@@ -290,13 +291,13 @@ const CheckoutScreen: FC = () => {
                 </View>
               </View>
               <View style={styles.contentBox}>
-                <View style={{flex: 1}}>
+                <View style={{ flex: 1 }}>
                   <View style={styles.btnNext}>
                     <Button width={sizes.wScreen - 30} onPress={_submitOtherPostPaid}>
                       pay on delivery
                     </Button>
                   </View>
-                  <View style={[styles.btnNext, {flex: 1}]}>
+                  <View style={[styles.btnNext, { flex: 1 }]}>
                     <PayPalButton
                       token={TokenAccessory.bearerToken}
                       ButtonType={(props: any) => {
@@ -304,7 +305,7 @@ const CheckoutScreen: FC = () => {
                           <Button
                             onPress={async () => {
                               const OrderID = await _submitOther_v2(EPaymentType.Prepay);
-                              console.log({OrderID});
+                              console.log({ OrderID });
                               if (OrderID) {
                                 props.onPress(OrderID);
                               }
@@ -315,14 +316,14 @@ const CheckoutScreen: FC = () => {
                           </Button>
                         );
                       }}
-                      urlBase={'http://192.168.1.100:5000'}
+                      urlBase={Config.API_URL}
                       onApproved={async (data: OrderApproved) => {
                         console.log(data);
                         await fetch(
-                          'http://192.168.1.100:5000/api/Payment/CaptureOrder?ApprovedOrderId=' +
-                            data.orderID,
+                          Config.API_URL + '/api/Payment/CaptureOrder?ApprovedOrderId=' +
+                          data.orderID,
                         );
-                        NotifySnackbar({text: 'Other product success!!!', duration: 1500});
+                        NotifySnackbar({ text: 'Other product success!!!', duration: 1500 });
                         stackNav.navigate(TABDROPS, {});
                       }}></PayPalButton>
                   </View>

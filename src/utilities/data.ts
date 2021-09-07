@@ -16,6 +16,8 @@ export const DefaultOptions: OptionMenu = {
   ThuongHieu: [
     {value: 'Adidas', key: 'adidas'},
     {value: 'Dr.Martens', key: 'dr.martens'},
+    {value: 'Nike', key: 'nike'},
+    {value: 'New Balance', key: 'new balance'},
   ],
   LoaiSP: [
     {value: 'Shoes', key: 'shoes'},

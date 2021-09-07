@@ -25,6 +25,8 @@ import {
   SHOWANDFILTERSCREEN,
   TABCARTSCREEN,
   CHECKOUTSCREEN,
+  TABORDERSCREEN,
+  ORDERDETAILSCREEN,
 } from './config';
 import Icons, {TypeLibraryIcons} from '../components/Icons';
 import HeaderHoc, {ChangeTitleHeader} from '../hocs/HeaderHoc';
@@ -35,8 +37,9 @@ import ShowAndFilterScreen from '../views/ShowAndFilterScreen';
 import WishlistScreen from '../views/WishlistScreen';
 import CartScreen from '../views/CartScreen';
 import CheckoutScreen from '../views/CheckoutScreen';
-import {Text} from '../support/styledComponents';
 import {IconCart, TabIconParams} from './support';
+import ListOrderScreen from '../views/ListOrderScreen';
+import OrderDetailScreen from '../views/OrderDetailScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -122,6 +125,20 @@ const HomeScreenTab: FC = () => {
           tabPress: ChangeTitleHeader(TABCARTSCREEN),
         })}
       />
+      <Tab.Screen
+        name={TABORDERSCREEN}
+        component={ListOrderScreen}
+        options={{
+          tabBarIcon: _tabIcon({
+            name: 'list-alt',
+            lib: 'MaterialIcons',
+            size: 32,
+          }),
+        }}
+        listeners={() => ({
+          tabPress: ChangeTitleHeader(TABORDERSCREEN),
+        })}
+      />
     </Tab.Navigator>
   );
 };
@@ -144,6 +161,7 @@ const AppNavigator: FC = () => {
           <Stack.Screen name={SEARCHSCREEN} component={SearchScreen} />
           <Stack.Screen name={SHOWANDFILTERSCREEN} component={ShowAndFilterScreen} />
           <Stack.Screen name={CHECKOUTSCREEN} component={CheckoutScreen} />
+          <Stack.Screen name={ORDERDETAILSCREEN} component={OrderDetailScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

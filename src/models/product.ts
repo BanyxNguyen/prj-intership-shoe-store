@@ -105,3 +105,34 @@ export interface OrderProduct extends InfoOrder {
   NgayLap: Date | string;
   CartList: CartCheckout[];
 }
+
+// order
+
+export interface OrderDetail {
+  Gia: number;
+  HinhAnh: string;
+  KichThuoc: number;
+  Mau: string;
+  SoLuong: number;
+  Ten: string;
+}
+
+export interface Order {
+  DiaChiNguoiNhan: string;
+  Id: string;
+  NgayLap: Date;
+  PaymentId: string;
+  PaymentType: number;
+  SoDienThoai: string;
+  TenNguoiNhan: string;
+  TongTien: number;
+  TrangThai: number;
+}
+
+export enum TrangThaiDonHang {
+  None,
+  Pending,
+  Delivery,
+  Complete,
+  Cancel,
+}

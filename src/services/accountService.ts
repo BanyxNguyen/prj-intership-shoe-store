@@ -1,5 +1,6 @@
-import {Account, InfoOrder, Login, Register} from '../models';
-import {AccountGateway} from './gateways/accountGateways';
+import { Account, InfoOrder, Login, Register } from '../models';
+import { SlowFetch } from '../utilities';
+import { AccountGateway } from './gateways/accountGateways';
 
 export class AccountService {
   private accountGateway: AccountGateway;
@@ -30,7 +31,7 @@ export class AccountService {
   }
 
   private async useSaveAndGetProfile(token: string) {
-    await this.accountGateway.useAndSaveAccessToken(token);
+    await SlowFetch(this.accountGateway.useAndSaveAccessToken(token), 400);
     return this.getProfile();
   }
 

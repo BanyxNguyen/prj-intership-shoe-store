@@ -60,14 +60,29 @@ export const parseOptionToModelFilterRequest = (
 
   for (const key in options) {
     const temps = options[key];
-    for (let i = 0; i < temps.length; i++) {
-      const elm = temps[i];
-      const t: PropFilterProduct = {
+    if (key == 'KichThuocs' && temps.length > 0) {
+      pipeFilters.push({
         Logic: ELogic.Or,
         FieldName: key as keyof Product,
-        Value: elm.key,
-      };
-      pipeFilters.push(t);
+        Value: JSON.stringify(temps.map(i => i.key)),
+      });
+    } else if (key == 'Ten' && temps.length > 0) {
+      pipeFilters.push({
+        Logic: ELogic.Or,
+        IsExactly: false,
+        FieldName: key as keyof Product,
+        Value: temps[0].value,
+      });
+    } else {
+      for (let i = 0; i < temps.length; i++) {
+        const elm = temps[i];
+        const t: PropFilterProduct = {
+          Logic: ELogic.Or,
+          FieldName: key as keyof Product,
+          Value: elm.key,
+        };
+        pipeFilters.push(t);
+      }
     }
   }
 

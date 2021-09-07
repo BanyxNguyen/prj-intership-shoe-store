@@ -95,7 +95,7 @@ const CartScreen: FC = () => {
     if (!_.isEmpty(profile)) {
       stackNav.navigate(CHECKOUTSCREEN, {});
     } else {
-      stackNav.navigate(LOGINLOGOUTSCREEN, {page: 1});
+      stackNav.navigate(LOGINLOGOUTSCREEN, {page: 0});
     }
   };
 

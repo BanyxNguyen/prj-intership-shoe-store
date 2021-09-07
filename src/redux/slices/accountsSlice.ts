@@ -72,7 +72,7 @@ export const registerUser =
       dispatch(setAccount({...account, profile: user}));
       LoadingScreen.stop();
       return user;
-    } catch (error) {
+    } catch (error: any) {
       console.log('registerUser', error.response.data);
       Alert.alert(_.get(error, 'response.data[0].Description', 'Username or password invalid'));
       callback(false);

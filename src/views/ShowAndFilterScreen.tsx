@@ -53,13 +53,14 @@ const ShowAndFilterScreen: FC = () => {
       LoadingScreen.start();
       delete options.sort;
       const filter = parseOptionToModelFilterRequest(opt, {page: 0, amount: 50});
+      console.log(filter);
       const result = await SlowFetch(productService.getProducts(filter), 700);
       setProducts(result);
       if (!_.isEmpty(options.sort)) {
         //TODO sort
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.log(error.response);
       setProducts([]);
     }
     LoadingScreen.stop();

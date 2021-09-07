@@ -47,6 +47,15 @@ export class ProductService {
     return this.productGateway.createOrderProduct(data);
   }
 
+  // order
+  getOrders() {
+    return this.productGateway.getOrders();
+  }
+
+  getOrderById(id: string) {
+    return this.productGateway.getOrderById(id);
+  }
+
   // wishlish
   loadWishlist() {
     return this.productGateway.loadWishlist();

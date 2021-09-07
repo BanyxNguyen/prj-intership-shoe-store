@@ -1,4 +1,4 @@
-import {Product, OptionMenu} from '../models';
+import {Product, OptionMenu, Order} from '../models';
 import {NavigationProp, NavigatorScreenParams, RouteProp} from '@react-navigation/native';
 
 export const WELCOMESCREEN = 'WELCOMESCREEN';
@@ -11,6 +11,7 @@ export const LOGINLOGOUTSCREEN = 'LOGINLOGOUTSCREEN';
 export const SEARCHSCREEN = 'SEARCHSCREEN';
 export const SHOWANDFILTERSCREEN = 'SHOWANDFILTERSCREEN';
 export const CHECKOUTSCREEN = 'CHECKOUTSCREEN';
+export const ORDERDETAILSCREEN = 'ORDERDETAILSCREEN';
 
 export type ScreenName =
   | 'HOMESCREEN'
@@ -22,12 +23,14 @@ export type ScreenName =
   | 'CHECKOUTSCREEN'
   | 'REGISTERSCREEN'
   | 'LOGINLOGOUTSCREEN'
-  | 'SHOWANDFILTERSCREEN';
+  | 'SHOWANDFILTERSCREEN'
+  | 'ORDERDETAILSCREEN';
 
 export const TABSHOP = 'SHOP';
 export const TABDROPS = 'DROPS';
 export const TABWISHLISH = 'WISHLISH';
 export const TABCARTSCREEN = 'CART';
+export const TABORDERSCREEN = 'ODER LiST';
 
 export interface IWelcomeScreenParams {}
 export interface IHomeScreenParams {}
@@ -45,6 +48,9 @@ export interface IShowAndFilterScreenParams {
 }
 export interface IProfileScreenParams {}
 export interface ICheckoutScreenParams {}
+export interface IOrderDetailScreenParams {
+  data: Order;
+}
 
 export type StackParams = {
   [HOMESCREEN]: IHomeScreenParams;
@@ -55,12 +61,14 @@ export type StackParams = {
   [CHECKOUTSCREEN]: ICheckoutScreenParams;
   [LOGINLOGOUTSCREEN]: ILoginLogOutScreenParams;
   [SHOWANDFILTERSCREEN]: IShowAndFilterScreenParams;
+  [ORDERDETAILSCREEN]: IOrderDetailScreenParams;
 
   // TAB
   [TABSHOP]: {};
   [TABDROPS]: {};
   [TABWISHLISH]: {};
   [TABCARTSCREEN]: {};
+  [TABORDERSCREEN]: {};
 };
 
 export type StackNavigationProp = NavigationProp<StackParams>;
@@ -73,3 +81,4 @@ export type SearchScreenRouteProp = RouteProp<StackParams, 'SEARCHSCREEN'>;
 export type ShowAndFilterScreenRouteProp = RouteProp<StackParams, 'SHOWANDFILTERSCREEN'>;
 export type ProfileScreenRouteProp = RouteProp<StackParams, 'PROFILESCREEN'>;
 export type CheckoutScreenRouteProp = RouteProp<StackParams, 'CHECKOUTSCREEN'>;
+export type OrderDetailScreenRouteProp = RouteProp<StackParams, 'ORDERDETAILSCREEN'>;

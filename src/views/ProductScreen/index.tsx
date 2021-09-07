@@ -15,7 +15,7 @@ import {colors, fonts, shadows, sizes} from '../../support/constants';
 import {SEARCHSCREEN, SHOWANDFILTERSCREEN, StackNavigationProp} from '../../navigators/config';
 
 const filterGetAllProduct: ModelFilterProduct = {
-  Amount: 100,
+  Amount: 50,
   Page: 0,
   PropFilters: [],
 };
@@ -48,7 +48,7 @@ const ProductScreen: FC = () => {
     <Container style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         {/* TODO update feature search */}
-        {/* <TouchableOpacity
+        <TouchableOpacity
           activeOpacity={0.9}
           onPress={_toSearchScreen}
           style={[styles.searchBox, shadows.s1]}>
@@ -56,7 +56,7 @@ const ProductScreen: FC = () => {
             <Icons size={26} color={colors.black} name="md-search-outline" lib="Ionicons" />
           </View>
           <Text style={styles.inputSearch}>Find products...</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
 
         <View style={styles.content}>
           <View>
@@ -89,7 +89,7 @@ const ProductScreen: FC = () => {
 
 export default ProductScreen;
 
-const hItem = sizes.hScreen * 0.38;
+const hItem = sizes.hScreen * 0.35;
 const wItem = sizes.wScreen * 0.4;
 
 const styles = StyleSheet.create({

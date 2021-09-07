@@ -152,11 +152,11 @@ class FilterBottomSheet extends Component<Props, State> {
                       filterOptions={this.options}
                       onChangeItem={this._onChangeChips}
                     />
-                    <TouchableOpacity style={styles.btnClear}>
+                    {/* <TouchableOpacity style={styles.btnClear}>
                       <View style={styles.btnClearUnderline}>
                         <Text style={styles.btnClearTxt}>CLEAR ALL</Text>
                       </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <View style={styles.menu}>{this._renderMenu()}</View>
                   </ScrollView>
                 </View>

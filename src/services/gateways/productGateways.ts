@@ -8,6 +8,7 @@ import {
   Product,
   ExternalProductCart,
   OrderProduct,
+  Order,
 } from '../../models';
 import {SlowFetch} from '../../utilities';
 
@@ -28,10 +29,13 @@ export class ProductGateway {
         '/api/SanPham/GetSanPhams',
         filter,
       );
-      const temps: ExternalProduct[] = products.map((item: any) => ({
-        Id: item.Id,
-        Size: item.KichThuocs[0],
-      }));
+      const temps: ExternalProduct[] = products
+        .filter((i: any) => i.KichThuocs.length > 0)
+        .map((item: any) => ({
+          Id: item.Id,
+          Size: item.KichThuocs[0],
+        }));
+      // console.log(temps);
       const {data: resultExternal} = await this.restConnector.post(
         '/api/Order/GetOrderProduct',
         temps,
@@ -66,10 +70,41 @@ export class ProductGateway {
     try {
       const {data}: any = await SlowFetch(
         this.restConnector.post('/api/Order/CreateOrder', params),
+        500,
       );
       return data;
     } catch (error) {
       console.log('getExternalProductInfo :', error);
+      throw error;
+    }
+  }
+
+  // order
+  async getOrders(): Promise<Order[]> {
+    try {
+      const {data}: any = await SlowFetch(
+        this.restConnector.post('/api/Order/GetOrders', {
+          Page: 0,
+          Amount: 50,
+          PropFilters: [],
+        }),
+        500,
+      );
+      return data;
+    } catch (error) {
+      console.log('getOrders :', error);
+      throw error;
+    }
+  }
+
+  async getOrderById(id: string): Promise<any> {
+    try {
+      const {data}: any = await SlowFetch(
+        this.restConnector.get('/api/Order/GetOrderDetails?orderId=' + id),
+      );
+      return data;
+    } catch (error) {
+      console.log('getOrders :', error);
       throw error;
     }
   }
